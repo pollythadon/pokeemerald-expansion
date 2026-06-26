@@ -30,6 +30,8 @@
 #include "constants/abilities.h"
 #include "constants/items.h"
 #include "constants/battle_frontier.h"
+#include "constants/abilities.h"
+#include "wild_encounter.h"
 
 static void CB2_ReturnFromChooseHalfParty(void);
 static void CB2_ReturnFromChooseBattleFrontierParty(void);
@@ -588,6 +590,35 @@ void ScrCmd_createmon(struct ScriptContext *ctx)
 }
 
 #undef PARSE_FLAG
+
+u32 BirchCase_GiveMonParameterized(u16 species, u8 level, u16 item, u8 ball, u8 nature, u8 abilityNum, u8 gender, u8 *evs, u8 *ivs, u16 *moves, bool8 ggMaxFactor, u8 teraType, bool8 isShinyExpansion)
+{
+    u32 i;
+    u16 convertedEvs[NUM_STATS];
+    u16 convertedIvs[NUM_STATS];
+    enum Move convertedMoves[MAX_MON_MOVES];
+    enum ShinyMode shinyMode = isShinyExpansion ? SHINY_MODE_ALWAYS : SHINY_MODE_RANDOM;
+    bool32 useDefaultMoves = TRUE;
+
+    for (i = 0; i < NUM_STATS; i++)
+    {
+        convertedEvs[i] = evs[i];
+        convertedIvs[i] = ivs[i];
+    }
+
+    for (i = 0; i < MAX_MON_MOVES; i++)
+    {
+        convertedMoves[i] = moves[i];
+        if (moves[i] != MOVE_NONE)
+            useDefaultMoves = FALSE;
+    }
+
+    if (useDefaultMoves)
+        for (i = 0; i < MAX_MON_MOVES; i++)
+            convertedMoves[i] = MOVE_DEFAULT;
+
+    return ScriptGiveMonParameterized(B_SIDE_PLAYER, PARTY_SIZE, species, level, item, ball, nature, abilityNum, gender, convertedEvs, convertedIvs, convertedMoves, shinyMode, ggMaxFactor, teraType, 0);
+}
 
 void Script_GetChosenMonOffensiveEVs(void)
 {

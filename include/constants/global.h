@@ -180,6 +180,14 @@ enum Gender
     GENDER_COUNT,
 };
 
+// Used by the Birch case UI to store the starter type in VAR_STARTER_MON.
+enum StarterIds
+{
+    GRASS_STARTER,
+    FIRE_STARTER,
+    WATER_STARTER,
+};
+
 #define NUM_BARD_SONG_WORDS    6
 #define NUM_STORYTELLER_TALES  4
 #define NUM_TRADER_ITEMS       4
