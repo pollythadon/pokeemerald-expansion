@@ -10,8 +10,11 @@ static void AdvanceComfyAnim_Easing(struct ComfyAnim *anim)
     struct ComfyAnimEasingConfig *config = &anim->config.data.easing;
 
     anim->state.easingState.curFrame++;
+
+    // Determine progress of animation, normalized to (0, 1].
     t = MathUtil_Div32(Q_24_8(anim->state.easingState.curFrame), Q_24_8(config->durationFrames));
 
+    // Early exit if we know we're at the end of the animation.
     if (t == Q_24_8(1))
     {
         anim->position = config->to;
@@ -28,6 +31,7 @@ static void AdvanceComfyAnim_Easing(struct ComfyAnim *anim)
         anim->completed = TRUE;
 }
 
+// These values intentionally complete spring animations before imperceptible sub-pixel oscillations linger.
 #define SPRING_POSITION_PRECISION     0x10
 #define STATIONARY_VELOCITY_THRESHOLD 0x10
 
@@ -68,6 +72,7 @@ static void AdvanceComfyAnim_Spring(struct ComfyAnim *anim)
             {
                 anim->position = config->to;
                 anim->completed = TRUE;
+                return;
             }
         }
     }
@@ -201,6 +206,9 @@ u32 GetEasingComfyAnim_CurrentFrame(struct ComfyAnim *anim)
     }
 }
 
+// Easing functions borrowed from easings.net library
+// https://github.com/ai/easings.net/blob/master/src/easings/easingsFunctions.ts
+
 s32 ComfyAnimEasing_Linear(s32 t)
 {
     return t;
@@ -252,7 +260,7 @@ s32 ComfyAnimEasing_EaseInOutCubic(s32 t)
 
 s32 ComfyAnimEasing_EaseInOutBack(s32 t)
 {
-    s32 c1 = 0x298;
+    s32 c1 = 0x298; // Q_24_8 representation of 1.70158 * 1.525
 
     if (t < (Q_24_8(1) >> 1))
     {

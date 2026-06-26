@@ -88,6 +88,7 @@ void ReleaseComfyAnims(void);
 int ReadComfyAnimValueSmooth(struct ComfyAnim *anim);
 u32 GetEasingComfyAnim_CurrentFrame(struct ComfyAnim *anim);
 
+// Collection of standard easing functions
 s32 ComfyAnimEasing_Linear(s32 t);
 s32 ComfyAnimEasing_EaseInQuad(s32 t);
 s32 ComfyAnimEasing_EaseOutQuad(s32 t);
