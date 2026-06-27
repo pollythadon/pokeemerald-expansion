@@ -70,6 +70,7 @@
 #include "text.h"
 #include "text_window.h"
 #include "trade.h"
+#include "ui_stat_editor.h"
 #include "union_room.h"
 #include "window.h"
 #include "constants/battle.h"
@@ -91,6 +92,7 @@
 
 enum {
     MENU_SUMMARY,
+    MENU_STAT_EDIT,
     MENU_SWITCH,
     MENU_CANCEL1,
     MENU_ITEM,
@@ -213,7 +215,7 @@ struct PartyMenuInternal
 
     u8 windowId[3];
     u8 promptWindowId;
-    u8 actions[8];
+    u8 actions[10];
     u8 numActions;
     // In vanilla Emerald, only the first 0xB0 hwords (0x160 bytes) are actually used.
     // However, a full 0x100 hwords (0x200 bytes) are allocated.
@@ -556,6 +558,7 @@ static void ShiftMoveSlot(struct BoxPokemon *, u8, u8);
 static void BlitBitmapToPartyWindow(u8, const u8 *, u8, u8, u8, u8, u8);
 static void BlitBitmapToPartyWindow_SwSh(u8, u8, u8, u8, u8, bool8);
 static void CursorCb_Summary(u8);
+static void CursorCb_StatEdit(u8);
 static void CursorCb_Switch(u8);
 static void CursorCb_Cancel1(u8);
 static void CursorCb_Item(u8);
@@ -3726,6 +3729,7 @@ static void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 
     sPartyMenuInternal->numActions = 0;
     AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_SUMMARY);
+    AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_STAT_EDIT);
 
     // Add field moves to action list
     for (i = 0; i < MAX_MON_MOVES; i++)
@@ -3933,6 +3937,24 @@ void CB2_ReturnToPartyMenuFromSummaryScreen(void)
     gPaletteFade.bufferTransferDisabled = TRUE;
     gPartyMenu.slotId = gLastViewedMonIndex;
     InitPartyMenu(gPartyMenu.menuType, KEEP_PARTY_LAYOUT, gPartyMenu.action, TRUE, PARTY_MSG_DO_WHAT_WITH_MON, Task_TryCreateSelectionWindow, gPartyMenu.exitCallback);
+}
+
+static void ChangePokemonStatsPartyScreen_CB(void)
+{
+    CB2_ReturnToPartyMenuFromSummaryScreen();
+}
+
+static void ChangePokemonStatsPartyScreen(void)
+{
+    StatEditor_Init(ChangePokemonStatsPartyScreen_CB);
+}
+
+static void CursorCb_StatEdit(u8 taskId)
+{
+    PlaySE(SE_SELECT);
+    gSpecialVar_0x8004 = gPartyMenu.slotId;
+    sPartyMenuInternal->exitCallback = ChangePokemonStatsPartyScreen;
+    Task_ClosePartyMenu(taskId);
 }
 
 static void CursorCb_Switch(u8 taskId)
