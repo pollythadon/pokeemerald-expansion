@@ -123,6 +123,10 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/e
 This project follows the [all-contributors](https://github.com/all-contributors/allcontributors.org) specification. Contributions of any kind welcome!
 
 ## Other Credits
+### Battle Terrain Credits:
+- RavePossum
+- Ruki
+
 ### Mega Evolution Overworld Sprite Credits:
 - [princess-phoenix](https://www.deviantart.com/princess-phoenix)
 - [larryturbo](https://www.deviantart.com/larryturbo)
