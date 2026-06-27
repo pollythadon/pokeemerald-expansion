@@ -43,6 +43,7 @@
 #include "trainer_hill.h"
 #include "fldeff.h"
 #include "battle.h"
+#include "unbound_start_menu.h"
 
 static void Task_ExitNonAnimDoor(u8);
 static void Task_ExitNonDoor(u8);
@@ -467,7 +468,7 @@ static void Task_ExitNonDoor(u8 taskId)
     }
 }
 
-static void Task_WaitForFadeShowStartMenu(u8 taskId)
+static void UNUSED Task_WaitForFadeShowStartMenu(u8 taskId)
 {
     if (WaitForWeatherFadeIn() == TRUE)
     {
