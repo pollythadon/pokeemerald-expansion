@@ -347,6 +347,7 @@ static void ResetValuesForCalledMove(void);
 static bool32 CanAbilityShieldActivateForBattler(enum BattlerId battler);
 static void PlayAnimation(enum BattlerId battler, u8 animId, const u16 *argPtr, const u8 *nextInstr);
 static u32 GetPossibleNextTarget(u32 currTarget);
+static void TryApplyCatchModeDamageClamp(u8 attacker, u8 target, s16 *damage);
 
 static void Cmd_attackcanceler(void);
 static void Cmd_accuracycheck(void);
@@ -1131,6 +1132,7 @@ static inline void SetDynamicMoveCategoryAndDamage(struct DamageContext *ctx)
 {
     SetDynamicMoveCategory(gBattlerAttacker, ctx->battlerDef, gCurrentMove);
     gBattleStruct->moveDamage[ctx->battlerDef] = CalculateMoveDamage(ctx);
+    TryApplyCatchModeDamageClamp(gBattlerAttacker, ctx->battlerDef, &gBattleStruct->moveDamage[ctx->battlerDef]);
 }
 
 static void Cmd_damagecalc(void)
@@ -1209,6 +1211,32 @@ static void Cmd_typecalc(void)
     gBattlescriptCurrInstr = cmd->nextInstr;
 }
 
+static void TryApplyCatchModeDamageClamp(u8 attacker, u8 target, s16 *damage)
+{
+    s32 clampedDamage;
+
+    if (!IsCatchModeAvailableInBattle())
+        return;
+    if (!gBattleStruct->catchModeEnabled)
+        return;
+    if (!IsOnPlayerSide(attacker))
+        return;
+    if (target != GetCatchingBattler())
+        return;
+    if (*damage <= 0)
+        return;
+
+    clampedDamage = *damage;
+    if (gBattleMons[target].hp <= 1)
+    {
+        clampedDamage = 0;
+    }
+    else if (clampedDamage >= gBattleMons[target].hp)
+    {
+        clampedDamage = gBattleMons[target].hp - 1;
+    }
+    *damage = clampedDamage;
+}
 static void Cmd_multihitresultmessage(void)
 {
     CMD_ARGS();
@@ -13967,4 +13995,3 @@ void BS_RestoreStatChangeQueue(void)
     ClearOtherStatChangeValues(gBattlerAttacker);
     gBattlescriptCurrInstr = cmd->nextInstr;
 }
-
