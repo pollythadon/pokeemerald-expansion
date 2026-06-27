@@ -289,6 +289,11 @@ void StoreSelectedPokemonInDaycare(void)
     }
     else
     {
+        u8 monId = gSpecialVar_0x8004;
+        if (gSaveBlock3Ptr->followerIndex == monId)
+            gSaveBlock3Ptr->followerIndex = OW_FOLLOWER_NOT_SET;
+        else if (gSaveBlock3Ptr->followerIndex < PARTY_SIZE && monId < gSaveBlock3Ptr->followerIndex)
+            gSaveBlock3Ptr->followerIndex--;
         mon = &gParties[B_TRAINER_PLAYER][gSpecialVar_0x8004];
     }
     StorePokemonInEmptyDaycareSlot(mon, &gSaveBlock1Ptr->daycare);

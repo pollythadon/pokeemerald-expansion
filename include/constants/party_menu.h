@@ -65,10 +65,11 @@
 #define PARTY_MSG_ALREADY_HOLDING_ONE       26
 #define PARTY_MSG_WHICH_APPLIANCE           27
 #define PARTY_MSG_CHOOSE_SECOND_FUSION      28
-#define PARTY_MSG_NO_POKEMON                29
-#define PARTY_MSG_CHOOSE_MON_FOR_BOX        30
-#define PARTY_MSG_MOVE_ITEM_WHERE           31
-#define PARTY_MSG_SEND_MON_TO_BOX           32
+#define PARTY_MSG_DO_WHAT_WITH_FOLLOWER     29
+#define PARTY_MSG_NO_POKEMON                30
+#define PARTY_MSG_CHOOSE_MON_FOR_BOX        31
+#define PARTY_MSG_MOVE_ITEM_WHERE           32
+#define PARTY_MSG_SEND_MON_TO_BOX           33
 
 #define PARTY_MSG_NONE                      127
 
@@ -93,6 +94,8 @@
 #define SELECTWINDOW_MOVES       3
 #define SELECTWINDOW_CATALOG     4
 #define SELECTWINDOW_ZYGARDECUBE 5
+#define SELECTWINDOW_FOLLOWER    6
+#define SELECTWINDOW_FOLLOWER_RETURN 7
 
 enum PcMonSelectionType
 {
