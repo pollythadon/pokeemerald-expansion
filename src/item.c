@@ -988,3 +988,13 @@ bool32 IsItemShopCriteriaFulfilled(u32 itemId)
 
     return func(SanitizeItemId(itemId));
 }
+
+u32 GetItemCoinPrice(u16 itemId)
+{
+    return gItemsInfo[SanitizeItemId(itemId)].coinPrice;
+}
+
+u32 GetItemBpPrice(u16 itemId)
+{
+    return gItemsInfo[SanitizeItemId(itemId)].bpPrice;
+}
