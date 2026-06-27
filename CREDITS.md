@@ -123,6 +123,10 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/e
 This project follows the [all-contributors](https://github.com/all-contributors/allcontributors.org) specification. Contributions of any kind welcome!
 
 ## Other Credits
+### Tileset Credits:
+- leob0505
+- [TheDeadHeroAlistair](https://www.deviantart.com/thedeadheroalistair)
+
 ### Battle Terrain Credits:
 - RavePossum
 - Ruki
