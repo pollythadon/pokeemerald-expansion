@@ -163,7 +163,7 @@ const struct ItemInfo gItemsInfo[] =
 {
     [ITEM_NONE] =
     {
-        .name = gQuestionMarksItemName,
+        .name = ITEM_NAME("Nothing"),
         .price = 0,
         .description = sQuestionMarksDesc,
         .pocket = POCKET_ITEMS,
