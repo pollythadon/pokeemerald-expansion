@@ -274,6 +274,10 @@ EventScript_ResetAllMapFlags::
 	setflag FLAG_HIDE_SKY_PILLAR_TOP_RAYQUAZA_STILL
 	setflag FLAG_CELEBI_LADY
 	setflag FLAG_CELEBI_BATTLE
+	setflag FLAG_DARKRAI_MAN
+	setflag FLAG_DARKRAI_BATTLE
+	setflag FLAG_CRESSELIA_LADY
+	setflag FLAG_CRESSELIA_BATTLE
 	call EventScript_ResetAllBerries
 	end
 

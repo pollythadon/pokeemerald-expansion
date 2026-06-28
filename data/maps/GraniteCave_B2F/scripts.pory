@@ -1,0 +1,88 @@
+raw `GraniteCave_B2F_MapScripts::
+	.byte 0
+
+`
+
+script Legendary_EventScript_DARKRAI {
+    lockall
+    if (checkitem(ITEM_DARKRANITE)) {
+        msgbox(format("The shadows here are too thick, too deep, and your eyelids are suddenly so very heavy..."))
+        msgbox(format("Hold up the Darkranite and let yourself drift?"), MSGBOX_YESNO)
+        switch (var(VAR_RESULT)) {
+            case YES:
+                clearflag(FLAG_DARKRAI_BATTLE)
+                addobject(10)
+                msgbox(format("You feel sleep dragging at you. The edges of the world go soft and dark."), MSGBOX_AUTOCLOSE)
+                fadescreenswapbuffers(FADE_TO_BLACK)
+                delay(50)
+                fadescreenswapbuffers(FADE_FROM_BLACK)
+                playmoncry(SPECIES_DARKRAI, CRY_MODE_ENCOUNTER)
+                applymovement(10, DARKRAI_Descend)
+                waitmovement(0)
+                msgbox(format("It peels itself out of your own shadow -- a sorrow with a single blue eye. The Pitch-Black Pokemon braces, as if expecting you to flee."), MSGBOX_AUTOCLOSE)
+                playmoncry(SPECIES_DARKRAI, CRY_MODE_ENCOUNTER)
+                delay(40)
+                waitmoncry
+                setwildbattle(SPECIES_DARKRAI, 70)
+                dowildbattle
+                specialvar(VAR_RESULT, GetBattleOutcome)
+                if (var(VAR_RESULT) == B_OUTCOME_CAUGHT) {
+                    call(DARKRAICaught)
+                } elif (var(VAR_RESULT) == B_OUTCOME_WON) {
+                    call(DARKRAIWon)
+                } elif (var(VAR_RESULT) == B_OUTCOME_RAN) {
+                    call(DARKRAIRanAway)
+                } elif (var(VAR_RESULT) == B_OUTCOME_PLAYER_TELEPORTED) {
+                    call(DARKRAIRanAway)
+                }
+                releaseall
+                end
+            case NO:
+                msgbox(format("You blink the drowsiness away. Not tonight."))
+                release
+                end
+        }
+    }
+    msgbox(format("The dark here feels almost... sad. Like something is hiding in it, hoping and dreading to be found."))
+    release
+    end
+}
+
+script DARKRAICaught {
+    fadescreenswapbuffers(FADE_TO_BLACK)
+    removeobject(10)
+    setflag(FLAG_DARKRAI_BATTLE)
+    fadescreenswapbuffers(FADE_FROM_BLACK)
+    msgbox(format("For the first time, it didn't have to slip away into the dark alone. It almost looks... relieved."))
+    return
+}
+
+script DARKRAIWon {
+    fadescreenswapbuffers(FADE_TO_BLACK)
+    removeobject(10)
+    setflag(FLAG_DARKRAI_BATTLE)
+    fadescreenswapbuffers(FADE_FROM_BLACK)
+    msgbox(format("You wake on the cold ground. No nightmare came. Maybe it just wanted someone to stay until the dream was over."))
+    return
+}
+
+script DARKRAIRanAway {
+    playmoncry(SPECIES_DARKRAI, CRY_MODE_ENCOUNTER)
+    delay(20)
+    fadescreenswapbuffers(FADE_TO_BLACK)
+    removeobject(10)
+    setflag(FLAG_DARKRAI_BATTLE)
+    fadescreenswapbuffers(FADE_FROM_BLACK)
+    msgbox(format("It melts back into the shadows, alone again. You wish, oddly, that it had stayed."))
+    return
+}
+
+movement DARKRAI_Descend {
+    walk_down * 9 // Move down 5 steps to simulate descending from the top
+    face_player // Face the player before the battle
+    walk_up * 1
+    walk_in_place_faster_up * 2
+    walk_down * 1
+    delay_16
+    face_player
+}

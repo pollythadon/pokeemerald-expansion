@@ -55,12 +55,12 @@
 #define FLAG_CELEBI_GIFT     0x20 // Celebi Tea
 #define FLAG_CELEBI_BATTLE   0x21 // Celebi Sprite
 #define FLAG_CELEBI_LADY     0x22 // Celebi Quest lady
-#define FLAG_UNUSED_0x023    0x23 // Unused Flag
-#define FLAG_UNUSED_0x024    0x24 // Unused Flag
-#define FLAG_UNUSED_0x025    0x25 // Unused Flag
-#define FLAG_UNUSED_0x026    0x26 // Unused Flag
-#define FLAG_UNUSED_0x027    0x27 // Unused Flag
-#define FLAG_UNUSED_0x028    0x28 // Unused Flag
+#define FLAG_DARKRAI_BATTLE  0x24 // Darkrai Sprite
+#define FLAG_DARKRAI_MAN     0x25 // Darkrai Quest Man
+#define FLAG_DARKRAI_GIFT    0x23 // Darkrai MegaStone
+#define FLAG_CRESSELIA_LADY  0x26 // Unused Flag
+#define FLAG_CRESSELIA_GIFT  0x27 // Unused Flag
+#define FLAG_CRESSELIA_BATTLE 0x28 // Unused Flag
 #define FLAG_UNUSED_0x029    0x29 // Unused Flag
 #define FLAG_UNUSED_0x02A    0x2A // Unused Flag
 #define FLAG_UNUSED_0x02B    0x2B // Unused Flag

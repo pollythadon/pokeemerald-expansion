@@ -1468,7 +1468,7 @@
       "id": "LAYOUT_GRANITE_CAVE_B2F",
       "name": "GraniteCave_B2F_Layout",
       "width": 32,
-      "height": 26,
+      "height": 35,
       "primary_tileset": "gTileset_General",
       "secondary_tileset": "gTileset_Cave",
       "border_filepath": "data/layouts/GraniteCave_B2F/border.bin",

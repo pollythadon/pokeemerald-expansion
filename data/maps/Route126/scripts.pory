@@ -1,0 +1,136 @@
+raw `Route126_MapScripts::
+	map_script MAP_SCRIPT_ON_TRANSITION, Route126_OnTransition
+	.byte 0
+
+Route126_OnTransition:
+	call_if_set FLAG_SYS_WEATHER_CTRL, Common_EventScript_SetAbnormalWeather
+	end
+
+Route126_EventScript_Barry::
+	trainerbattle_single TRAINER_BARRY, Route126_Text_BarryIntro, Route126_Text_BarryDefeat
+	msgbox Route126_Text_BarryPostBattle, MSGBOX_AUTOCLOSE
+	end
+
+Route126_EventScript_Dean::
+	trainerbattle_single TRAINER_DEAN, Route126_Text_DeanIntro, Route126_Text_DeanDefeat
+	msgbox Route126_Text_DeanPostBattle, MSGBOX_AUTOCLOSE
+	end
+
+Route126_EventScript_Nikki::
+	trainerbattle_single TRAINER_NIKKI, Route126_Text_NikkiIntro, Route126_Text_NikkiDefeat
+	msgbox Route126_Text_NikkiPostBattle, MSGBOX_AUTOCLOSE
+	end
+
+Route126_EventScript_Brenda::
+	trainerbattle_single TRAINER_BRENDA, Route126_Text_BrendaIntro, Route126_Text_BrendaDefeat
+	msgbox Route126_Text_BrendaPostBattle, MSGBOX_AUTOCLOSE
+	end
+
+Route126_EventScript_Leonardo::
+	trainerbattle_single TRAINER_LEONARDO, Route126_Text_LeonardoIntro, Route126_Text_LeonardoDefeat
+	msgbox Route126_Text_LeonardoPostBattle, MSGBOX_AUTOCLOSE
+	end
+
+Route126_EventScript_Isobel::
+	trainerbattle_single TRAINER_ISOBEL, Route126_Text_IsobelIntro, Route126_Text_IsobelDefeat
+	msgbox Route126_Text_IsobelPostBattle, MSGBOX_AUTOCLOSE
+	end
+
+Route126_EventScript_Sienna::
+	trainerbattle_single TRAINER_SIENNA, Route126_Text_SiennaIntro, Route126_Text_SiennaDefeat
+	msgbox Route126_Text_SiennaPostBattle, MSGBOX_AUTOCLOSE
+	end
+
+Route126_EventScript_Pablo::
+	trainerbattle_single TRAINER_PABLO_1, Route126_Text_PabloIntro, Route126_Text_PabloDefeat, Route126_EventScript_RegisterPablo
+	specialvar VAR_RESULT, ShouldTryRematchBattle
+	goto_if_eq VAR_RESULT, TRUE, Route126_EventScript_RematchPablo
+	msgbox Route126_Text_PabloPostBattle, MSGBOX_DEFAULT
+	release
+	end
+
+Route126_EventScript_RegisterPablo::
+	special PlayerFaceTrainerAfterBattle
+	waitmovement 0
+	msgbox Route126_Text_PabloRegister, MSGBOX_DEFAULT
+	register_matchcall TRAINER_PABLO_1
+	release
+	end
+
+Route126_EventScript_RematchPablo::
+	trainerbattle_rematch TRAINER_PABLO_1, Route126_Text_PabloRematchIntro, Route126_Text_PabloRematchDefeat
+	msgbox Route126_Text_PabloPostRematch, MSGBOX_AUTOCLOSE
+	end
+
+`
+
+script Legendary_EventScript_CRESSELIA {
+    lockall
+    if (checkitem(ITEM_DREAD_PLATE)) {
+        msgbox(format("Moonlight pools on the water like spilled silver. The Hisuian plate grows warm in your hand..."))
+        msgbox(format("Hold the plate up to the full moon?"), MSGBOX_YESNO)
+        switch (var(VAR_RESULT)) {
+            case YES:
+                clearflag(FLAG_CRESSELIA_BATTLE)
+                addobject(10)
+                msgbox(format("A single glowing feather drifts down from the sky. The air feels lighter, kinder, half-asleep."), MSGBOX_AUTOCLOSE)
+                playmoncry(SPECIES_CRESSELIA, CRY_MODE_ENCOUNTER)
+                fadescreenswapbuffers(FADE_TO_WHITE)
+                delay(30)
+                fadescreenswapbuffers(FADE_FROM_WHITE)
+                applymovement(10, CRESSELIA_Descend)
+                waitmovement(0)
+                msgbox(format("She glides down on wings like an aurora, the Lunar Pokemon, born of the crescent's mercy."), MSGBOX_AUTOCLOSE)
+                playmoncry(SPECIES_CRESSELIA, CRY_MODE_ENCOUNTER)
+                delay(40)
+                waitmoncry
+                setwildbattle(SPECIES_CRESSELIA, 70)
+                dowildbattle
+                specialvar(VAR_RESULT, GetBattleOutcome)
+                if (var(VAR_RESULT) == B_OUTCOME_CAUGHT) {
+                    call(CRESSELIAWon_or_Caught)
+                } elif (var(VAR_RESULT) == B_OUTCOME_WON) {
+                    call(CRESSELIAWon_or_Caught)
+                } elif (var(VAR_RESULT) == B_OUTCOME_RAN) {
+                    call(CRESSELIARanAway)
+                } elif (var(VAR_RESULT) == B_OUTCOME_PLAYER_TELEPORTED) {
+                    call(CRESSELIARanAway)
+                }
+                releaseall
+                end
+            case NO:
+                msgbox(format("The moon will be full again. No need to rush."))
+                release
+                end
+        }
+    }
+    msgbox(format("The lake is calm and the moon is bright. A good place to rest... if only you had the right token."))
+    release
+    end
+}
+
+script CRESSELIAWon_or_Caught {
+    fadescreenswapbuffers(FADE_TO_WHITE)
+    removeobject(10)
+    setflag(FLAG_CRESSELIA_BATTLE)
+    fadescreenswapbuffers(FADE_FROM_WHITE)
+    msgbox(format("A lone Lunar Wing settles on the shore where she stood. You feel rested in a way sleep never quite manages."))
+    return
+}
+
+script CRESSELIARanAway {
+    playmoncry(SPECIES_CRESSELIA, CRY_MODE_ENCOUNTER)
+    delay(20)
+    fadescreenswapbuffers(FADE_TO_WHITE)
+    removeobject(10)
+    setflag(FLAG_CRESSELIA_BATTLE)
+    fadescreenswapbuffers(FADE_FROM_WHITE)
+    msgbox(format("She rises back into the moonlight and fades, leaving the night a little gentler than she found it."))
+    return
+}
+
+movement CRESSELIA_Descend {
+    walk_down * 9
+    delay_16
+    face_player
+}
