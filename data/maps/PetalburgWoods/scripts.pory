@@ -512,6 +512,8 @@ script Legendary_EventScript_CELEBI {
                 elif(var(VAR_RESULT) == B_OUTCOME_PLAYER_TELEPORTED) {
                     call(CELEBIRanAway)
                 }
+                release
+                end
             case NO:
                 msgbox(format("Might need it for later.."))
                 release
