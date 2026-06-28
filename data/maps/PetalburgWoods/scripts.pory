@@ -518,8 +518,7 @@ script Legendary_EventScript_CELEBI {
                 end
         }
     }
-    msgbox(format("Something feels special about this spot...\n"
-                  "Maybe an item could stir the forest’s spirit."))
+    msgbox(format("Something feels special about this spot..."))
     release
     end
 }
