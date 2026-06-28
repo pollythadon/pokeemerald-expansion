@@ -55,6 +55,7 @@
 #include "trainer.h"
 #include "trainer_hill.h"
 #include "util.h"
+#include "variant_colours.h"
 #include "constants/abilities.h"
 #include "constants/battle_frontier.h"
 #include "constants/battle_move_effects.h"
@@ -5393,14 +5394,32 @@ const u16 *GetMonFrontSpritePal(struct Pokemon *mon)
     return GetMonSpritePalFromSpeciesAndPersonalityIsEgg(species, isShiny, personality, isEgg);
 }
 
+// Copies a mon's base palette into a scratch buffer and applies its PID-based
+// colour variant (see src/variant_colours.c). Eggs are never recoloured. The
+// returned buffer is consumed synchronously by the caller's LoadPalette, so a
+// single static buffer is safe even when several sprites load in sequence.
+static const u16 *ApplyMonSpritePalVariant(const u16 *base, enum Species species, bool32 isShiny, u32 personality, bool32 isEgg)
+{
+    static u16 sVariantPalette[16];
+
+    if (isEgg)
+        return base;
+
+    CpuCopy16(base, sVariantPalette, sizeof(sVariantPalette));
+    ApplyMonSpeciesVariantToPaletteBuffer(species, isShiny, personality, sVariantPalette);
+    return sVariantPalette;
+}
+
 const u16 *GetMonSpritePalFromSpeciesAndPersonality(enum Species species, bool32 isShiny, u32 personality)
 {
-    return GetMonSpritePalFromSpeciesIsEgg(species, isShiny, IsPersonalityFemale(species, personality), FALSE);
+    const u16 *base = GetMonSpritePalFromSpeciesIsEgg(species, isShiny, IsPersonalityFemale(species, personality), FALSE);
+    return ApplyMonSpritePalVariant(base, species, isShiny, personality, FALSE);
 }
 
 const u16 *GetMonSpritePalFromSpeciesAndPersonalityIsEgg(enum Species species, bool32 isShiny, u32 personality, bool32 isEgg)
 {
-    return GetMonSpritePalFromSpeciesIsEgg(species, isShiny, IsPersonalityFemale(species, personality), isEgg);
+    const u16 *base = GetMonSpritePalFromSpeciesIsEgg(species, isShiny, IsPersonalityFemale(species, personality), isEgg);
+    return ApplyMonSpritePalVariant(base, species, isShiny, personality, isEgg);
 }
 
 const u16 *GetMonSpritePalFromSpecies(enum Species species, bool32 isShiny, bool32 isFemale)

@@ -2,6 +2,49 @@
 #include "trig.h"
 #include "fpmath.h"
 
+// Precomputed hue-amount table
+// Code uses hue in [0..255] instead of [0..360]
+// {0,10,20,30,45,60,90,180} -> {0,7,14,21,32,43,64,128}
+static const u8 sHueTable[8] = {0, 7, 14, 21, 32, 43, 64, 128};
+static const u8 sCLTable[4] = {0, 5, 10, 25};
+
+// Per-species variant table. Species without an entry fall back to
+// DEFAULT_SPECIES_VARIANT (see GetSpeciesVariants below).
+static const struct SpeciesVariant gSpeciesVariants[NUM_SPECIES] = {
+    [SPECIES_POOCHYENA] = {
+        PAL1(1, 5),
+        HCL1(0, 25, 5, FALSE),
+    },
+    [SPECIES_MIGHTYENA] = {
+        PAL1(1, 5),
+        HCL1(0, 25, 5, FALSE),
+    },
+    [SPECIES_ZIGZAGOON] = {
+        PAL1(5, 8),
+        HCL1(10, 25, 5, FALSE),
+    },
+    [SPECIES_LINOONE] = {
+        PAL1(1, 3),
+        HCL1(10, 25, 5, FALSE),
+    },
+    [SPECIES_WURMPLE] = {
+        PAL1(1, 4),
+        HCL1(30, 5, 0, TRUE),
+    },
+    [SPECIES_SMEARGLE] = {
+        PAL1(8, 6),
+        HCL1(360, 0, 0, FALSE),
+        PAL2(1, 6),
+        HCL2(10, 5, 5, TRUE),
+    },
+    [SPECIES_TYRANITAR] = {
+        PAL1(11, 3),
+        HCL1(30, 25, 0, TRUE),
+        PAL2(1, 5),
+        HCL2(0, 0, 10, FALSE),
+    },
+};
+
 /* ---------- helpers ---------- */
 
 typedef u8 uQ0_8;
