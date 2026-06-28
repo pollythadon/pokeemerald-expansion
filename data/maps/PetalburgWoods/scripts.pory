@@ -498,7 +498,8 @@ script Legendary_EventScript_CELEBI {
                 delay(40)
                 waitmoncry
                 setwildbattle(SPECIES_CELEBI, 65)
-                dowildbattle
+                special(BattleSetup_StartLegendaryBattle)
+                waitstate
                 specialvar(VAR_RESULT, GetBattleOutcome)
                 if(var(VAR_RESULT) == B_OUTCOME_CAUGHT) {
                     call(CELEBIWon_or_Caught)

@@ -951,9 +951,9 @@ Legendary_EventScript_CELEBI::
 	compare VAR_RESULT, 0
 	goto_if_ne Legendary_EventScript_CELEBI_2
 Legendary_EventScript_CELEBI_1:
-# 523 "data/maps/PetalburgWoods/scripts.pory"
-	msgbox Legendary_EventScript_CELEBI_Text_5
 # 524 "data/maps/PetalburgWoods/scripts.pory"
+	msgbox Legendary_EventScript_CELEBI_Text_5
+# 525 "data/maps/PetalburgWoods/scripts.pory"
 	release
 	end
 
@@ -966,7 +966,7 @@ Legendary_EventScript_CELEBI_2:
 	switch VAR_RESULT
 # 482 "data/maps/PetalburgWoods/scripts.pory"
 	case YES, Legendary_EventScript_CELEBI_5
-# 517 "data/maps/PetalburgWoods/scripts.pory"
+# 518 "data/maps/PetalburgWoods/scripts.pory"
 	case NO, Legendary_EventScript_CELEBI_6
 	goto Legendary_EventScript_CELEBI_1
 
@@ -1008,107 +1008,109 @@ Legendary_EventScript_CELEBI_5:
 # 500 "data/maps/PetalburgWoods/scripts.pory"
 	setwildbattle SPECIES_CELEBI, 65
 # 501 "data/maps/PetalburgWoods/scripts.pory"
-	dowildbattle
+	special BattleSetup_StartLegendaryBattle
 # 502 "data/maps/PetalburgWoods/scripts.pory"
-	specialvar VAR_RESULT, GetBattleOutcome
+	waitstate
 # 503 "data/maps/PetalburgWoods/scripts.pory"
+	specialvar VAR_RESULT, GetBattleOutcome
+# 504 "data/maps/PetalburgWoods/scripts.pory"
 	compare VAR_RESULT, B_OUTCOME_CAUGHT
 	goto_if_eq Legendary_EventScript_CELEBI_8
-# 506 "data/maps/PetalburgWoods/scripts.pory"
+# 507 "data/maps/PetalburgWoods/scripts.pory"
 	compare VAR_RESULT, B_OUTCOME_WON
 	goto_if_eq Legendary_EventScript_CELEBI_9
-# 509 "data/maps/PetalburgWoods/scripts.pory"
+# 510 "data/maps/PetalburgWoods/scripts.pory"
 	compare VAR_RESULT, B_OUTCOME_RAN
 	goto_if_eq Legendary_EventScript_CELEBI_10
-# 512 "data/maps/PetalburgWoods/scripts.pory"
+# 513 "data/maps/PetalburgWoods/scripts.pory"
 	compare VAR_RESULT, B_OUTCOME_PLAYER_TELEPORTED
 	goto_if_eq Legendary_EventScript_CELEBI_11
 Legendary_EventScript_CELEBI_7:
-# 515 "data/maps/PetalburgWoods/scripts.pory"
+# 516 "data/maps/PetalburgWoods/scripts.pory"
 	release
 	end
 
 Legendary_EventScript_CELEBI_6:
-# 518 "data/maps/PetalburgWoods/scripts.pory"
-	msgbox Legendary_EventScript_CELEBI_Text_4
 # 519 "data/maps/PetalburgWoods/scripts.pory"
+	msgbox Legendary_EventScript_CELEBI_Text_4
+# 520 "data/maps/PetalburgWoods/scripts.pory"
 	release
 	end
 
 Legendary_EventScript_CELEBI_8:
-# 504 "data/maps/PetalburgWoods/scripts.pory"
+# 505 "data/maps/PetalburgWoods/scripts.pory"
 	call CELEBIWon_or_Caught
 	goto Legendary_EventScript_CELEBI_7
 
 Legendary_EventScript_CELEBI_9:
-# 507 "data/maps/PetalburgWoods/scripts.pory"
+# 508 "data/maps/PetalburgWoods/scripts.pory"
 	call CELEBIWon_or_Caught
 	goto Legendary_EventScript_CELEBI_7
 
 Legendary_EventScript_CELEBI_10:
-# 510 "data/maps/PetalburgWoods/scripts.pory"
+# 511 "data/maps/PetalburgWoods/scripts.pory"
 	call CELEBIRanAway
 	goto Legendary_EventScript_CELEBI_7
 
 Legendary_EventScript_CELEBI_11:
-# 513 "data/maps/PetalburgWoods/scripts.pory"
+# 514 "data/maps/PetalburgWoods/scripts.pory"
 	call CELEBIRanAway
 	goto Legendary_EventScript_CELEBI_7
 
 
 CELEBIWon_or_Caught::
-# 529 "data/maps/PetalburgWoods/scripts.pory"
-	fadescreenswapbuffers FADE_TO_BLACK
 # 530 "data/maps/PetalburgWoods/scripts.pory"
-	removeobject 14
+	fadescreenswapbuffers FADE_TO_BLACK
 # 531 "data/maps/PetalburgWoods/scripts.pory"
-	setflag FLAG_CELEBI_BATTLE
+	removeobject 14
 # 532 "data/maps/PetalburgWoods/scripts.pory"
-	fadescreenswapbuffers FADE_FROM_BLACK
+	setflag FLAG_CELEBI_BATTLE
 # 533 "data/maps/PetalburgWoods/scripts.pory"
+	fadescreenswapbuffers FADE_FROM_BLACK
+# 534 "data/maps/PetalburgWoods/scripts.pory"
 	msgbox CELEBIWon_or_Caught_Text_0
 	return
 
 
 CELEBIRanAway::
-# 538 "data/maps/PetalburgWoods/scripts.pory"
-	playmoncry SPECIES_CELEBI, CRY_MODE_ENCOUNTER
 # 539 "data/maps/PetalburgWoods/scripts.pory"
-	delay 20
+	playmoncry SPECIES_CELEBI, CRY_MODE_ENCOUNTER
 # 540 "data/maps/PetalburgWoods/scripts.pory"
-	fadescreenswapbuffers FADE_TO_BLACK
+	delay 20
 # 541 "data/maps/PetalburgWoods/scripts.pory"
-	removeobject 14
+	fadescreenswapbuffers FADE_TO_BLACK
 # 542 "data/maps/PetalburgWoods/scripts.pory"
-	setflag FLAG_CELEBI_BATTLE
+	removeobject 14
 # 543 "data/maps/PetalburgWoods/scripts.pory"
-	fadescreenswapbuffers FADE_FROM_BLACK
+	setflag FLAG_CELEBI_BATTLE
 # 544 "data/maps/PetalburgWoods/scripts.pory"
+	fadescreenswapbuffers FADE_FROM_BLACK
+# 545 "data/maps/PetalburgWoods/scripts.pory"
 	msgbox CELEBIWon_or_Caught_Text_0
 	return
 
 
-# 548 "data/maps/PetalburgWoods/scripts.pory"
+# 549 "data/maps/PetalburgWoods/scripts.pory"
 Celebi_Descend:
-# 549 "data/maps/PetalburgWoods/scripts.pory"
-	walk_down
-# 549 "data/maps/PetalburgWoods/scripts.pory"
-	walk_down
-# 549 "data/maps/PetalburgWoods/scripts.pory"
-	walk_down
-# 549 "data/maps/PetalburgWoods/scripts.pory"
-	walk_down
-# 549 "data/maps/PetalburgWoods/scripts.pory"
-	walk_down
-# 549 "data/maps/PetalburgWoods/scripts.pory"
-	walk_down
-# 549 "data/maps/PetalburgWoods/scripts.pory"
-	walk_down
-# 549 "data/maps/PetalburgWoods/scripts.pory"
-	walk_down
-# 549 "data/maps/PetalburgWoods/scripts.pory"
+# 550 "data/maps/PetalburgWoods/scripts.pory"
 	walk_down
 # 550 "data/maps/PetalburgWoods/scripts.pory"
+	walk_down
+# 550 "data/maps/PetalburgWoods/scripts.pory"
+	walk_down
+# 550 "data/maps/PetalburgWoods/scripts.pory"
+	walk_down
+# 550 "data/maps/PetalburgWoods/scripts.pory"
+	walk_down
+# 550 "data/maps/PetalburgWoods/scripts.pory"
+	walk_down
+# 550 "data/maps/PetalburgWoods/scripts.pory"
+	walk_down
+# 550 "data/maps/PetalburgWoods/scripts.pory"
+	walk_down
+# 550 "data/maps/PetalburgWoods/scripts.pory"
+	walk_down
+# 551 "data/maps/PetalburgWoods/scripts.pory"
 	face_player
 	step_end
 
@@ -1130,15 +1132,15 @@ Legendary_EventScript_CELEBI_Text_3:
 	.string "at once!!$"
 
 Legendary_EventScript_CELEBI_Text_4:
-# 518 "data/maps/PetalburgWoods/scripts.pory"
+# 519 "data/maps/PetalburgWoods/scripts.pory"
 	.string "Might need it for later..$"
 
 Legendary_EventScript_CELEBI_Text_5:
-# 523 "data/maps/PetalburgWoods/scripts.pory"
+# 524 "data/maps/PetalburgWoods/scripts.pory"
 	.string "Something feels special about this\n"
 	.string "spot...$"
 
 CELEBIWon_or_Caught_Text_0:
-# 533 "data/maps/PetalburgWoods/scripts.pory"
+# 534 "data/maps/PetalburgWoods/scripts.pory"
 	.string "The things I saw... A family... Best I\n"
 	.string "move on.$"

@@ -571,6 +571,18 @@ void BattleSetup_StartLegendaryBattle(void)
     case SPECIES_MEW:
         CreateBattleStartTask(B_TRANSITION_GRID_SQUARES, MUS_VS_MEW);
         break;
+    case SPECIES_DIALGA:
+    case SPECIES_PALKIA:
+    case SPECIES_GIRATINA:
+    case SPECIES_CELEBI:
+    case SPECIES_DARKRAI:
+    case SPECIES_CRESSELIA:
+    case SPECIES_HEATRAN:
+    case SPECIES_ZEKROM:
+    case SPECIES_RESHIRAM:
+    case SPECIES_KYUREM:
+    CreateBattleStartTask(B_TRANSITION_BLUR, MUS_RG_VS_LEGEND);
+    break;
     }
 
     IncrementGameStat(GAME_STAT_TOTAL_BATTLES);

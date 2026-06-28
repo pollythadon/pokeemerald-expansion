@@ -133,9 +133,9 @@ Legendary_EventScript_CRESSELIA::
 	compare VAR_RESULT, 0
 	goto_if_ne Legendary_EventScript_CRESSELIA_2
 Legendary_EventScript_CRESSELIA_1:
-# 107 "data/maps/Route126/scripts.pory"
-	msgbox Legendary_EventScript_CRESSELIA_Text_5
 # 108 "data/maps/Route126/scripts.pory"
+	msgbox Legendary_EventScript_CRESSELIA_Text_5
+# 109 "data/maps/Route126/scripts.pory"
 	release
 	end
 
@@ -148,7 +148,7 @@ Legendary_EventScript_CRESSELIA_2:
 	switch VAR_RESULT
 # 73 "data/maps/Route126/scripts.pory"
 	case YES, Legendary_EventScript_CRESSELIA_5
-# 101 "data/maps/Route126/scripts.pory"
+# 102 "data/maps/Route126/scripts.pory"
 	case NO, Legendary_EventScript_CRESSELIA_6
 	goto Legendary_EventScript_CRESSELIA_1
 
@@ -182,109 +182,111 @@ Legendary_EventScript_CRESSELIA_5:
 # 87 "data/maps/Route126/scripts.pory"
 	setwildbattle SPECIES_CRESSELIA, 70
 # 88 "data/maps/Route126/scripts.pory"
-	dowildbattle
+	special BattleSetup_StartLegendaryBattle
 # 89 "data/maps/Route126/scripts.pory"
-	specialvar VAR_RESULT, GetBattleOutcome
+	waitstate
 # 90 "data/maps/Route126/scripts.pory"
+	specialvar VAR_RESULT, GetBattleOutcome
+# 91 "data/maps/Route126/scripts.pory"
 	compare VAR_RESULT, B_OUTCOME_CAUGHT
 	goto_if_eq Legendary_EventScript_CRESSELIA_8
-# 92 "data/maps/Route126/scripts.pory"
+# 93 "data/maps/Route126/scripts.pory"
 	compare VAR_RESULT, B_OUTCOME_WON
 	goto_if_eq Legendary_EventScript_CRESSELIA_9
-# 94 "data/maps/Route126/scripts.pory"
+# 95 "data/maps/Route126/scripts.pory"
 	compare VAR_RESULT, B_OUTCOME_RAN
 	goto_if_eq Legendary_EventScript_CRESSELIA_10
-# 96 "data/maps/Route126/scripts.pory"
+# 97 "data/maps/Route126/scripts.pory"
 	compare VAR_RESULT, B_OUTCOME_PLAYER_TELEPORTED
 	goto_if_eq Legendary_EventScript_CRESSELIA_11
 Legendary_EventScript_CRESSELIA_7:
-# 99 "data/maps/Route126/scripts.pory"
+# 100 "data/maps/Route126/scripts.pory"
 	releaseall
 	end
 
 Legendary_EventScript_CRESSELIA_6:
-# 102 "data/maps/Route126/scripts.pory"
-	msgbox Legendary_EventScript_CRESSELIA_Text_4
 # 103 "data/maps/Route126/scripts.pory"
+	msgbox Legendary_EventScript_CRESSELIA_Text_4
+# 104 "data/maps/Route126/scripts.pory"
 	release
 	end
 
 Legendary_EventScript_CRESSELIA_8:
-# 91 "data/maps/Route126/scripts.pory"
+# 92 "data/maps/Route126/scripts.pory"
 	call CRESSELIAWon_or_Caught
 	goto Legendary_EventScript_CRESSELIA_7
 
 Legendary_EventScript_CRESSELIA_9:
-# 93 "data/maps/Route126/scripts.pory"
+# 94 "data/maps/Route126/scripts.pory"
 	call CRESSELIAWon_or_Caught
 	goto Legendary_EventScript_CRESSELIA_7
 
 Legendary_EventScript_CRESSELIA_10:
-# 95 "data/maps/Route126/scripts.pory"
+# 96 "data/maps/Route126/scripts.pory"
 	call CRESSELIARanAway
 	goto Legendary_EventScript_CRESSELIA_7
 
 Legendary_EventScript_CRESSELIA_11:
-# 97 "data/maps/Route126/scripts.pory"
+# 98 "data/maps/Route126/scripts.pory"
 	call CRESSELIARanAway
 	goto Legendary_EventScript_CRESSELIA_7
 
 
 CRESSELIAWon_or_Caught::
-# 113 "data/maps/Route126/scripts.pory"
-	fadescreenswapbuffers FADE_TO_WHITE
 # 114 "data/maps/Route126/scripts.pory"
-	removeobject 10
+	fadescreenswapbuffers FADE_TO_WHITE
 # 115 "data/maps/Route126/scripts.pory"
-	setflag FLAG_CRESSELIA_BATTLE
+	removeobject 10
 # 116 "data/maps/Route126/scripts.pory"
-	fadescreenswapbuffers FADE_FROM_WHITE
+	setflag FLAG_CRESSELIA_BATTLE
 # 117 "data/maps/Route126/scripts.pory"
+	fadescreenswapbuffers FADE_FROM_WHITE
+# 118 "data/maps/Route126/scripts.pory"
 	msgbox CRESSELIAWon_or_Caught_Text_0
 	return
 
 
 CRESSELIARanAway::
-# 122 "data/maps/Route126/scripts.pory"
-	playmoncry SPECIES_CRESSELIA, CRY_MODE_ENCOUNTER
 # 123 "data/maps/Route126/scripts.pory"
-	delay 20
+	playmoncry SPECIES_CRESSELIA, CRY_MODE_ENCOUNTER
 # 124 "data/maps/Route126/scripts.pory"
-	fadescreenswapbuffers FADE_TO_WHITE
+	delay 20
 # 125 "data/maps/Route126/scripts.pory"
-	removeobject 10
+	fadescreenswapbuffers FADE_TO_WHITE
 # 126 "data/maps/Route126/scripts.pory"
-	setflag FLAG_CRESSELIA_BATTLE
+	removeobject 10
 # 127 "data/maps/Route126/scripts.pory"
-	fadescreenswapbuffers FADE_FROM_WHITE
+	setflag FLAG_CRESSELIA_BATTLE
 # 128 "data/maps/Route126/scripts.pory"
+	fadescreenswapbuffers FADE_FROM_WHITE
+# 129 "data/maps/Route126/scripts.pory"
 	msgbox CRESSELIARanAway_Text_0
 	return
 
 
-# 132 "data/maps/Route126/scripts.pory"
+# 133 "data/maps/Route126/scripts.pory"
 CRESSELIA_Descend:
-# 133 "data/maps/Route126/scripts.pory"
-	walk_down
-# 133 "data/maps/Route126/scripts.pory"
-	walk_down
-# 133 "data/maps/Route126/scripts.pory"
-	walk_down
-# 133 "data/maps/Route126/scripts.pory"
-	walk_down
-# 133 "data/maps/Route126/scripts.pory"
-	walk_down
-# 133 "data/maps/Route126/scripts.pory"
-	walk_down
-# 133 "data/maps/Route126/scripts.pory"
-	walk_down
-# 133 "data/maps/Route126/scripts.pory"
-	walk_down
-# 133 "data/maps/Route126/scripts.pory"
+# 134 "data/maps/Route126/scripts.pory"
 	walk_down
 # 134 "data/maps/Route126/scripts.pory"
-	delay_16
+	walk_down
+# 134 "data/maps/Route126/scripts.pory"
+	walk_down
+# 134 "data/maps/Route126/scripts.pory"
+	walk_down
+# 134 "data/maps/Route126/scripts.pory"
+	walk_down
+# 134 "data/maps/Route126/scripts.pory"
+	walk_down
+# 134 "data/maps/Route126/scripts.pory"
+	walk_down
+# 134 "data/maps/Route126/scripts.pory"
+	walk_down
+# 134 "data/maps/Route126/scripts.pory"
+	walk_down
 # 135 "data/maps/Route126/scripts.pory"
+	delay_16
+# 136 "data/maps/Route126/scripts.pory"
 	face_player
 	step_end
 
@@ -306,29 +308,29 @@ Legendary_EventScript_CRESSELIA_Text_2:
 
 Legendary_EventScript_CRESSELIA_Text_3:
 # 83 "data/maps/Route126/scripts.pory"
-	.string "She glides down on wings like an aurora,\n"
-	.string "the Lunar Pokemon, born of the\l"
+	.string "She glides down on wings like an aurora\n"
+	.string "-- the Lunar Pokemon, born of the\l"
 	.string "crescent's mercy.$"
 
 Legendary_EventScript_CRESSELIA_Text_4:
-# 102 "data/maps/Route126/scripts.pory"
+# 103 "data/maps/Route126/scripts.pory"
 	.string "The moon will be full again. No need to\n"
 	.string "rush.$"
 
 Legendary_EventScript_CRESSELIA_Text_5:
-# 107 "data/maps/Route126/scripts.pory"
+# 108 "data/maps/Route126/scripts.pory"
 	.string "The lake is calm and the moon is bright.\n"
 	.string "A good place to rest... if only you had\l"
 	.string "the right token.$"
 
 CRESSELIAWon_or_Caught_Text_0:
-# 117 "data/maps/Route126/scripts.pory"
+# 118 "data/maps/Route126/scripts.pory"
 	.string "A lone Lunar Wing settles on the shore\n"
 	.string "where she stood. You feel rested in a\l"
 	.string "way sleep never quite manages.$"
 
 CRESSELIARanAway_Text_0:
-# 128 "data/maps/Route126/scripts.pory"
+# 129 "data/maps/Route126/scripts.pory"
 	.string "She rises back into the moonlight and\n"
 	.string "fades, leaving the night a little\l"
 	.string "gentler than she found it.$"
