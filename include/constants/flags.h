@@ -50,10 +50,11 @@
 #include "constants/flags_frlg.h"
 
 #else
+// Legendary FLags
 
-#define FLAG_UNUSED_0x020    0x20 // Unused Flag
-#define FLAG_UNUSED_0x021    0x21 // Unused Flag
-#define FLAG_UNUSED_0x022    0x22 // Unused Flag
+#define FLAG_CELEBI_GIFT     0x20 // Celebi Tea
+#define FLAG_CELEBI_BATTLE   0x21 // Celebi Sprite
+#define FLAG_CELEBI_LADY     0x22 // Celebi Quest lady
 #define FLAG_UNUSED_0x023    0x23 // Unused Flag
 #define FLAG_UNUSED_0x024    0x24 // Unused Flag
 #define FLAG_UNUSED_0x025    0x25 // Unused Flag
@@ -106,8 +107,8 @@
 #define FLAG_RESCUED_BIRCH                       0x52
 #define FLAG_LEGENDARIES_IN_SOOTOPOLIS           0x53
 
-#define FLAG_UNUSED_0x054                    0x54  // Unused Flag
-#define FLAG_UNUSED_0x055                    0x55  // Unused Flag
+#define FLAG_COLLISION                       0x54  // DEBUG COLLISION  
+#define FLAG_POKE_RIDER                      0x55  // POKE_RIDER
 
 #define FLAG_HIDE_CONTEST_POKE_BALL          0x56  // Always set after new game, object it hides is added directly
 #define FLAG_MET_RIVAL_MOM                   0x57

@@ -1,0 +1,40 @@
+raw `OldaleTown_House1_MapScripts::
+	.byte 0
+
+OldaleTown_House1_EventScript_Woman::
+	msgbox OldaleTown_House1_Text_LeftPokemonGoesOutFirst, MSGBOX_NPC
+	end
+
+OldaleTown_House1_Text_LeftPokemonGoesOutFirst:
+	.string "When a POKéMON battle starts, the one\n"
+	.string "at the left of the list goes out first.\p"
+	.string "So, when you get more POKéMON in your\n"
+	.string "party, try switching around the order\l"
+	.string "of your POKéMON.\p"
+	.string "It could give you an advantage.$"
+
+`
+
+script CELEBIquest_starter {
+    lockall
+    faceplayer
+    if (flag(FLAG_CELEBI_GIFT)) {
+        msgbox(format("Should've tasted the tea for myself."))
+        release
+        end
+    }
+    msgbox(format("Have you heard the voice of the forest? An old Johtonian folktale...  A Pokémon that wanders across time, breathing life into the vegetation as it flies through forests."))
+    msgbox("'The Voice' couldn't resist this tea.\n
+            Want some?", MSGBOX_YESNO)
+        switch (var(VAR_RESULT)) {
+            case YES:
+                 setflag (FLAG_CELEBI_GIFT)
+                 setflag (FLAG_CELEBI_LADY)
+                 giveitem(ITEM_TEA)
+                 msgbox(format("Sammy also told me this Pokémon has a thing for forests. Bye now."))
+            case NO:
+                 msgbox("I understand...")
+            }
+   release
+   end
+}
