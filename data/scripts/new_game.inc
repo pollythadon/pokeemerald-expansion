@@ -278,6 +278,9 @@ EventScript_ResetAllMapFlags::
 	setflag FLAG_DARKRAI_BATTLE
 	setflag FLAG_CRESSELIA_LADY
 	setflag FLAG_CRESSELIA_BATTLE
+	setflag FLAG_JIRACHI_GIRL
+	setflag FLAG_JIRACHI_BATTLE
+	setflag FLAG_JIRACHI_SAIL
 	call EventScript_ResetAllBerries
 	end
 

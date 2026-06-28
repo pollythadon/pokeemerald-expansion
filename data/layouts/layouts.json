@@ -9323,6 +9323,17 @@
       "border_height": 2,
       "border_width": 2,
       "layout_version": "frlg"
+    },
+    {
+      "id": "LAYOUT_STAR_ISLAND",
+      "name": "Star_Island_Layout",
+      "width": 30,
+      "height": 40,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Dewford",
+      "border_filepath": "data/layouts/Star_Island/border.bin",
+      "blockdata_filepath": "data/layouts/Star_Island/map.bin",
+      "layout_version": "emerald"
     }
   ]
 }

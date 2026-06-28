@@ -210,10 +210,8 @@ Legendary_EventScript_DARKRAI_Text_2:
 
 Legendary_EventScript_DARKRAI_Text_3:
 # 22 "data/maps/GraniteCave_B2F/scripts.pory"
-	.string "It peels itself out of your own shadow\n"
-	.string "-- a sorrow with a single blue eye. The\l"
-	.string "Pitch-Black Pokemon braces, as if\l"
-	.string "expecting you to flee.$"
+	.string "It peels itself out of your own shadow,\n"
+	.string "a sorrow with a single blue eye.$"
 
 Legendary_EventScript_DARKRAI_Text_4:
 # 42 "data/maps/GraniteCave_B2F/scripts.pory"

@@ -1552,6 +1552,14 @@
       "name": "BIRTH ISLAND"
     },
     {
+      "id": "MAPSEC_STAR_ISLAND",
+      "name": "STAR ISLAND",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
       "id": "MAPSEC_FARAWAY_ISLAND",
       "name": "FARAWAY ISLAND"
     },

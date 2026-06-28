@@ -1,0 +1,83 @@
+raw `
+Star_Island_MapScripts::
+	.byte 0
+`
+
+script Legendary_EventScript_JIRACHI {
+    lockall
+    if(checkitem(ITEM_OLD_SEA_MAP)) {
+        msgbox(format("This looks like the place."))
+        msgbox("Drop a coin and make a wish?", MSGBOX_YESNO)
+        switch (var(VAR_RESULT)) {
+            case YES:
+                clearflag(FLAG_JIRACHI_BATTLE)
+                addobject(1) // Ensure Jirachi sprite is visible
+                playmoncry(SPECIES_JIRACHI, CRY_MODE_ENCOUNTER)
+                fadescreen(FADE_TO_WHITE) // Flash effect
+                delay(20) // Brief delay for flash duration
+                fadescreen(FADE_FROM_WHITE)
+                msgbox(format("My wish! It's coming true!"))
+                applymovement(1, JIRACHI_Descend) // Apply movement to make Jirachi descend
+                waitmovement(0)
+                playmoncry(SPECIES_JIRACHI, CRY_MODE_ENCOUNTER)
+                fadescreen(FADE_TO_WHITE) // Flash effect
+                delay(20) // Brief delay for flash duration
+                fadescreen(FADE_FROM_WHITE)
+                msgbox("The Wishmaker!!", MSGBOX_AUTOCLOSE)
+                playmoncry(SPECIES_JIRACHI, CRY_MODE_ENCOUNTER)
+                delay(40)
+                waitmoncry
+                setwildbattle(SPECIES_JIRACHI, 65)
+                special(BattleSetup_StartLegendaryBattle)
+                waitstate
+                specialvar(VAR_RESULT, GetBattleOutcome)
+                if(var(VAR_RESULT) == B_OUTCOME_CAUGHT) {
+                    call(JIRACHIWon_or_Caught)
+                }
+                elif(var(VAR_RESULT) == B_OUTCOME_WON) {
+                    call(JIRACHIWon_or_Caught)
+                }
+                elif(var(VAR_RESULT) == B_OUTCOME_RAN) {
+                    call(JIRACHIRanAway)
+                }
+                elif(var(VAR_RESULT) == B_OUTCOME_PLAYER_TELEPORTED) {
+                    call(JIRACHIRanAway)
+                }
+                release
+                end
+            case NO:
+                msgbox(format("Maybe my wish isn't ready yet."))
+                release
+                end
+        }
+    }
+    msgbox(format("There's a strange pull to this spot... but nothing happens."))
+    release
+    end
+}
+
+script JIRACHIWon_or_Caught {
+    fadescreen(FADE_TO_BLACK)
+    removeobject(1)
+    setflag (FLAG_JIRACHI_BATTLE)
+    setflag (FLAG_JIRACHI_GIFT)
+    fadescreen(FADE_FROM_BLACK)
+    msgbox(format("My wish was to catch a Rare Pokémon."))
+    return
+}
+
+script JIRACHIRanAway {
+    playmoncry(SPECIES_JIRACHI, CRY_MODE_ENCOUNTER)
+    delay(20)
+    fadescreen(FADE_TO_BLACK)
+    removeobject(1)
+    setflag (FLAG_JIRACHI_BATTLE)
+    fadescreen(FADE_FROM_BLACK)
+    msgbox(format("It granted itself one last wish... and vanished."))
+    return
+}
+
+movement JIRACHI_Descend {
+    walk_down * 7 // Descend from the top of the screen
+    face_player // Face the player before the battle
+}
