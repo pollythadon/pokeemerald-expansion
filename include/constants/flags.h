@@ -58,17 +58,17 @@
 #define FLAG_DARKRAI_BATTLE  0x24 // Darkrai Sprite
 #define FLAG_DARKRAI_MAN     0x25 // Darkrai Quest Man
 #define FLAG_DARKRAI_GIFT    0x23 // Darkrai MegaStone
-#define FLAG_CRESSELIA_LADY  0x26 // Unused Flag
-#define FLAG_CRESSELIA_GIFT  0x27 // Unused Flag
-#define FLAG_CRESSELIA_BATTLE 0x28 // Unused Flag
+#define FLAG_CRESSELIA_LADY  0x26 // Cresselia Quest Lady
+#define FLAG_CRESSELIA_GIFT  0x27 // Cresselia Item
+#define FLAG_CRESSELIA_BATTLE 0x28 // Cresselia Sprite
 #define FLAG_JIRACHI_SAIL    0x29 // Sailor to warp to Star Island
-#define FLAG_JIRACHI_GIRL     0x2A // Girl who draws on Old Sea Map
+#define FLAG_JIRACHI_GIRL    0x2A // Girl who draws on Old Sea Map
 #define FLAG_JIRACHI_GIFT    0x2B // when cleared player cannot warp to Star Island
 #define FLAG_JIRACHI_BATTLE  0x2C // Jirachi sprite
-#define FLAG_UNUSED_0x02D    0x2D // Unused Flag
-#define FLAG_UNUSED_0x02E    0x2E // Unused Flag
-#define FLAG_UNUSED_0x02F    0x2F // Unused Flag
-#define FLAG_UNUSED_0x030    0x30 // Unused Flag
+#define FLAG_LEGENDARY_BTL   0x2D // Activates all Legendary quest starter except above ^
+#define FLAG_DIALGA_BATTLE   0x2E // Dialga Sprite
+#define FLAG_PALKIA_BATTLE   0x2F // Palkia Sprite
+#define FLAG_GIRATINA_BATTLE 0x30 // Giratina Sprite
 #define FLAG_UNUSED_0x031    0x31 // Unused Flag
 #define FLAG_UNUSED_0x032    0x32 // Unused Flag
 #define FLAG_UNUSED_0x033    0x33 // Unused Flag

@@ -9334,6 +9334,17 @@
       "border_filepath": "data/layouts/Star_Island/border.bin",
       "blockdata_filepath": "data/layouts/Star_Island/map.bin",
       "layout_version": "emerald"
+    },
+    {
+      "id": "LAYOUT_DISTORTION_WORLD",
+      "name": "DIstortionWorld_Layout",
+      "width": 30,
+      "height": 40,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_DistortionWorld",
+      "border_filepath": "data/layouts/DIstortionWorld/border.bin",
+      "blockdata_filepath": "data/layouts/DIstortionWorld/map.bin",
+      "layout_version": "emerald"
     }
   ]
 }

@@ -1,0 +1,66 @@
+raw `MeteorFalls_B1F_2R_MapScripts::
+	.byte 0
+
+`
+
+script Legendary_EventScript_PALKIA {
+    lockall
+    if (checkitem(ITEM_LUSTROUS_ORB)) {
+        msgbox(format("The Lustrous Orb hums, and the ground seems both an inch and a mile away..."))
+        msgbox(format("Raise the Orb?"), MSGBOX_YESNO)
+        switch (var(VAR_RESULT)) {
+            case YES:
+                msgbox(format("The world folds like wet paper. Up is sideways. Far is here."), MSGBOX_AUTOCLOSE)
+                fadescreenswapbuffers(FADE_TO_WHITE)
+                delay(30)
+                fadescreenswapbuffers(FADE_FROM_WHITE)
+                playmoncry(SPECIES_PALKIA, CRY_MODE_ENCOUNTER)
+                msgbox(format("It's closer than close, and somehow still distant."), MSGBOX_AUTOCLOSE)
+                playmoncry(SPECIES_PALKIA, CRY_MODE_ENCOUNTER)
+                delay(40)
+                waitmoncry
+                setwildbattle(SPECIES_PALKIA, 80)
+                special(BattleSetup_StartLegendaryBattle)
+                waitstate
+                specialvar(VAR_RESULT, GetBattleOutcome)
+                if (var(VAR_RESULT) == B_OUTCOME_CAUGHT) {
+                    call(PALKIAWon_or_Caught)
+                } elif (var(VAR_RESULT) == B_OUTCOME_WON) {
+                    call(PALKIAWon_or_Caught)
+                } elif (var(VAR_RESULT) == B_OUTCOME_RAN) {
+                    call(PALKIARanAway)
+                } elif (var(VAR_RESULT) == B_OUTCOME_PLAYER_TELEPORTED) {
+                    call(PALKIARanAway)
+                }
+                releaseall
+                end
+            case NO:
+                msgbox(format("Better to leave the lines where they are."))
+                release
+                end
+        }
+    }
+    msgbox(format("Something about the distances here refuses to stay still..."))
+    release
+    end
+}
+
+script PALKIAWon_or_Caught {
+    fadescreenswapbuffers(FADE_TO_WHITE)
+    removeobject(2)
+    setflag(FLAG_PALKIA_BATTLE)
+    fadescreenswapbuffers(FADE_FROM_WHITE)
+    msgbox(format("The horizon snaps back into place. The world feels... measured again."))
+    return
+}
+
+script PALKIARanAway {
+    playmoncry(SPECIES_PALKIA, CRY_MODE_ENCOUNTER)
+    delay(20)
+    fadescreenswapbuffers(FADE_TO_WHITE)
+    removeobject(2)
+    setflag(FLAG_PALKIA_BATTLE)
+    fadescreenswapbuffers(FADE_FROM_WHITE)
+    msgbox(format("It folded the space between us and was simply... elsewhere."))
+    return
+}

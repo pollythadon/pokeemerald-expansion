@@ -6,6 +6,7 @@ EverGrandeCity_HallOfFame_EventScript_SetGameClearFlags::
 	clearflag FLAG_CRESSELIA_LADY
 	clearflag FLAG_JIRACHI_GIRL
 	clearflag FLAG_JIRACHI_SAIL
+	clearflag FLAG_LEGENDARY_BTL
 	call EverGrandeCity_HallOfFame_EventScript_ResetDefeatedEventLegendaries
 	call_if_eq VAR_FOSSIL_MANIAC_STATE, 0, EverGrandeCity_HallOfFame_EventScript_SetDesertUnderpassCommentReady
 	clearflag FLAG_HIDE_LILYCOVE_MOTEL_GAME_DESIGNERS
