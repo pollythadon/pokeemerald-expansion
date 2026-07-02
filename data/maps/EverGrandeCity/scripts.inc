@@ -80,29 +80,104 @@ GIRATINA_quest_starter::
 # 0 "data/maps/EverGrandeCity/scripts.pory"
 	compare VAR_RESULT, 0
 	goto_if_ne GIRATINA_quest_starter_2
-# 48 "data/maps/EverGrandeCity/scripts.pory"
-	msgbox GIRATINA_quest_starter_Text_1
-# 50 "data/maps/EverGrandeCity/scripts.pory"
+# 58 "data/maps/EverGrandeCity/scripts.pory"
 	msgbox GIRATINA_quest_starter_Text_2
-# 52 "data/maps/EverGrandeCity/scripts.pory"
+# 60 "data/maps/EverGrandeCity/scripts.pory"
+	msgbox GIRATINA_quest_starter_Text_3
+# 62 "data/maps/EverGrandeCity/scripts.pory"
 	release
 	end
 
 GIRATINA_quest_starter_2:
 # 44 "data/maps/EverGrandeCity/scripts.pory"
-	msgbox GIRATINA_quest_starter_Text_0
+	msgbox GIRATINA_quest_starter_Text_0, MSGBOX_YESNO
 # 45 "data/maps/EverGrandeCity/scripts.pory"
+	switch VAR_RESULT
+# 46 "data/maps/EverGrandeCity/scripts.pory"
+	case YES, GIRATINA_quest_starter_6
+# 52 "data/maps/EverGrandeCity/scripts.pory"
+	case NO, GIRATINA_quest_starter_7
+GIRATINA_quest_starter_4:
+# 55 "data/maps/EverGrandeCity/scripts.pory"
 	release
 	end
+
+GIRATINA_quest_starter_6:
+# 47 "data/maps/EverGrandeCity/scripts.pory"
+	fadescreen FADE_TO_BLACK
+# 48 "data/maps/EverGrandeCity/scripts.pory"
+	delay 60
+# 50 "data/maps/EverGrandeCity/scripts.pory"
+	warp MAP_DISTORTION_WORLD, 10, 36
+# 51 "data/maps/EverGrandeCity/scripts.pory"
+	waitstate
+	goto GIRATINA_quest_starter_4
+
+GIRATINA_quest_starter_7:
+# 53 "data/maps/EverGrandeCity/scripts.pory"
+	msgbox GIRATINA_quest_starter_Text_1
+	goto GIRATINA_quest_starter_4
+
+
+GriseousCore_DigUp::
+# 67 "data/maps/EverGrandeCity/scripts.pory"
+	lockall
+# 68 "data/maps/EverGrandeCity/scripts.pory"
+	faceplayer
+	checkitem ITEM_GRISEOUS_CORE
+# 0 "data/maps/EverGrandeCity/scripts.pory"
+	compare VAR_RESULT, 0
+	goto_if_ne GriseousCore_DigUp_2
+# 73 "data/maps/EverGrandeCity/scripts.pory"
+	goto_if_unset FLAG_LEGENDARY_BTL, GriseousCore_DigUp_5
+GriseousCore_DigUp_4:
+# 86 "data/maps/EverGrandeCity/scripts.pory"
+	release
+	end
+
+GriseousCore_DigUp_2:
+# 70 "data/maps/EverGrandeCity/scripts.pory"
+	release
+	end
+
+GriseousCore_DigUp_5:
+# 74 "data/maps/EverGrandeCity/scripts.pory"
+	msgbox GriseousCore_DigUp_Text_0, MSGBOX_YESNO
+# 76 "data/maps/EverGrandeCity/scripts.pory"
+	switch VAR_RESULT
+# 77 "data/maps/EverGrandeCity/scripts.pory"
+	case YES, GriseousCore_DigUp_8
+# 82 "data/maps/EverGrandeCity/scripts.pory"
+	case NO, GriseousCore_DigUp_9
+	goto GriseousCore_DigUp_4
+
+GriseousCore_DigUp_8:
+# 78 "data/maps/EverGrandeCity/scripts.pory"
+	playfanfare MUS_OBTAIN_ITEM
+# 79 "data/maps/EverGrandeCity/scripts.pory"
+	giveitem ITEM_GRISEOUS_CORE
+# 80 "data/maps/EverGrandeCity/scripts.pory"
+	waitfanfare
+# 81 "data/maps/EverGrandeCity/scripts.pory"
+	msgbox GriseousCore_DigUp_Text_1
+	goto GriseousCore_DigUp_4
+
+GriseousCore_DigUp_9:
+# 83 "data/maps/EverGrandeCity/scripts.pory"
+	msgbox GriseousCore_DigUp_Text_2
+	goto GriseousCore_DigUp_4
 
 
 GIRATINA_quest_starter_Text_0:
 # 44 "data/maps/EverGrandeCity/scripts.pory"
-	.string "Whatever you saw on the other side...\n"
-	.string "It's best to keep it to yourself.$"
+	.string "There's a tear in reality, poke it?$"
 
 GIRATINA_quest_starter_Text_1:
-# 48 "data/maps/EverGrandeCity/scripts.pory"
+# 53 "data/maps/EverGrandeCity/scripts.pory"
+	.string "Not very wise.$"
+
+GIRATINA_quest_starter_Text_2:
+# 58 "data/maps/EverGrandeCity/scripts.pory"
 	.string "There's a part of every myth they don't\n"
 	.string "tell children. A third sibling. Cast out\l"
 	.string "for its violence...\p"
@@ -110,10 +185,24 @@ GIRATINA_quest_starter_Text_1:
 	.string "behind our own, where rivers fall upward\l"
 	.string "and gravity forgets its job.$"
 
-GIRATINA_quest_starter_Text_2:
-# 50 "data/maps/EverGrandeCity/scripts.pory"
+GIRATINA_quest_starter_Text_3:
+# 60 "data/maps/EverGrandeCity/scripts.pory"
 	.string "The devils core lies here. Perhaps maybe\n"
 	.string "a champion can find it.\p"
 	.string "If you carry it to a still, lonely spot,\n"
 	.string "it will pry open a door that was shut for\l"
 	.string "good reason.$"
+
+GriseousCore_DigUp_Text_0:
+# 74 "data/maps/EverGrandeCity/scripts.pory"
+	.string "There's something poking out of the\n"
+	.string "ground.\p"
+	.string "Would you like to dig it up?$"
+
+GriseousCore_DigUp_Text_1:
+# 81 "data/maps/EverGrandeCity/scripts.pory"
+	.string "What!? The writing on the sign changed!$"
+
+GriseousCore_DigUp_Text_2:
+# 83 "data/maps/EverGrandeCity/scripts.pory"
+	.string "It's best I mind my business$"

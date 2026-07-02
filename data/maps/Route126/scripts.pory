@@ -66,6 +66,11 @@ Route126_EventScript_RematchPablo::
 
 script Legendary_EventScript_CRESSELIA {
     lockall
+    	if (flag(FLAG_CRESSELIA_DFTD)) {
+        msgbox(format("The moonlight here is gentle, the tide of the locean is calm, but something is missing."))
+        releaseall
+        end
+    }
     if (checkitem(ITEM_DREAD_PLATE)) {
         msgbox(format("Moonlight pools on the water like spilled silver. The Hisuian plate grows warm in your hand..."))
         msgbox(format("Hold the plate up to the full moon?"), MSGBOX_YESNO)
@@ -114,6 +119,7 @@ script CRESSELIAWon_or_Caught {
     fadescreenswapbuffers(FADE_TO_WHITE)
     removeobject(10)
     setflag(FLAG_CRESSELIA_BATTLE)
+    setflag(FLAG_CRESSELIA_DFTD)
     fadescreenswapbuffers(FADE_FROM_WHITE)
     msgbox(format("A lone Lunar Wing settles on the shore where she stood. You feel rested in a way sleep never quite manages."))
     return

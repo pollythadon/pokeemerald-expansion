@@ -5,6 +5,11 @@ raw `MeteorFalls_B1F_2R_MapScripts::
 
 script Legendary_EventScript_PALKIA {
     lockall
+    if (flag(FLAG_PALKIA_DFTD)) {
+        msgbox(format("The gap between space has closed."))
+        releaseall
+        end
+    }
     if (checkitem(ITEM_LUSTROUS_ORB)) {
         msgbox(format("The Lustrous Orb hums, and the ground seems both an inch and a mile away..."))
         msgbox(format("Raise the Orb?"), MSGBOX_YESNO)
@@ -49,6 +54,7 @@ script PALKIAWon_or_Caught {
     fadescreenswapbuffers(FADE_TO_WHITE)
     removeobject(2)
     setflag(FLAG_PALKIA_BATTLE)
+    setflag (FLAG_PALKIA_DFTD)
     fadescreenswapbuffers(FADE_FROM_WHITE)
     msgbox(format("The horizon snaps back into place. The world feels... measured again."))
     return
@@ -60,6 +66,7 @@ script PALKIARanAway {
     fadescreenswapbuffers(FADE_TO_WHITE)
     removeobject(2)
     setflag(FLAG_PALKIA_BATTLE)
+    setflag (FLAG_PALKIA_DFTD)
     fadescreenswapbuffers(FADE_FROM_WHITE)
     msgbox(format("It folded the space between us and was simply... elsewhere."))
     return

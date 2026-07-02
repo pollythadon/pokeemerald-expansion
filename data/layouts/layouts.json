@@ -9339,7 +9339,7 @@
       "id": "LAYOUT_DISTORTION_WORLD",
       "name": "DIstortionWorld_Layout",
       "width": 30,
-      "height": 40,
+      "height": 47,
       "primary_tileset": "gTileset_General",
       "secondary_tileset": "gTileset_DistortionWorld",
       "border_filepath": "data/layouts/DIstortionWorld/border.bin",

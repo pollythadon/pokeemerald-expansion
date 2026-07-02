@@ -6,14 +6,16 @@ GraniteCave_B2F_MapScripts::
 Legendary_EventScript_DARKRAI::
 # 7 "data/maps/GraniteCave_B2F/scripts.pory"
 	lockall
+# 8 "data/maps/GraniteCave_B2F/scripts.pory"
+	goto_if_set FLAG_DARKRAI_DFTD, Legendary_EventScript_DARKRAI_2
 	checkitem ITEM_DARKRANITE
 # 0 "data/maps/GraniteCave_B2F/scripts.pory"
 	compare VAR_RESULT, 0
-	goto_if_ne Legendary_EventScript_DARKRAI_2
-Legendary_EventScript_DARKRAI_1:
-# 47 "data/maps/GraniteCave_B2F/scripts.pory"
-	msgbox Legendary_EventScript_DARKRAI_Text_5
-# 48 "data/maps/GraniteCave_B2F/scripts.pory"
+	goto_if_ne Legendary_EventScript_DARKRAI_5
+Legendary_EventScript_DARKRAI_4:
+# 52 "data/maps/GraniteCave_B2F/scripts.pory"
+	msgbox Legendary_EventScript_DARKRAI_Text_6
+# 53 "data/maps/GraniteCave_B2F/scripts.pory"
 	release
 	end
 
@@ -21,224 +23,241 @@ Legendary_EventScript_DARKRAI_2:
 # 9 "data/maps/GraniteCave_B2F/scripts.pory"
 	msgbox Legendary_EventScript_DARKRAI_Text_0
 # 10 "data/maps/GraniteCave_B2F/scripts.pory"
-	msgbox Legendary_EventScript_DARKRAI_Text_1, MSGBOX_YESNO
-# 11 "data/maps/GraniteCave_B2F/scripts.pory"
-	switch VAR_RESULT
-# 12 "data/maps/GraniteCave_B2F/scripts.pory"
-	case YES, Legendary_EventScript_DARKRAI_5
-# 41 "data/maps/GraniteCave_B2F/scripts.pory"
-	case NO, Legendary_EventScript_DARKRAI_6
-	goto Legendary_EventScript_DARKRAI_1
-
-Legendary_EventScript_DARKRAI_5:
-# 13 "data/maps/GraniteCave_B2F/scripts.pory"
-	clearflag FLAG_DARKRAI_BATTLE
-# 14 "data/maps/GraniteCave_B2F/scripts.pory"
-	addobject 10
-# 15 "data/maps/GraniteCave_B2F/scripts.pory"
-	msgbox Legendary_EventScript_DARKRAI_Text_2, MSGBOX_AUTOCLOSE
-# 16 "data/maps/GraniteCave_B2F/scripts.pory"
-	fadescreenswapbuffers FADE_TO_BLACK
-# 17 "data/maps/GraniteCave_B2F/scripts.pory"
-	delay 50
-# 18 "data/maps/GraniteCave_B2F/scripts.pory"
-	fadescreenswapbuffers FADE_FROM_BLACK
-# 19 "data/maps/GraniteCave_B2F/scripts.pory"
-	playmoncry SPECIES_DARKRAI, CRY_MODE_ENCOUNTER
-# 20 "data/maps/GraniteCave_B2F/scripts.pory"
-	applymovement 10, DARKRAI_Descend
-# 21 "data/maps/GraniteCave_B2F/scripts.pory"
-	waitmovement 0
-# 22 "data/maps/GraniteCave_B2F/scripts.pory"
-	msgbox Legendary_EventScript_DARKRAI_Text_3, MSGBOX_AUTOCLOSE
-# 23 "data/maps/GraniteCave_B2F/scripts.pory"
-	playmoncry SPECIES_DARKRAI, CRY_MODE_ENCOUNTER
-# 24 "data/maps/GraniteCave_B2F/scripts.pory"
-	delay 40
-# 25 "data/maps/GraniteCave_B2F/scripts.pory"
-	waitmoncry
-# 26 "data/maps/GraniteCave_B2F/scripts.pory"
-	setwildbattle SPECIES_DARKRAI, 70
-# 27 "data/maps/GraniteCave_B2F/scripts.pory"
-	special BattleSetup_StartLegendaryBattle
-# 28 "data/maps/GraniteCave_B2F/scripts.pory"
-	waitstate
-# 29 "data/maps/GraniteCave_B2F/scripts.pory"
-	specialvar VAR_RESULT, GetBattleOutcome
-# 30 "data/maps/GraniteCave_B2F/scripts.pory"
-	compare VAR_RESULT, B_OUTCOME_CAUGHT
-	goto_if_eq Legendary_EventScript_DARKRAI_8
-# 32 "data/maps/GraniteCave_B2F/scripts.pory"
-	compare VAR_RESULT, B_OUTCOME_WON
-	goto_if_eq Legendary_EventScript_DARKRAI_9
-# 34 "data/maps/GraniteCave_B2F/scripts.pory"
-	compare VAR_RESULT, B_OUTCOME_RAN
-	goto_if_eq Legendary_EventScript_DARKRAI_10
-# 36 "data/maps/GraniteCave_B2F/scripts.pory"
-	compare VAR_RESULT, B_OUTCOME_PLAYER_TELEPORTED
-	goto_if_eq Legendary_EventScript_DARKRAI_11
-Legendary_EventScript_DARKRAI_7:
-# 39 "data/maps/GraniteCave_B2F/scripts.pory"
 	releaseall
 	end
 
-Legendary_EventScript_DARKRAI_6:
-# 42 "data/maps/GraniteCave_B2F/scripts.pory"
-	msgbox Legendary_EventScript_DARKRAI_Text_4
-# 43 "data/maps/GraniteCave_B2F/scripts.pory"
+Legendary_EventScript_DARKRAI_5:
+# 14 "data/maps/GraniteCave_B2F/scripts.pory"
+	msgbox Legendary_EventScript_DARKRAI_Text_1
+# 15 "data/maps/GraniteCave_B2F/scripts.pory"
+	msgbox Legendary_EventScript_DARKRAI_Text_2, MSGBOX_YESNO
+# 16 "data/maps/GraniteCave_B2F/scripts.pory"
+	switch VAR_RESULT
+# 17 "data/maps/GraniteCave_B2F/scripts.pory"
+	case YES, Legendary_EventScript_DARKRAI_8
+# 46 "data/maps/GraniteCave_B2F/scripts.pory"
+	case NO, Legendary_EventScript_DARKRAI_9
+	goto Legendary_EventScript_DARKRAI_4
+
+Legendary_EventScript_DARKRAI_8:
+# 18 "data/maps/GraniteCave_B2F/scripts.pory"
+	clearflag FLAG_DARKRAI_BATTLE
+# 19 "data/maps/GraniteCave_B2F/scripts.pory"
+	addobject 10
+# 20 "data/maps/GraniteCave_B2F/scripts.pory"
+	msgbox Legendary_EventScript_DARKRAI_Text_3, MSGBOX_AUTOCLOSE
+# 21 "data/maps/GraniteCave_B2F/scripts.pory"
+	fadescreenswapbuffers FADE_TO_BLACK
+# 22 "data/maps/GraniteCave_B2F/scripts.pory"
+	delay 50
+# 23 "data/maps/GraniteCave_B2F/scripts.pory"
+	fadescreenswapbuffers FADE_FROM_BLACK
+# 24 "data/maps/GraniteCave_B2F/scripts.pory"
+	playmoncry SPECIES_DARKRAI, CRY_MODE_ENCOUNTER
+# 25 "data/maps/GraniteCave_B2F/scripts.pory"
+	applymovement 10, DARKRAI_Descend
+# 26 "data/maps/GraniteCave_B2F/scripts.pory"
+	waitmovement 0
+# 27 "data/maps/GraniteCave_B2F/scripts.pory"
+	msgbox Legendary_EventScript_DARKRAI_Text_4, MSGBOX_AUTOCLOSE
+# 28 "data/maps/GraniteCave_B2F/scripts.pory"
+	playmoncry SPECIES_DARKRAI, CRY_MODE_ENCOUNTER
+# 29 "data/maps/GraniteCave_B2F/scripts.pory"
+	delay 40
+# 30 "data/maps/GraniteCave_B2F/scripts.pory"
+	waitmoncry
+# 31 "data/maps/GraniteCave_B2F/scripts.pory"
+	setwildbattle SPECIES_DARKRAI, 70
+# 32 "data/maps/GraniteCave_B2F/scripts.pory"
+	special BattleSetup_StartLegendaryBattle
+# 33 "data/maps/GraniteCave_B2F/scripts.pory"
+	waitstate
+# 34 "data/maps/GraniteCave_B2F/scripts.pory"
+	specialvar VAR_RESULT, GetBattleOutcome
+# 35 "data/maps/GraniteCave_B2F/scripts.pory"
+	compare VAR_RESULT, B_OUTCOME_CAUGHT
+	goto_if_eq Legendary_EventScript_DARKRAI_11
+# 37 "data/maps/GraniteCave_B2F/scripts.pory"
+	compare VAR_RESULT, B_OUTCOME_WON
+	goto_if_eq Legendary_EventScript_DARKRAI_12
+# 39 "data/maps/GraniteCave_B2F/scripts.pory"
+	compare VAR_RESULT, B_OUTCOME_RAN
+	goto_if_eq Legendary_EventScript_DARKRAI_13
+# 41 "data/maps/GraniteCave_B2F/scripts.pory"
+	compare VAR_RESULT, B_OUTCOME_PLAYER_TELEPORTED
+	goto_if_eq Legendary_EventScript_DARKRAI_14
+Legendary_EventScript_DARKRAI_10:
+# 44 "data/maps/GraniteCave_B2F/scripts.pory"
+	releaseall
+	end
+
+Legendary_EventScript_DARKRAI_9:
+# 47 "data/maps/GraniteCave_B2F/scripts.pory"
+	msgbox Legendary_EventScript_DARKRAI_Text_5
+# 48 "data/maps/GraniteCave_B2F/scripts.pory"
 	release
 	end
 
-Legendary_EventScript_DARKRAI_8:
-# 31 "data/maps/GraniteCave_B2F/scripts.pory"
-	call DARKRAICaught
-	goto Legendary_EventScript_DARKRAI_7
-
-Legendary_EventScript_DARKRAI_9:
-# 33 "data/maps/GraniteCave_B2F/scripts.pory"
-	call DARKRAIWon
-	goto Legendary_EventScript_DARKRAI_7
-
-Legendary_EventScript_DARKRAI_10:
-# 35 "data/maps/GraniteCave_B2F/scripts.pory"
-	call DARKRAIRanAway
-	goto Legendary_EventScript_DARKRAI_7
-
 Legendary_EventScript_DARKRAI_11:
-# 37 "data/maps/GraniteCave_B2F/scripts.pory"
+# 36 "data/maps/GraniteCave_B2F/scripts.pory"
+	call DARKRAICaught
+	goto Legendary_EventScript_DARKRAI_10
+
+Legendary_EventScript_DARKRAI_12:
+# 38 "data/maps/GraniteCave_B2F/scripts.pory"
+	call DARKRAIWon
+	goto Legendary_EventScript_DARKRAI_10
+
+Legendary_EventScript_DARKRAI_13:
+# 40 "data/maps/GraniteCave_B2F/scripts.pory"
 	call DARKRAIRanAway
-	goto Legendary_EventScript_DARKRAI_7
+	goto Legendary_EventScript_DARKRAI_10
+
+Legendary_EventScript_DARKRAI_14:
+# 42 "data/maps/GraniteCave_B2F/scripts.pory"
+	call DARKRAIRanAway
+	goto Legendary_EventScript_DARKRAI_10
 
 
 DARKRAICaught::
-# 53 "data/maps/GraniteCave_B2F/scripts.pory"
+# 58 "data/maps/GraniteCave_B2F/scripts.pory"
 	fadescreenswapbuffers FADE_TO_BLACK
-# 54 "data/maps/GraniteCave_B2F/scripts.pory"
+# 59 "data/maps/GraniteCave_B2F/scripts.pory"
 	removeobject 10
-# 55 "data/maps/GraniteCave_B2F/scripts.pory"
+# 60 "data/maps/GraniteCave_B2F/scripts.pory"
 	setflag FLAG_DARKRAI_BATTLE
-# 56 "data/maps/GraniteCave_B2F/scripts.pory"
+# 61 "data/maps/GraniteCave_B2F/scripts.pory"
+	setflag FLAG_DARKRAI_DFTD
+# 62 "data/maps/GraniteCave_B2F/scripts.pory"
 	fadescreenswapbuffers FADE_FROM_BLACK
-# 57 "data/maps/GraniteCave_B2F/scripts.pory"
+# 63 "data/maps/GraniteCave_B2F/scripts.pory"
 	msgbox DARKRAICaught_Text_0
 	return
 
 
 DARKRAIWon::
-# 62 "data/maps/GraniteCave_B2F/scripts.pory"
+# 68 "data/maps/GraniteCave_B2F/scripts.pory"
 	fadescreenswapbuffers FADE_TO_BLACK
-# 63 "data/maps/GraniteCave_B2F/scripts.pory"
+# 69 "data/maps/GraniteCave_B2F/scripts.pory"
 	removeobject 10
-# 64 "data/maps/GraniteCave_B2F/scripts.pory"
+# 70 "data/maps/GraniteCave_B2F/scripts.pory"
 	setflag FLAG_DARKRAI_BATTLE
-# 65 "data/maps/GraniteCave_B2F/scripts.pory"
+# 71 "data/maps/GraniteCave_B2F/scripts.pory"
+	setflag FLAG_DARKRAI_DFTD
+# 72 "data/maps/GraniteCave_B2F/scripts.pory"
 	fadescreenswapbuffers FADE_FROM_BLACK
-# 66 "data/maps/GraniteCave_B2F/scripts.pory"
+# 73 "data/maps/GraniteCave_B2F/scripts.pory"
 	msgbox DARKRAIWon_Text_0
 	return
 
 
 DARKRAIRanAway::
-# 71 "data/maps/GraniteCave_B2F/scripts.pory"
+# 78 "data/maps/GraniteCave_B2F/scripts.pory"
 	playmoncry SPECIES_DARKRAI, CRY_MODE_ENCOUNTER
-# 72 "data/maps/GraniteCave_B2F/scripts.pory"
+# 79 "data/maps/GraniteCave_B2F/scripts.pory"
 	delay 20
-# 73 "data/maps/GraniteCave_B2F/scripts.pory"
+# 80 "data/maps/GraniteCave_B2F/scripts.pory"
 	fadescreenswapbuffers FADE_TO_BLACK
-# 74 "data/maps/GraniteCave_B2F/scripts.pory"
+# 81 "data/maps/GraniteCave_B2F/scripts.pory"
 	removeobject 10
-# 75 "data/maps/GraniteCave_B2F/scripts.pory"
+# 82 "data/maps/GraniteCave_B2F/scripts.pory"
 	setflag FLAG_DARKRAI_BATTLE
-# 76 "data/maps/GraniteCave_B2F/scripts.pory"
+# 83 "data/maps/GraniteCave_B2F/scripts.pory"
 	fadescreenswapbuffers FADE_FROM_BLACK
-# 77 "data/maps/GraniteCave_B2F/scripts.pory"
+# 84 "data/maps/GraniteCave_B2F/scripts.pory"
 	msgbox DARKRAIRanAway_Text_0
 	return
 
 
-# 81 "data/maps/GraniteCave_B2F/scripts.pory"
-DARKRAI_Descend:
-# 82 "data/maps/GraniteCave_B2F/scripts.pory"
-	walk_down
-# 82 "data/maps/GraniteCave_B2F/scripts.pory"
-	walk_down
-# 82 "data/maps/GraniteCave_B2F/scripts.pory"
-	walk_down
-# 82 "data/maps/GraniteCave_B2F/scripts.pory"
-	walk_down
-# 82 "data/maps/GraniteCave_B2F/scripts.pory"
-	walk_down
-# 82 "data/maps/GraniteCave_B2F/scripts.pory"
-	walk_down
-# 82 "data/maps/GraniteCave_B2F/scripts.pory"
-	walk_down
-# 82 "data/maps/GraniteCave_B2F/scripts.pory"
-	walk_down
-# 82 "data/maps/GraniteCave_B2F/scripts.pory"
-	walk_down
-# 83 "data/maps/GraniteCave_B2F/scripts.pory"
-	face_player
-# 84 "data/maps/GraniteCave_B2F/scripts.pory"
-	walk_up
-# 85 "data/maps/GraniteCave_B2F/scripts.pory"
-	walk_in_place_faster_up
-# 85 "data/maps/GraniteCave_B2F/scripts.pory"
-	walk_in_place_faster_up
-# 86 "data/maps/GraniteCave_B2F/scripts.pory"
-	walk_down
-# 87 "data/maps/GraniteCave_B2F/scripts.pory"
-	delay_16
 # 88 "data/maps/GraniteCave_B2F/scripts.pory"
+DARKRAI_Descend:
+# 89 "data/maps/GraniteCave_B2F/scripts.pory"
+	walk_down
+# 89 "data/maps/GraniteCave_B2F/scripts.pory"
+	walk_down
+# 89 "data/maps/GraniteCave_B2F/scripts.pory"
+	walk_down
+# 89 "data/maps/GraniteCave_B2F/scripts.pory"
+	walk_down
+# 89 "data/maps/GraniteCave_B2F/scripts.pory"
+	walk_down
+# 89 "data/maps/GraniteCave_B2F/scripts.pory"
+	walk_down
+# 89 "data/maps/GraniteCave_B2F/scripts.pory"
+	walk_down
+# 89 "data/maps/GraniteCave_B2F/scripts.pory"
+	walk_down
+# 89 "data/maps/GraniteCave_B2F/scripts.pory"
+	walk_down
+# 90 "data/maps/GraniteCave_B2F/scripts.pory"
+	face_player
+# 91 "data/maps/GraniteCave_B2F/scripts.pory"
+	walk_up
+# 92 "data/maps/GraniteCave_B2F/scripts.pory"
+	walk_in_place_faster_up
+# 92 "data/maps/GraniteCave_B2F/scripts.pory"
+	walk_in_place_faster_up
+# 93 "data/maps/GraniteCave_B2F/scripts.pory"
+	walk_down
+# 94 "data/maps/GraniteCave_B2F/scripts.pory"
+	delay_16
+# 95 "data/maps/GraniteCave_B2F/scripts.pory"
 	face_player
 	step_end
 
 Legendary_EventScript_DARKRAI_Text_0:
 # 9 "data/maps/GraniteCave_B2F/scripts.pory"
+	.string "Your nightmares are quiet now. The\n"
+	.string "shadows here feel empty, like something\l"
+	.string "is missing.$"
+
+Legendary_EventScript_DARKRAI_Text_1:
+# 14 "data/maps/GraniteCave_B2F/scripts.pory"
 	.string "The shadows here are too thick, too\n"
 	.string "deep, and your eyelids are suddenly so\l"
 	.string "very heavy...$"
 
-Legendary_EventScript_DARKRAI_Text_1:
-# 10 "data/maps/GraniteCave_B2F/scripts.pory"
+Legendary_EventScript_DARKRAI_Text_2:
+# 15 "data/maps/GraniteCave_B2F/scripts.pory"
 	.string "Hold up the Darkranite and let yourself\n"
 	.string "drift?$"
 
-Legendary_EventScript_DARKRAI_Text_2:
-# 15 "data/maps/GraniteCave_B2F/scripts.pory"
+Legendary_EventScript_DARKRAI_Text_3:
+# 20 "data/maps/GraniteCave_B2F/scripts.pory"
 	.string "You feel sleep dragging at you. The\n"
 	.string "edges of the world go soft and dark.$"
 
-Legendary_EventScript_DARKRAI_Text_3:
-# 22 "data/maps/GraniteCave_B2F/scripts.pory"
+Legendary_EventScript_DARKRAI_Text_4:
+# 27 "data/maps/GraniteCave_B2F/scripts.pory"
 	.string "It peels itself out of your own shadow,\n"
 	.string "a sorrow with a single blue eye.$"
 
-Legendary_EventScript_DARKRAI_Text_4:
-# 42 "data/maps/GraniteCave_B2F/scripts.pory"
+Legendary_EventScript_DARKRAI_Text_5:
+# 47 "data/maps/GraniteCave_B2F/scripts.pory"
 	.string "You blink the drowsiness away. Not\n"
 	.string "tonight.$"
 
-Legendary_EventScript_DARKRAI_Text_5:
-# 47 "data/maps/GraniteCave_B2F/scripts.pory"
+Legendary_EventScript_DARKRAI_Text_6:
+# 52 "data/maps/GraniteCave_B2F/scripts.pory"
 	.string "The dark here feels almost... sad. Like\n"
 	.string "something is hiding in it, hoping and\l"
 	.string "dreading to be found.$"
 
 DARKRAICaught_Text_0:
-# 57 "data/maps/GraniteCave_B2F/scripts.pory"
+# 63 "data/maps/GraniteCave_B2F/scripts.pory"
 	.string "For the first time, it didn't have to slip\n"
 	.string "away into the dark alone. It almost\l"
 	.string "looks... relieved.$"
 
 DARKRAIWon_Text_0:
-# 66 "data/maps/GraniteCave_B2F/scripts.pory"
+# 73 "data/maps/GraniteCave_B2F/scripts.pory"
 	.string "You wake on the cold ground. No\n"
 	.string "nightmare came. Maybe it just wanted\l"
 	.string "someone to stay until the dream was\l"
 	.string "over.$"
 
 DARKRAIRanAway_Text_0:
-# 77 "data/maps/GraniteCave_B2F/scripts.pory"
+# 84 "data/maps/GraniteCave_B2F/scripts.pory"
 	.string "It melts back into the shadows, alone\n"
 	.string "again. You wish, oddly, that it had\l"
 	.string "stayed.$"

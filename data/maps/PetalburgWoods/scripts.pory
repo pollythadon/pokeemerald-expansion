@@ -475,6 +475,11 @@ PetalburgWoods_Text_TrainerTipsPP:
 
 script Legendary_EventScript_CELEBI {
     lockall
+	    if (flag(FLAG_CELEBI_DFTD)) {
+        msgbox(format("Time flows through the forest, but I feel like something is missing..."))
+        releaseall
+        end
+    }
     if(checkitem(ITEM_TEA)) {
         msgbox(format("This is a nice spot for a tea break."))
         msgbox("Place the tea?", MSGBOX_YESNO)
@@ -530,6 +535,7 @@ script CELEBIWon_or_Caught {
     fadescreenswapbuffers(FADE_TO_BLACK)
     removeobject(14)
     setflag (FLAG_CELEBI_BATTLE)
+	setflag (FLAG_CELEBI_DFTD)
     fadescreenswapbuffers(FADE_FROM_BLACK)
     msgbox(format("The things I saw... A family... Best I move on."))
     return
@@ -541,6 +547,7 @@ script CELEBIRanAway {
     fadescreenswapbuffers(FADE_TO_BLACK)
     removeobject(14)
     setflag (FLAG_CELEBI_BATTLE)
+	setflag (FLAG_CELEBI_DFTD)
     fadescreenswapbuffers(FADE_FROM_BLACK)
     msgbox(format("The things I saw... A family... Best I move on."))
     return

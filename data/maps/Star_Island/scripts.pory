@@ -5,6 +5,11 @@ Star_Island_MapScripts::
 
 script Legendary_EventScript_JIRACHI {
     lockall
+        if (flag(FLAG_JIRACHI_DFTD)) {
+        msgbox(format("The moonlight here is gentle, the tide of the locean is calm, but something is missing."))
+        releaseall
+        end
+    }
     if(checkitem(ITEM_OLD_SEA_MAP)) {
         msgbox(format("This looks like the place."))
         msgbox("Drop a coin and make a wish?", MSGBOX_YESNO)
@@ -60,7 +65,7 @@ script JIRACHIWon_or_Caught {
     fadescreen(FADE_TO_BLACK)
     removeobject(1)
     setflag (FLAG_JIRACHI_BATTLE)
-    setflag (FLAG_JIRACHI_GIFT)
+    setflag (FLAG_JIRACHI_DFTD)
     fadescreen(FADE_FROM_BLACK)
     msgbox(format("My wish was to catch a Rare Pokémon."))
     return

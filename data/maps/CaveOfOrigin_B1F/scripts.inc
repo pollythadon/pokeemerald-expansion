@@ -238,14 +238,16 @@ CaveOfOrigin_B1F_Text_WellHeadToSkyPillar:
 Legendary_EventScript_DIALGA::
 # 124 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	lockall
+# 125 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	goto_if_set FLAG_DIALGA_DFTD, Legendary_EventScript_DIALGA_2
 	checkitem ITEM_ADAMANT_ORB
 # 0 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	compare VAR_RESULT, 0
-	goto_if_ne Legendary_EventScript_DIALGA_2
-Legendary_EventScript_DIALGA_1:
-# 164 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	msgbox Legendary_EventScript_DIALGA_Text_5
-# 165 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	goto_if_ne Legendary_EventScript_DIALGA_5
+Legendary_EventScript_DIALGA_4:
+# 169 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	msgbox Legendary_EventScript_DIALGA_Text_6
+# 170 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	release
 	end
 
@@ -253,28 +255,25 @@ Legendary_EventScript_DIALGA_2:
 # 126 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	msgbox Legendary_EventScript_DIALGA_Text_0
 # 127 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	msgbox Legendary_EventScript_DIALGA_Text_1, MSGBOX_YESNO
-# 128 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	switch VAR_RESULT
-# 129 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	case YES, Legendary_EventScript_DIALGA_5
-# 158 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	case NO, Legendary_EventScript_DIALGA_6
-	goto Legendary_EventScript_DIALGA_1
+	releaseall
+	end
 
 Legendary_EventScript_DIALGA_5:
-# 130 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	clearflag FLAG_DIALGA_BATTLE
 # 131 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	fadescreenswapbuffers FADE_TO_WHITE
+	msgbox Legendary_EventScript_DIALGA_Text_1
 # 132 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	delay 40
+	msgbox Legendary_EventScript_DIALGA_Text_2, MSGBOX_YESNO
 # 133 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	fadescreenswapbuffers FADE_FROM_WHITE
+	switch VAR_RESULT
 # 134 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	addobject 3
+	case YES, Legendary_EventScript_DIALGA_8
+# 163 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	case NO, Legendary_EventScript_DIALGA_9
+	goto Legendary_EventScript_DIALGA_4
+
+Legendary_EventScript_DIALGA_8:
 # 135 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	msgbox Legendary_EventScript_DIALGA_Text_2, MSGBOX_AUTOCLOSE
+	clearflag FLAG_DIALGA_BATTLE
 # 136 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	fadescreenswapbuffers FADE_TO_WHITE
 # 137 "data/maps/CaveOfOrigin_B1F/scripts.pory"
@@ -282,133 +281,150 @@ Legendary_EventScript_DIALGA_5:
 # 138 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	fadescreenswapbuffers FADE_FROM_WHITE
 # 139 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	msgbox Legendary_EventScript_DIALGA_Text_3, MSGBOX_AUTOCLOSE
+	addobject 3
 # 140 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	playmoncry SPECIES_DIALGA, CRY_MODE_ENCOUNTER
+	msgbox Legendary_EventScript_DIALGA_Text_3, MSGBOX_AUTOCLOSE
 # 141 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	delay 40
+	fadescreenswapbuffers FADE_TO_WHITE
 # 142 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	waitmoncry
+	delay 40
 # 143 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	setwildbattle SPECIES_DIALGA, 80
+	fadescreenswapbuffers FADE_FROM_WHITE
 # 144 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	special BattleSetup_StartLegendaryBattle
+	msgbox Legendary_EventScript_DIALGA_Text_4, MSGBOX_AUTOCLOSE
 # 145 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	waitstate
+	playmoncry SPECIES_DIALGA, CRY_MODE_ENCOUNTER
 # 146 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	specialvar VAR_RESULT, GetBattleOutcome
+	delay 40
 # 147 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	compare VAR_RESULT, B_OUTCOME_CAUGHT
-	goto_if_eq Legendary_EventScript_DIALGA_8
+	waitmoncry
+# 148 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	setwildbattle SPECIES_DIALGA, 80
 # 149 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	compare VAR_RESULT, B_OUTCOME_WON
-	goto_if_eq Legendary_EventScript_DIALGA_9
+	special BattleSetup_StartLegendaryBattle
+# 150 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	waitstate
 # 151 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	compare VAR_RESULT, B_OUTCOME_RAN
-	goto_if_eq Legendary_EventScript_DIALGA_10
-# 153 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	compare VAR_RESULT, B_OUTCOME_PLAYER_TELEPORTED
+	specialvar VAR_RESULT, GetBattleOutcome
+# 152 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	compare VAR_RESULT, B_OUTCOME_CAUGHT
 	goto_if_eq Legendary_EventScript_DIALGA_11
-Legendary_EventScript_DIALGA_7:
+# 154 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	compare VAR_RESULT, B_OUTCOME_WON
+	goto_if_eq Legendary_EventScript_DIALGA_12
 # 156 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	compare VAR_RESULT, B_OUTCOME_RAN
+	goto_if_eq Legendary_EventScript_DIALGA_13
+# 158 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	compare VAR_RESULT, B_OUTCOME_PLAYER_TELEPORTED
+	goto_if_eq Legendary_EventScript_DIALGA_14
+Legendary_EventScript_DIALGA_10:
+# 161 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	releaseall
 	end
 
-Legendary_EventScript_DIALGA_6:
-# 159 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	msgbox Legendary_EventScript_DIALGA_Text_4
-# 160 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+Legendary_EventScript_DIALGA_9:
+# 164 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	msgbox Legendary_EventScript_DIALGA_Text_5
+# 165 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	release
 	end
 
-Legendary_EventScript_DIALGA_8:
-# 148 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	call DIALGAWon_or_Caught
-	goto Legendary_EventScript_DIALGA_7
-
-Legendary_EventScript_DIALGA_9:
-# 150 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	call DIALGAWon_or_Caught
-	goto Legendary_EventScript_DIALGA_7
-
-Legendary_EventScript_DIALGA_10:
-# 152 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	call DIALGARanAway
-	goto Legendary_EventScript_DIALGA_7
-
 Legendary_EventScript_DIALGA_11:
-# 154 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+# 153 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	call DIALGAWon_or_Caught
+	goto Legendary_EventScript_DIALGA_10
+
+Legendary_EventScript_DIALGA_12:
+# 155 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	call DIALGAWon_or_Caught
+	goto Legendary_EventScript_DIALGA_10
+
+Legendary_EventScript_DIALGA_13:
+# 157 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	call DIALGARanAway
-	goto Legendary_EventScript_DIALGA_7
+	goto Legendary_EventScript_DIALGA_10
+
+Legendary_EventScript_DIALGA_14:
+# 159 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	call DIALGARanAway
+	goto Legendary_EventScript_DIALGA_10
 
 
 DIALGAWon_or_Caught::
-# 170 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+# 175 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	fadescreenswapbuffers FADE_TO_WHITE
-# 171 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+# 176 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	removeobject 3
-# 172 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+# 177 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	setflag FLAG_DIALGA_BATTLE
-# 173 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+# 178 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	setflag FLAG_DIALGA_DFTD
+# 179 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	fadescreenswapbuffers FADE_FROM_WHITE
-# 174 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+# 180 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	msgbox DIALGAWon_or_Caught_Text_0
 	return
 
 
 DIALGARanAway::
-# 179 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	playmoncry SPECIES_DIALGA, CRY_MODE_ENCOUNTER
-# 180 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	delay 20
-# 181 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	fadescreenswapbuffers FADE_TO_WHITE
-# 182 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	removeobject 3
-# 183 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	setflag FLAG_DIALGA_BATTLE
-# 184 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	fadescreenswapbuffers FADE_FROM_WHITE
 # 185 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	playmoncry SPECIES_DIALGA, CRY_MODE_ENCOUNTER
+# 186 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	delay 20
+# 187 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	fadescreenswapbuffers FADE_TO_WHITE
+# 188 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	removeobject 3
+# 189 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	setflag FLAG_DIALGA_BATTLE
+# 190 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	fadescreenswapbuffers FADE_FROM_WHITE
+# 191 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	msgbox DIALGARanAway_Text_0
 	return
 
 
 Legendary_EventScript_DIALGA_Text_0:
 # 126 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	.string "The clock is silent now. Time flows on as\n"
+	.string "it always has.$"
+
+Legendary_EventScript_DIALGA_Text_1:
+# 131 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	.string "The Adamant Orb is pounding like a\n"
 	.string "second heartbeat...$"
 
-Legendary_EventScript_DIALGA_Text_1:
-# 127 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+Legendary_EventScript_DIALGA_Text_2:
+# 132 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	.string "Hold the Orb to the air?$"
 
-Legendary_EventScript_DIALGA_Text_2:
-# 135 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+Legendary_EventScript_DIALGA_Text_3:
+# 140 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	.string "The seconds stop. A clock with no hands\n"
 	.string "hangs over everything.$"
 
-Legendary_EventScript_DIALGA_Text_3:
-# 139 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+Legendary_EventScript_DIALGA_Text_4:
+# 144 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	.string "Time itself bows its head to the one who\n"
 	.string "rules it.$"
 
-Legendary_EventScript_DIALGA_Text_4:
-# 159 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	.string "Not yet. Time will keep.$"
-
 Legendary_EventScript_DIALGA_Text_5:
 # 164 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	.string "Not yet. Time will keep.$"
+
+Legendary_EventScript_DIALGA_Text_6:
+# 169 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	.string "The air here feels... slow. Like a held\n"
 	.string "breath.$"
 
 DIALGAWon_or_Caught_Text_0:
-# 174 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+# 180 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	.string "The clock starts again. However much\n"
 	.string "time I just lost... I think it was worth\l"
 	.string "it.$"
 
 DIALGARanAway_Text_0:
-# 185 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+# 191 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	.string "Gone in an instant. To It, my whole life\n"
 	.string "is just an instant.$"

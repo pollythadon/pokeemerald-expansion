@@ -41,7 +41,17 @@ script GIRATINA_quest_starter {
     lockall
     faceplayer
     if (checkitem(ITEM_GRISEOUS_CORE)) {
-        msgbox(format("Whatever you saw on the other side... It's best to keep it to yourself."))
+    msgbox(format("There's a tear in reality, poke it?"), MSGBOX_YESNO)
+    switch (var(VAR_RESULT)) {
+        case YES:
+            fadescreen(FADE_TO_BLACK)
+            delay(60)
+            // Adjust the map + coords above to point at your island.
+            warp(MAP_DISTORTION_WORLD, 10, 36)
+            waitstate
+        case NO:
+            msgbox(format("Not very wise."))
+    }
         release
         end
     }
@@ -49,6 +59,30 @@ script GIRATINA_quest_starter {
                   "Sealed away in the world that lies behind our own, where rivers fall upward and gravity forgets its job."))
     msgbox(format("The devils core lies here. Perhaps maybe a champion can find it.\p"
                   "If you carry it to a still, lonely spot, it will pry open a door that was shut for good reason."))
+    release
+    end
+}
+
+script GriseousCore_DigUp {
+    lockall
+    faceplayer
+    if (checkitem(ITEM_GRISEOUS_CORE)) {
+        release
+        end
+    }
+    if(!flag(FLAG_LEGENDARY_BTL)) {
+    msgbox(format("There's something poking out of the ground.\p"
+                  "Would you like to dig it up?"), MSGBOX_YESNO)
+    switch (var(VAR_RESULT)) {
+        case YES:
+            playfanfare(MUS_OBTAIN_ITEM)
+            giveitem(ITEM_GRISEOUS_CORE)
+            waitfanfare
+            msgbox(format("What!? The writing on the sign changed!"))
+        case NO:
+            msgbox(format("It's best I mind my business"))
+    }
+    }
     release
     end
 }
