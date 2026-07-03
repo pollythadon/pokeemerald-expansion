@@ -243,7 +243,7 @@ const struct ItemInfo gItemsInfo[] =
     [ITEM_MASTER_BALL] =
     {
         .name = ITEM_NAME("Master Ball"),
-        .price = 0,
+        .price = 500000,
         .description = COMPOUND_STRING(
             "The best Ball that\n"
             "catches a Pokémon\n"
@@ -531,7 +531,7 @@ const struct ItemInfo gItemsInfo[] =
     [ITEM_DREAM_BALL] =
     {
         .name = ITEM_NAME("Dream Ball"),
-        .price = 0,
+        .price = 25000,
         .description = COMPOUND_STRING(
         #if B_DREAM_BALL_MODIFIER >= GEN_8
             "A Ball that works\n"
@@ -552,7 +552,7 @@ const struct ItemInfo gItemsInfo[] =
     [ITEM_SAFARI_BALL] =
     {
         .name = ITEM_NAME("Safari Ball"),
-        .price = 0,
+        .price = 20000,
         .description = COMPOUND_STRING(
             "A special Ball that\n"
             "is used only in the\n"
@@ -584,7 +584,7 @@ const struct ItemInfo gItemsInfo[] =
     [ITEM_PARK_BALL] =
     {
         .name = ITEM_NAME("Park Ball"),
-        .price = 0,
+        .price = 20000,
         .description = COMPOUND_STRING(
             "A special Ball for\n"
             "the Pal Park."),
@@ -599,7 +599,7 @@ const struct ItemInfo gItemsInfo[] =
     [ITEM_BEAST_BALL] =
     {
         .name = ITEM_NAME("Beast Ball"),
-        .price = 0,
+        .price = 100000,
         .description = COMPOUND_STRING(
             "A Ball designed to\n"
             "catch Ultra Beasts."),
@@ -614,7 +614,7 @@ const struct ItemInfo gItemsInfo[] =
     [ITEM_CHERISH_BALL] =
     {
         .name = ITEM_NAME("Cherish Ball"),
-        .price = 0,
+        .price = 50000,
         .description = COMPOUND_STRING(
             "A rare Ball made\n"
             "in commemoration\n"
@@ -14878,7 +14878,7 @@ const struct ItemInfo gItemsInfo[] =
     {
         .name = ITEM_NAME("Scroll of Darkness"),
         .pluralName = ITEM_PLURAL_NAME("Scrolls of Darkness"),
-        .price = 0,
+        .price = 80000,
         .description = COMPOUND_STRING(
             "A peculiar scroll\n"
             "with secrets of\n"
@@ -14897,7 +14897,7 @@ const struct ItemInfo gItemsInfo[] =
     {
         .name = ITEM_NAME("Scroll of Waters"),
         .pluralName = ITEM_PLURAL_NAME("Scrolls of Waters"),
-        .price = 0,
+        .price = 80000,
         .description = COMPOUND_STRING(
             "A peculiar scroll\n"
             "with secrets of\n"

@@ -1,0 +1,122 @@
+raw `LilycoveCity_DepartmentStore_3F_MapScripts::
+	.byte 0
+
+LilycoveCity_DepartmentStore_3F_EventScript_ClerkLeft::
+	lock
+	faceplayer
+	message gText_HowMayIServeYou
+	waitmessage
+	pokemart LilycoveCity_DepartmentStore_3F_Pokemart_Vitamins
+	msgbox gText_PleaseComeAgain, MSGBOX_DEFAULT
+	release
+	end
+
+	.align 2
+LilycoveCity_DepartmentStore_3F_Pokemart_Vitamins:
+	.2byte ITEM_PROTEIN
+	.2byte ITEM_CALCIUM
+	.2byte ITEM_IRON
+	.2byte ITEM_ZINC
+	.2byte ITEM_CARBOS
+	.2byte ITEM_HP_UP
+	pokemartlistend
+
+LilycoveCity_DepartmentStore_3F_EventScript_ClerkRight::
+	lock
+	faceplayer
+	message gText_HowMayIServeYou
+	waitmessage
+	pokemart LilycoveCity_DepartmentStore_3F_Pokemart_StatBoosters
+	msgbox gText_PleaseComeAgain, MSGBOX_DEFAULT
+	release
+	end
+
+	.align 2
+LilycoveCity_DepartmentStore_3F_Pokemart_StatBoosters:
+	.2byte ITEM_X_SPEED
+	.2byte ITEM_X_SP_ATK
+	.2byte ITEM_X_ATTACK
+	.2byte ITEM_X_DEFENSE
+	.2byte ITEM_DIRE_HIT
+	.2byte ITEM_GUARD_SPEC
+	.2byte ITEM_X_ACCURACY
+	pokemartlistend
+
+LilycoveCity_DepartmentStore_3F_EventScript_TriathleteM::
+	msgbox LilycoveCity_DepartmentStore_3F_Text_ItemsBestForTougheningPokemon, MSGBOX_NPC
+	end
+
+LilycoveCity_DepartmentStore_3F_EventScript_PokefanM::
+	msgbox LilycoveCity_DepartmentStore_3F_Text_WantMoreEndurance, MSGBOX_NPC
+	end
+
+LilycoveCity_DepartmentStore_3F_EventScript_Woman::
+	msgbox LilycoveCity_DepartmentStore_3F_Text_GaveCarbosToSpeedUpMon, MSGBOX_NPC
+	end
+
+LilycoveCity_DepartmentStore_3F_Text_ItemsBestForTougheningPokemon:
+	.string "For quickly toughening up POKéMON,\n"
+	.string "items are the best.\p"
+	.string "PROTEIN boosts ATTACK,\n"
+	.string "and CALCIUM raises SP. ATK.$"
+
+LilycoveCity_DepartmentStore_3F_Text_WantMoreEndurance:
+	.string "I want my POKéMON to have more\n"
+	.string "endurance.\p"
+	.string "I'm trying to decide whether to raise\n"
+	.string "DEFENSE with IRON, or SP. DEF with ZINC.$"
+
+LilycoveCity_DepartmentStore_3F_Text_GaveCarbosToSpeedUpMon:
+	.string "I gave a CARBOS to my POKéMON,\n"
+	.string "and its SPEED went up.$"
+
+`
+
+// ============================================================================
+//  MINT APOTHECARY  --  a merchant who sells every nature-altering Mint
+// ----------------------------------------------------------------------------
+//  Attach MintApothecary_Clerk to the shopkeeper object event.
+//  A Mint shifts which stats a Pokemon's nature boosts/lowers (it does NOT
+//  change the displayed nature). All 21 mints, verified against items.h.
+// ============================================================================
+
+script MintApothecary_Clerk {
+    lock
+    faceplayer
+    message(format("Step right up! A pinch of the right Mint, and your partner's potential blooms anew."))
+    waitmessage
+    pokemart(MintApothecary_Items)
+    msgbox(format("Mind the dosage. One Mint changes everything."))
+    release
+    end
+}
+
+mart MintApothecary_Items {
+    // +Atk
+    ITEM_LONELY_MINT   // +Atk -Def
+    ITEM_BRAVE_MINT    // +Atk -Spe
+    ITEM_ADAMANT_MINT  // +Atk -SpA
+    ITEM_NAUGHTY_MINT  // +Atk -SpD
+    // +Def
+    ITEM_BOLD_MINT     // +Def -Atk
+    ITEM_RELAXED_MINT  // +Def -Spe
+    ITEM_IMPISH_MINT   // +Def -SpA
+    ITEM_LAX_MINT      // +Def -SpD
+    // +SpA
+    ITEM_MODEST_MINT   // +SpA -Atk
+    ITEM_MILD_MINT     // +SpA -Def
+    ITEM_QUIET_MINT    // +SpA -Spe
+    ITEM_RASH_MINT     // +SpA -SpD
+    // +SpD
+    ITEM_CALM_MINT     // +SpD -Atk
+    ITEM_GENTLE_MINT   // +SpD -Def
+    ITEM_SASSY_MINT    // +SpD -Spe
+    ITEM_CAREFUL_MINT  // +SpD -SpA
+    // +Spe
+    ITEM_TIMID_MINT    // +Spe -Atk
+    ITEM_HASTY_MINT    // +Spe -Def
+    ITEM_JOLLY_MINT    // +Spe -SpA
+    ITEM_NAIVE_MINT    // +Spe -SpD
+    // Neutral
+    ITEM_SERIOUS_MINT  // no change (balanced)
+}

@@ -312,11 +312,11 @@
 #define B_SECRET_POWER_ANIMATION    GEN_LATEST // Secret Power's animations change depending on terrain and generation.
 #define B_NATURE_POWER_MOVES        GEN_LATEST // Nature Power calls different moves depending on terrain and generation. See gBattleEnvironmentInfo.
 #define B_CAMOUFLAGE_TYPES          GEN_LATEST // Camouflage changes the user to different types depending on terrain and generation. See sTerrainToType.
-#define B_NEW_TERRAIN_BACKGROUNDS   FALSE      // If set to TRUE, uses new terrain backgrounds for Electric, Misty, Grassy and Psychic Terrain.
+#define B_NEW_TERRAIN_BACKGROUNDS   TRUE      // If set to TRUE, uses new terrain backgrounds for Electric, Misty, Grassy and Psychic Terrain.
 
 // Interface settings
 #define B_FAST_INTRO_PKMN_TEXT              TRUE  // If set to TRUE, battle intro texts print at the same time as animation of a Pokémon, as opposing to waiting for the animation to end.
-#define B_FAST_INTRO_NO_SLIDE               FALSE // If set to TRUE, the slide animation that happens at the beginning of the battle is skipped.
+#define B_FAST_INTRO_NO_SLIDE               TRUE // If set to TRUE, the slide animation that happens at the beginning of the battle is skipped.
 #define B_FAST_HP_DRAIN                     TRUE  // If set to TRUE, HP bars will move faster.
 #define B_FAST_EXP_GROW                     TRUE  // If set to TRUE, EXP bars will move faster.
 #define B_SHOW_TARGETS                      TRUE  // If set to TRUE, all available targets, for moves hitting 2 or 3 Pokémon, will be shown before selecting a move.

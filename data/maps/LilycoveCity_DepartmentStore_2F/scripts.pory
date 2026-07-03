@@ -1,0 +1,223 @@
+raw `LilycoveCity_DepartmentStore_2F_MapScripts::
+	.byte 0
+
+LilycoveCity_DepartmentStore_2F_EventScript_Cook::
+	msgbox LilycoveCity_DepartmentStore_2F_Text_LearnToUseItemsProperly, MSGBOX_NPC
+	end
+
+LilycoveCity_DepartmentStore_2F_EventScript_PokefanF::
+	msgbox LilycoveCity_DepartmentStore_2F_Text_GoodGiftForHusband, MSGBOX_NPC
+	end
+
+LilycoveCity_DepartmentStore_2F_EventScript_Sailor::
+	msgbox LilycoveCity_DepartmentStore_2F_Text_StockUpOnItems, MSGBOX_NPC
+	end
+
+LilycoveCity_DepartmentStore_2F_EventScript_ClerkLeft::
+	lock
+	faceplayer
+	message gText_HowMayIServeYou
+	waitmessage
+	pokemart LilycoveCity_DepartmentStore_2F_Pokemart1
+	msgbox gText_PleaseComeAgain, MSGBOX_DEFAULT
+	release
+	end
+
+	.align 2
+LilycoveCity_DepartmentStore_2F_Pokemart1:
+	.2byte ITEM_POKE_BALL
+	.2byte ITEM_GREAT_BALL
+	.2byte ITEM_ULTRA_BALL
+	.2byte ITEM_ESCAPE_ROPE
+	.2byte ITEM_FULL_HEAL
+	.2byte ITEM_ANTIDOTE
+	.2byte ITEM_PARALYZE_HEAL
+	.2byte ITEM_BURN_HEAL
+	.2byte ITEM_ICE_HEAL
+	.2byte ITEM_AWAKENING
+	.2byte ITEM_FLUFFY_TAIL
+	pokemartlistend
+
+LilycoveCity_DepartmentStore_2F_EventScript_ClerkRight::
+	lock
+	faceplayer
+	message gText_HowMayIServeYou
+	waitmessage
+	pokemart LilycoveCity_DepartmentStore_2F_Pokemart2
+	msgbox gText_PleaseComeAgain, MSGBOX_DEFAULT
+	release
+	end
+
+	.align 2
+LilycoveCity_DepartmentStore_2F_Pokemart2:
+	.2byte ITEM_POTION
+	.2byte ITEM_SUPER_POTION
+	.2byte ITEM_HYPER_POTION
+	.2byte ITEM_MAX_POTION
+	.2byte ITEM_REVIVE
+	.2byte ITEM_REPEL
+	.2byte ITEM_SUPER_REPEL
+	.2byte ITEM_MAX_REPEL
+	.2byte ITEM_WAVE_MAIL
+	.2byte ITEM_MECH_MAIL
+	pokemartlistend
+
+LilycoveCity_DepartmentStore_2F_Text_LearnToUseItemsProperly:
+	.string "Learn to use items properly.\n"
+	.string "That's basic, really.$"
+
+LilycoveCity_DepartmentStore_2F_Text_GoodGiftForHusband:
+	.string "My husband is waiting at home.\n"
+	.string "What would make a good gift for him?$"
+
+LilycoveCity_DepartmentStore_2F_Text_StockUpOnItems:
+	.string "I'm leaving on a long journey soon.\n"
+	.string "I need to stock up on items.$"
+
+`
+
+// ============================================================================
+//  POKE BALL EMPORIUM  --  a merchant who stocks every kind of Poke Ball
+// ----------------------------------------------------------------------------
+//  Attach PokeBallEmporium_Clerk to the shopkeeper object event.
+//  Items verified against include/constants/items.h (pokeemerald-expansion).
+//  Master/Cherish/Safari/Park Balls are situational -- comment them out if you
+//  don't want them freely purchasable.
+// ============================================================================
+
+script PokeBallEmporium_Clerk {
+    lock
+    faceplayer
+    message(format("Welcome to the Poke Ball Emporium! If it catches Pokemon, we've got it."))
+    waitmessage
+    pokemart(PokeBallEmporium)
+    msgbox(format("May your throws always find their mark!"))
+    release
+    end
+}
+
+mart PokeBallEmporium {
+    // --- Situational standards ---
+    ITEM_NET_BALL
+    ITEM_NEST_BALL
+    ITEM_DIVE_BALL
+    ITEM_REPEAT_BALL
+    ITEM_TIMER_BALL
+    ITEM_DUSK_BALL
+    ITEM_QUICK_BALL
+    ITEM_HEAL_BALL
+    ITEM_LUXURY_BALL
+    ITEM_PREMIER_BALL
+    // --- Apricorn / Johto balls ---
+    ITEM_FAST_BALL
+    ITEM_FRIEND_BALL
+    ITEM_HEAVY_BALL
+    ITEM_LEVEL_BALL
+    ITEM_LOVE_BALL
+    ITEM_LURE_BALL
+    ITEM_MOON_BALL
+    ITEM_SPORT_BALL
+    // --- Rare / specialty ---
+    ITEM_SAFARI_BALL
+    ITEM_PARK_BALL
+    ITEM_CHERISH_BALL
+    ITEM_DREAM_BALL
+    ITEM_BEAST_BALL
+    ITEM_MASTER_BALL
+}
+
+// ============================================================================
+//  EVOLUTION ITEM BAZAAR  --  two stalls: Evolution Stones & Evolution Gear
+// ----------------------------------------------------------------------------
+//  Attach EvolutionStones_Clerk and EvolutionGear_Clerk to two separate
+//  shopkeeper object events (a stone-cutter and a curio dealer make a nice
+//  pair). All items verified against include/constants/items.h.
+//  NOTE: Everstone PREVENTS evolution -- included for breeders; remove it if
+//  you'd rather keep the stall strictly "items that cause evolution."
+// ============================================================================
+
+
+// ----------------------------------------------------------------------------
+//  STALL 1 -- Evolution Stones
+// ----------------------------------------------------------------------------
+script EvolutionStones_Clerk {
+    lock
+    faceplayer
+    message(format("Fresh-cut stones, each humming with the power to change a Pokemon's form."))
+    waitmessage
+    pokemart(EvolutionStones_Items)
+    msgbox(format("Choose carefully, a stone's gift is forever."))
+    release
+    end
+}
+
+mart EvolutionStones_Items {
+    ITEM_FIRE_STONE
+    ITEM_WATER_STONE
+    ITEM_THUNDER_STONE
+    ITEM_LEAF_STONE
+    ITEM_MOON_STONE
+    ITEM_SUN_STONE
+    ITEM_SHINY_STONE
+    ITEM_DUSK_STONE
+    ITEM_DAWN_STONE
+    ITEM_ICE_STONE
+    ITEM_OVAL_STONE
+    ITEM_EVERSTONE   // prevents evolution (breeders' choice)
+}
+
+
+// ----------------------------------------------------------------------------
+//  STALL 2 -- Evolution Gear (trade items, held/use items, regional curios)
+// ----------------------------------------------------------------------------
+script EvolutionGear_Clerk {
+    lock
+    faceplayer
+    message(format("Trinkets, scrolls, and oddities -- the little nudges some Pokemon need to grow."))
+    waitmessage
+    pokemart(EvolutionGear_Items)
+    msgbox(format("Change is a beautiful thing. Come again!"))
+    release
+    end
+}
+
+mart EvolutionGear_Items {
+    // --- Trade-evolution items / stand-in ---
+    ITEM_LINKING_CORD
+    ITEM_KINGS_ROCK
+    ITEM_METAL_COAT
+    ITEM_DRAGON_SCALE
+    ITEM_UP_GRADE
+    ITEM_DUBIOUS_DISC
+    ITEM_PROTECTOR
+    ITEM_ELECTIRIZER
+    ITEM_MAGMARIZER
+    ITEM_REAPER_CLOTH
+    ITEM_PRISM_SCALE
+    ITEM_DEEP_SEA_TOOTH
+    ITEM_DEEP_SEA_SCALE
+    // --- Level/condition held items ---
+    ITEM_RAZOR_CLAW
+    ITEM_RAZOR_FANG
+    ITEM_WHIPPED_DREAM
+    ITEM_SACHET
+    // --- Regional / modern evolution items ---
+    ITEM_GALARICA_CUFF
+    ITEM_GALARICA_WREATH
+    ITEM_BLACK_AUGURITE
+    ITEM_PEAT_BLOCK
+    ITEM_SWEET_APPLE
+    ITEM_TART_APPLE
+    ITEM_SYRUPY_APPLE
+    ITEM_CRACKED_POT
+    ITEM_CHIPPED_POT
+    ITEM_AUSPICIOUS_ARMOR
+    ITEM_MALICIOUS_ARMOR
+    ITEM_GIMMIGHOUL_COIN
+    ITEM_LEADERS_CREST
+    ITEM_SCROLL_OF_DARKNESS
+    ITEM_SCROLL_OF_WATERS
+    ITEM_MASTERPIECE_TEACUP
+    ITEM_UNREMARKABLE_TEACUP
+    ITEM_METAL_ALLOY
+}
