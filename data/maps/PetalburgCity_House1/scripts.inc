@@ -97,9 +97,8 @@ PetalburgCity_House1_EventScript_Scientist_Text_0:
 	.string "So, has my DexNav app been pulling its\n"
 	.string "weight?\p"
 	.string "Sniffing out those sneaky POKéMON\n"
-	.string "hiding in the\l"
-	.string "grass has to be paying off by now,\l"
-	.string "right?\p"
+	.string "hiding in the grass has to be paying off\l"
+	.string "by now, right?\p"
 	.string "Data, data! Tell me it's been useful!$"
 
 PetalburgCity_House1_EventScript_Scientist_Text_1:
