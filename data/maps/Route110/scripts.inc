@@ -459,6 +459,7 @@ Route110_EventScript_BrendanDefeated::
 
 Route110_EventScript_GiveItemfinder::
 	giveitem ITEM_DOWSING_MACHINE
+	setflag FLAG_ORAS_DOWSING @ Enables the ORAS Dowsing Machine mechanic (see I_ORAS_DOWSING_FLAG)
 	return
 
 Route110_EventScript_RivalExit::

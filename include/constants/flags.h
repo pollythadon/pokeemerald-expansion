@@ -75,7 +75,7 @@
 #define FLAG_CRESSELIA_DFTD  0x34 // Unused Flag
 #define FLAG_CELEBI_DFTD     0x35 // Unused Flag
 #define FLAG_JIRACHI_DFTD    0x36 // Unused Flag
-#define FLAG_UNUSED_0x037    0x37 // Unused Flag
+#define FLAG_ORAS_DOWSING    0x37 // Set when the player receives the Dowsing Machine; enables the ORAS Dowsing Machine mechanic (see I_ORAS_DOWSING_FLAG)
 #define FLAG_UNUSED_0x038    0x38 // Unused Flag
 #define FLAG_UNUSED_0x039    0x39 // Unused Flag
 #define FLAG_UNUSED_0x03A    0x3A // Unused Flag
