@@ -60,6 +60,21 @@ static void SpriteCB_PressStartCopyrightBanner(struct Sprite *sprite);
 static void SpriteCB_PokemonLogoShine(struct Sprite *sprite);
 
 // const rom data
+
+// Easy fade colors: each entry pulses palette 14's colorIndex between color1 and color2.
+// Add more entries to animate additional indices at once.
+struct FadeColors
+{
+    u16 color1;
+    u16 color2;
+    u8 colorIndex;
+};
+
+static const struct FadeColors sFadeColors[] =
+{
+    { .color1 = RGB2GBA(70, 25, 0), .color2 = RGB2GBA(255, 140, 0), .colorIndex = 15 }, // dark -> bright orange
+};
+
 static const u16 sUnusedUnknownPal[] = INCGFX_U16("graphics/title_screen/unused.pal", ".gbapal");
 
 static const u32 sTitleScreenRayquazaGfx[] = INCGFX_U32("graphics/title_screen/rayquaza.png", ".4bpp.smol");
@@ -487,13 +502,13 @@ static void SpriteCB_PokemonLogoShine(struct Sprite *sprite)
 
             backgroundColor = _RGB(sprite->sBgColor, sprite->sBgColor, sprite->sBgColor);
 
-            // Flash the background green for 4 frames of movement.
+            // Flash the background orange for 4 frames of movement.
             // Otherwise use the updating color.
             if (sprite->x == DISPLAY_WIDTH / 2 + (3 * SHINE_SPEED)
              || sprite->x == DISPLAY_WIDTH / 2 + (4 * SHINE_SPEED)
              || sprite->x == DISPLAY_WIDTH / 2 + (5 * SHINE_SPEED)
              || sprite->x == DISPLAY_WIDTH / 2 + (6 * SHINE_SPEED))
-                gPlttBufferFaded[0] = RGB(24, 31, 12);
+                gPlttBufferFaded[0] = RGB(31, 18, 4);
             else
                 gPlttBufferFaded[0] = backgroundColor;
         }
@@ -598,6 +613,9 @@ void CB2_InitTitleScreen(void)
         DecompressDataWithHeaderVram(gTitleScreenPokemonLogoGfx, (void *)(BG_CHAR_ADDR(0)));
         DecompressDataWithHeaderVram(gTitleScreenPokemonLogoTilemap, (void *)(BG_SCREEN_ADDR(9)));
         LoadPalette(gTitleScreenBgPalettes, BG_PLTT_ID(0), 15 * PLTT_SIZE_4BPP);
+        // Desaturate the Rayquaza + clouds (palette 14) to black/grey, leaving the Pokemon logo (palettes 0-13) original.
+        TintPalette_GrayScale(&gPlttBufferUnfaded[BG_PLTT_ID(14)], 16);
+        CpuCopy16(&gPlttBufferUnfaded[BG_PLTT_ID(14)], &gPlttBufferFaded[BG_PLTT_ID(14)], PLTT_SIZE_4BPP);
         // bg3
         DecompressDataWithHeaderVram(sTitleScreenRayquazaGfx, (void *)(BG_CHAR_ADDR(2)));
         DecompressDataWithHeaderVram(sTitleScreenRayquazaTilemap, (void *)(BG_SCREEN_ADDR(26)));
@@ -613,7 +631,20 @@ void CB2_InitTitleScreen(void)
         LoadCompressedSpriteSheet(&sSpriteSheet_PressStart[0]);
         LoadCompressedSpriteSheet(&sPokemonLogoShineSpriteSheet[0]);
         LoadPalette(gTitleScreenEmeraldVersionPal, OBJ_PLTT_ID(0), PLTT_SIZE_4BPP);
+        // Recolor the "Emerald Version" logo to orange.
+        TintPalette_CustomTone(&gPlttBufferUnfaded[OBJ_PLTT_ID(0)], 16, 384, 200, 40);
+        CpuCopy16(&gPlttBufferUnfaded[OBJ_PLTT_ID(0)], &gPlttBufferFaded[OBJ_PLTT_ID(0)], PLTT_SIZE_4BPP);
         LoadSpritePalette(&sSpritePalette_PressStart[0]);
+        // Recolor the "Press Start" text to orange.
+        {
+            u8 pressStartPalIdx = IndexOfSpritePaletteTag(sSpritePalette_PressStart[0].tag);
+            if (pressStartPalIdx != 0xFF)
+            {
+                u16 palOffset = OBJ_PLTT_ID(pressStartPalIdx);
+                TintPalette_CustomTone(&gPlttBufferUnfaded[palOffset], 16, 384, 200, 40);
+                CpuCopy16(&gPlttBufferUnfaded[palOffset], &gPlttBufferFaded[palOffset], PLTT_SIZE_4BPP);
+            }
+        }
         gMain.state = 2;
         break;
     case 2:
@@ -862,12 +893,17 @@ static void UpdateLegendaryMarkingColor(u8 frameNum)
 {
     if ((frameNum % 4) == 0) // Change color every 4th frame
     {
+        u32 i;
         s32 intensity = Cos(frameNum, Q_8_8(0.5)) + Q_8_8(0.5);
-        u32 r = 31 - Q_8_8_TO_INT(intensity * 31);
-        u32 g = 31 - Q_8_8_TO_INT(intensity * 22);
-        u32 b = 12;
 
-        u16 color = RGB(r, g, b);
-        LoadPalette(&color, BG_PLTT_ID(14) + 15, sizeof(color));
-   }
+        for (i = 0; i < ARRAY_COUNT(sFadeColors); i++)
+        {
+            u32 r = GET_R(sFadeColors[i].color1) + Q_8_8_TO_INT(intensity * (GET_R(sFadeColors[i].color2) - GET_R(sFadeColors[i].color1)));
+            u32 g = GET_G(sFadeColors[i].color1) + Q_8_8_TO_INT(intensity * (GET_G(sFadeColors[i].color2) - GET_G(sFadeColors[i].color1)));
+            u32 b = GET_B(sFadeColors[i].color1) + Q_8_8_TO_INT(intensity * (GET_B(sFadeColors[i].color2) - GET_B(sFadeColors[i].color1)));
+
+            u16 color = RGB(r, g, b);
+            LoadPalette(&color, BG_PLTT_ID(14) + sFadeColors[i].colorIndex, sizeof(color));
+        }
+    }
 }
