@@ -286,6 +286,7 @@ EventScript_ResetAllMapFlags::
 	setflag FLAG_DIALGA_BATTLE
 	setflag FLAG_PALKIA_BATTLE
 	setflag FLAG_GIRATINA_BATTLE
+	setflag FLAG_MEWTWO_BATTLE
 	call EventScript_ResetAllBerries
 	end
 

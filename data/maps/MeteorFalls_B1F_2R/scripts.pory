@@ -41,12 +41,12 @@ script Legendary_EventScript_PALKIA {
                 end
             case NO:
                 msgbox(format("Better to leave the lines where they are."))
-                release
+                releaseall
                 end
         }
     }
     msgbox(format("Something about the distances here refuses to stay still..."))
-    release
+    releaseall
     end
 }
 
@@ -65,8 +65,6 @@ script PALKIARanAway {
     delay(20)
     fadescreenswapbuffers(FADE_TO_WHITE)
     removeobject(2)
-    setflag(FLAG_PALKIA_BATTLE)
-    setflag (FLAG_PALKIA_DFTD)
     fadescreenswapbuffers(FADE_FROM_WHITE)
     msgbox(format("It folded the space between us and was simply... elsewhere."))
     return

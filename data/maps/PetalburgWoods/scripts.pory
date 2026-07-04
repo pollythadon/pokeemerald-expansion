@@ -518,16 +518,16 @@ script Legendary_EventScript_CELEBI {
                 elif(var(VAR_RESULT) == B_OUTCOME_PLAYER_TELEPORTED) {
                     call(CELEBIRanAway)
                 }
-                release
+                releaseall
                 end
             case NO:
                 msgbox(format("Might need it for later.."))
-                release
+                releaseall
                 end
         }
     }
     msgbox(format("Something feels special about this spot..."))
-    release
+    releaseall
     end
 }
 
@@ -546,8 +546,6 @@ script CELEBIRanAway {
     delay(20)
     fadescreenswapbuffers(FADE_TO_BLACK)
     removeobject(14)
-    setflag (FLAG_CELEBI_BATTLE)
-	setflag (FLAG_CELEBI_DFTD)
     fadescreenswapbuffers(FADE_FROM_BLACK)
     msgbox(format("The things I saw... A family... Best I move on."))
     return

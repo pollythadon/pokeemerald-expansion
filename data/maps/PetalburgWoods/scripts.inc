@@ -956,7 +956,7 @@ Legendary_EventScript_CELEBI_4:
 # 529 "data/maps/PetalburgWoods/scripts.pory"
 	msgbox Legendary_EventScript_CELEBI_Text_6
 # 530 "data/maps/PetalburgWoods/scripts.pory"
-	release
+	releaseall
 	end
 
 Legendary_EventScript_CELEBI_2:
@@ -1036,14 +1036,14 @@ Legendary_EventScript_CELEBI_8:
 	goto_if_eq Legendary_EventScript_CELEBI_14
 Legendary_EventScript_CELEBI_10:
 # 521 "data/maps/PetalburgWoods/scripts.pory"
-	release
+	releaseall
 	end
 
 Legendary_EventScript_CELEBI_9:
 # 524 "data/maps/PetalburgWoods/scripts.pory"
 	msgbox Legendary_EventScript_CELEBI_Text_5
 # 525 "data/maps/PetalburgWoods/scripts.pory"
-	release
+	releaseall
 	end
 
 Legendary_EventScript_CELEBI_11:
@@ -1093,37 +1093,33 @@ CELEBIRanAway::
 # 548 "data/maps/PetalburgWoods/scripts.pory"
 	removeobject 14
 # 549 "data/maps/PetalburgWoods/scripts.pory"
-	setflag FLAG_CELEBI_BATTLE
-# 550 "data/maps/PetalburgWoods/scripts.pory"
-	setflag FLAG_CELEBI_DFTD
-# 551 "data/maps/PetalburgWoods/scripts.pory"
 	fadescreenswapbuffers FADE_FROM_BLACK
-# 552 "data/maps/PetalburgWoods/scripts.pory"
+# 550 "data/maps/PetalburgWoods/scripts.pory"
 	msgbox CELEBIWon_or_Caught_Text_0
 	return
 
 
-# 556 "data/maps/PetalburgWoods/scripts.pory"
+# 554 "data/maps/PetalburgWoods/scripts.pory"
 Celebi_Descend:
-# 557 "data/maps/PetalburgWoods/scripts.pory"
+# 555 "data/maps/PetalburgWoods/scripts.pory"
 	walk_down
-# 557 "data/maps/PetalburgWoods/scripts.pory"
+# 555 "data/maps/PetalburgWoods/scripts.pory"
 	walk_down
-# 557 "data/maps/PetalburgWoods/scripts.pory"
+# 555 "data/maps/PetalburgWoods/scripts.pory"
 	walk_down
-# 557 "data/maps/PetalburgWoods/scripts.pory"
+# 555 "data/maps/PetalburgWoods/scripts.pory"
 	walk_down
-# 557 "data/maps/PetalburgWoods/scripts.pory"
+# 555 "data/maps/PetalburgWoods/scripts.pory"
 	walk_down
-# 557 "data/maps/PetalburgWoods/scripts.pory"
+# 555 "data/maps/PetalburgWoods/scripts.pory"
 	walk_down
-# 557 "data/maps/PetalburgWoods/scripts.pory"
+# 555 "data/maps/PetalburgWoods/scripts.pory"
 	walk_down
-# 557 "data/maps/PetalburgWoods/scripts.pory"
+# 555 "data/maps/PetalburgWoods/scripts.pory"
 	walk_down
-# 557 "data/maps/PetalburgWoods/scripts.pory"
+# 555 "data/maps/PetalburgWoods/scripts.pory"
 	walk_down
-# 558 "data/maps/PetalburgWoods/scripts.pory"
+# 556 "data/maps/PetalburgWoods/scripts.pory"
 	face_player
 	step_end
 

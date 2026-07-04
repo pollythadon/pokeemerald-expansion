@@ -16,7 +16,7 @@ Legendary_EventScript_PALKIA_4:
 # 48 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
 	msgbox Legendary_EventScript_PALKIA_Text_6
 # 49 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
-	release
+	releaseall
 	end
 
 Legendary_EventScript_PALKIA_2:
@@ -87,7 +87,7 @@ Legendary_EventScript_PALKIA_9:
 # 43 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
 	msgbox Legendary_EventScript_PALKIA_Text_5
 # 44 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
-	release
+	releaseall
 	end
 
 Legendary_EventScript_PALKIA_11:
@@ -137,12 +137,8 @@ PALKIARanAway::
 # 67 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
 	removeobject 2
 # 68 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
-	setflag FLAG_PALKIA_BATTLE
-# 69 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
-	setflag FLAG_PALKIA_DFTD
-# 70 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
 	fadescreenswapbuffers FADE_FROM_WHITE
-# 71 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
+# 69 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
 	msgbox PALKIARanAway_Text_0
 	return
 
@@ -186,6 +182,6 @@ PALKIAWon_or_Caught_Text_0:
 	.string "world feels... measured again.$"
 
 PALKIARanAway_Text_0:
-# 71 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
+# 69 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
 	.string "It folded the space between us and was\n"
 	.string "simply... elsewhere.$"

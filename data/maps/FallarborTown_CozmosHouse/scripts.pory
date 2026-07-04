@@ -123,7 +123,7 @@ script PALKIA_quest_starter {
     faceplayer
     if (checkitem(ITEM_LUSTROUS_ORB)) {
         msgbox(format("Mind the distance between things. It's only a suggestion, really."))
-        release
+        releaseall
         end
     }
     msgbox(format("Look up. The space between the stars... who do you think keeps them from falling into one another?\p"
@@ -132,14 +132,12 @@ script PALKIA_quest_starter {
                   "and you may meet the one that draws the lines reality dares not cross."), MSGBOX_YESNO)
     switch (var(VAR_RESULT)) {
         case YES:
-            playfanfare(MUS_OBTAIN_ITEM)
             giveitem(ITEM_LUSTROUS_ORB)
             clearflag(FLAG_PALKIA_BATTLE)
-            waitfanfare
             msgbox(format("Here and there, near and far... It decides which is which. Go carefully."))
         case NO:
             msgbox(format("Keep your distance, then. It's safer."))
     }
-    release
+    releaseall
     end
 }

@@ -85,7 +85,7 @@ GIRATINA_quest_starter::
 # 60 "data/maps/EverGrandeCity/scripts.pory"
 	msgbox GIRATINA_quest_starter_Text_3
 # 62 "data/maps/EverGrandeCity/scripts.pory"
-	release
+	releaseall
 	end
 
 GIRATINA_quest_starter_2:
@@ -99,7 +99,7 @@ GIRATINA_quest_starter_2:
 	case NO, GIRATINA_quest_starter_7
 GIRATINA_quest_starter_4:
 # 55 "data/maps/EverGrandeCity/scripts.pory"
-	release
+	releaseall
 	end
 
 GIRATINA_quest_starter_6:
@@ -131,13 +131,13 @@ GriseousCore_DigUp::
 # 73 "data/maps/EverGrandeCity/scripts.pory"
 	goto_if_unset FLAG_LEGENDARY_BTL, GriseousCore_DigUp_5
 GriseousCore_DigUp_4:
-# 86 "data/maps/EverGrandeCity/scripts.pory"
-	release
+# 84 "data/maps/EverGrandeCity/scripts.pory"
+	releaseall
 	end
 
 GriseousCore_DigUp_2:
 # 70 "data/maps/EverGrandeCity/scripts.pory"
-	release
+	releaseall
 	end
 
 GriseousCore_DigUp_5:
@@ -147,23 +147,19 @@ GriseousCore_DigUp_5:
 	switch VAR_RESULT
 # 77 "data/maps/EverGrandeCity/scripts.pory"
 	case YES, GriseousCore_DigUp_8
-# 82 "data/maps/EverGrandeCity/scripts.pory"
+# 80 "data/maps/EverGrandeCity/scripts.pory"
 	case NO, GriseousCore_DigUp_9
 	goto GriseousCore_DigUp_4
 
 GriseousCore_DigUp_8:
 # 78 "data/maps/EverGrandeCity/scripts.pory"
-	playfanfare MUS_OBTAIN_ITEM
-# 79 "data/maps/EverGrandeCity/scripts.pory"
 	giveitem ITEM_GRISEOUS_CORE
-# 80 "data/maps/EverGrandeCity/scripts.pory"
-	waitfanfare
-# 81 "data/maps/EverGrandeCity/scripts.pory"
+# 79 "data/maps/EverGrandeCity/scripts.pory"
 	msgbox GriseousCore_DigUp_Text_1
 	goto GriseousCore_DigUp_4
 
 GriseousCore_DigUp_9:
-# 83 "data/maps/EverGrandeCity/scripts.pory"
+# 81 "data/maps/EverGrandeCity/scripts.pory"
 	msgbox GriseousCore_DigUp_Text_2
 	goto GriseousCore_DigUp_4
 
@@ -200,9 +196,9 @@ GriseousCore_DigUp_Text_0:
 	.string "Would you like to dig it up?$"
 
 GriseousCore_DigUp_Text_1:
-# 81 "data/maps/EverGrandeCity/scripts.pory"
+# 79 "data/maps/EverGrandeCity/scripts.pory"
 	.string "What!? The writing on the sign changed!$"
 
 GriseousCore_DigUp_Text_2:
-# 83 "data/maps/EverGrandeCity/scripts.pory"
+# 81 "data/maps/EverGrandeCity/scripts.pory"
 	.string "It's best I mind my business$"

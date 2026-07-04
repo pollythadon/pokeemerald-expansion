@@ -138,7 +138,7 @@ Legendary_EventScript_CRESSELIA_4:
 # 113 "data/maps/Route126/scripts.pory"
 	msgbox Legendary_EventScript_CRESSELIA_Text_6
 # 114 "data/maps/Route126/scripts.pory"
-	release
+	releaseall
 	end
 
 Legendary_EventScript_CRESSELIA_2:
@@ -217,7 +217,7 @@ Legendary_EventScript_CRESSELIA_9:
 # 108 "data/maps/Route126/scripts.pory"
 	msgbox Legendary_EventScript_CRESSELIA_Text_5
 # 109 "data/maps/Route126/scripts.pory"
-	release
+	releaseall
 	end
 
 Legendary_EventScript_CRESSELIA_11:
@@ -267,37 +267,35 @@ CRESSELIARanAway::
 # 132 "data/maps/Route126/scripts.pory"
 	removeobject 10
 # 133 "data/maps/Route126/scripts.pory"
-	setflag FLAG_CRESSELIA_BATTLE
-# 134 "data/maps/Route126/scripts.pory"
 	fadescreenswapbuffers FADE_FROM_WHITE
-# 135 "data/maps/Route126/scripts.pory"
+# 134 "data/maps/Route126/scripts.pory"
 	msgbox CRESSELIARanAway_Text_0
 	return
 
 
-# 139 "data/maps/Route126/scripts.pory"
+# 138 "data/maps/Route126/scripts.pory"
 CRESSELIA_Descend:
-# 140 "data/maps/Route126/scripts.pory"
+# 139 "data/maps/Route126/scripts.pory"
+	walk_down
+# 139 "data/maps/Route126/scripts.pory"
+	walk_down
+# 139 "data/maps/Route126/scripts.pory"
+	walk_down
+# 139 "data/maps/Route126/scripts.pory"
+	walk_down
+# 139 "data/maps/Route126/scripts.pory"
+	walk_down
+# 139 "data/maps/Route126/scripts.pory"
+	walk_down
+# 139 "data/maps/Route126/scripts.pory"
+	walk_down
+# 139 "data/maps/Route126/scripts.pory"
+	walk_down
+# 139 "data/maps/Route126/scripts.pory"
 	walk_down
 # 140 "data/maps/Route126/scripts.pory"
-	walk_down
-# 140 "data/maps/Route126/scripts.pory"
-	walk_down
-# 140 "data/maps/Route126/scripts.pory"
-	walk_down
-# 140 "data/maps/Route126/scripts.pory"
-	walk_down
-# 140 "data/maps/Route126/scripts.pory"
-	walk_down
-# 140 "data/maps/Route126/scripts.pory"
-	walk_down
-# 140 "data/maps/Route126/scripts.pory"
-	walk_down
-# 140 "data/maps/Route126/scripts.pory"
-	walk_down
-# 141 "data/maps/Route126/scripts.pory"
 	delay_16
-# 142 "data/maps/Route126/scripts.pory"
+# 141 "data/maps/Route126/scripts.pory"
 	face_player
 	step_end
 
@@ -347,7 +345,7 @@ CRESSELIAWon_or_Caught_Text_0:
 	.string "way sleep never quite manages.$"
 
 CRESSELIARanAway_Text_0:
-# 135 "data/maps/Route126/scripts.pory"
+# 134 "data/maps/Route126/scripts.pory"
 	.string "She rises back into the moonlight and\n"
 	.string "fades, leaving the night a little\l"
 	.string "gentler than she found it.$"

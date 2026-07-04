@@ -162,12 +162,12 @@ script Legendary_EventScript_DIALGA {
                 end
             case NO:
                 msgbox(format("Not yet. Time will keep."))
-                release
+                releaseall
                 end
         }
     }
     msgbox(format("The air here feels... slow. Like a held breath."))
-    release
+    releaseall
     end
 }
 
@@ -186,7 +186,6 @@ script DIALGARanAway {
     delay(20)
     fadescreenswapbuffers(FADE_TO_WHITE)
     removeobject(3)
-    setflag(FLAG_DIALGA_BATTLE)
     fadescreenswapbuffers(FADE_FROM_WHITE)
     msgbox(format("Gone in an instant. To It, my whole life is just an instant."))
     return

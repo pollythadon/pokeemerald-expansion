@@ -45,12 +45,12 @@ script Legendary_EventScript_DARKRAI {
                 end
             case NO:
                 msgbox(format("You blink the drowsiness away. Not tonight."))
-                release
+                releaseall
                 end
         }
     }
     msgbox(format("The dark here feels almost... sad. Like something is hiding in it, hoping and dreading to be found."))
-    release
+    releaseall
     end
 }
 
@@ -79,7 +79,6 @@ script DARKRAIRanAway {
     delay(20)
     fadescreenswapbuffers(FADE_TO_BLACK)
     removeobject(10)
-    setflag(FLAG_DARKRAI_BATTLE)
     fadescreenswapbuffers(FADE_FROM_BLACK)
     msgbox(format("It melts back into the shadows, alone again. You wish, oddly, that it had stayed."))
     return

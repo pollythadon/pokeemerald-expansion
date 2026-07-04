@@ -250,35 +250,31 @@ PALKIA_quest_starter::
 	switch VAR_RESULT
 # 134 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
 	case YES, PALKIA_quest_starter_6
-# 140 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
+# 138 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
 	case NO, PALKIA_quest_starter_7
 PALKIA_quest_starter_4:
-# 143 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
-	release
+# 141 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
+	releaseall
 	end
 
 PALKIA_quest_starter_2:
 # 125 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
 	msgbox PALKIA_quest_starter_Text_0
 # 126 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
-	release
+	releaseall
 	end
 
 PALKIA_quest_starter_6:
 # 135 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
-	playfanfare MUS_OBTAIN_ITEM
-# 136 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
 	giveitem ITEM_LUSTROUS_ORB
-# 137 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
+# 136 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
 	clearflag FLAG_PALKIA_BATTLE
-# 138 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
-	waitfanfare
-# 139 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
+# 137 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
 	msgbox PALKIA_quest_starter_Text_3
 	goto PALKIA_quest_starter_4
 
 PALKIA_quest_starter_7:
-# 141 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
+# 139 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
 	msgbox PALKIA_quest_starter_Text_4
 	goto PALKIA_quest_starter_4
 
@@ -305,10 +301,10 @@ PALKIA_quest_starter_Text_2:
 	.string "the lines reality dares not cross.$"
 
 PALKIA_quest_starter_Text_3:
-# 139 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
+# 137 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
 	.string "Here and there, near and far... It\n"
 	.string "decides which is which. Go carefully.$"
 
 PALKIA_quest_starter_Text_4:
-# 141 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
+# 139 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
 	.string "Keep your distance, then. It's safer.$"

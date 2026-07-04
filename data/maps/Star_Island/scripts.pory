@@ -48,16 +48,16 @@ script Legendary_EventScript_JIRACHI {
                 elif(var(VAR_RESULT) == B_OUTCOME_PLAYER_TELEPORTED) {
                     call(JIRACHIRanAway)
                 }
-                release
+                releaseall
                 end
             case NO:
                 msgbox(format("Maybe my wish isn't ready yet."))
-                release
+                releaseall
                 end
         }
     }
     msgbox(format("There's a strange pull to this spot... but nothing happens."))
-    release
+    releaseall
     end
 }
 
@@ -76,7 +76,6 @@ script JIRACHIRanAway {
     delay(20)
     fadescreen(FADE_TO_BLACK)
     removeobject(1)
-    setflag (FLAG_JIRACHI_BATTLE)
     fadescreen(FADE_FROM_BLACK)
     msgbox(format("It granted itself one last wish... and vanished."))
     return

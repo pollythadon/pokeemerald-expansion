@@ -433,7 +433,7 @@ script JIRACHI_quest_starter {
     faceplayer
     if (flag(FLAG_JIRACHI_GIFT)) {
         msgbox(format("Have you made a wish yet?"))
-        release
+        releaseall
         end
     }
     msgbox(format("Have you ever made a wish? Like one you really wanted to come true? I know a place where any wish you make comes true, supposedly it's all thanks to 'The Wishmaker'."))
@@ -449,6 +449,6 @@ script JIRACHI_quest_starter {
     } else {
         msgbox(format("But you'll need an Old Sea Map to find your way there. Track one down, then come back and show me. I'll point you the right way."))
     }
-   release
+   releaseall
    end
 }

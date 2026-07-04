@@ -870,14 +870,14 @@ JIRACHI_quest_starter::
 	msgbox JIRACHI_quest_starter_Text_5
 JIRACHI_quest_starter_4:
 # 452 "data/maps/MossdeepCity/scripts.pory"
-	release
+	releaseall
 	end
 
 JIRACHI_quest_starter_2:
 # 435 "data/maps/MossdeepCity/scripts.pory"
 	msgbox JIRACHI_quest_starter_Text_0
 # 436 "data/maps/MossdeepCity/scripts.pory"
-	release
+	releaseall
 	end
 
 JIRACHI_quest_starter_5:

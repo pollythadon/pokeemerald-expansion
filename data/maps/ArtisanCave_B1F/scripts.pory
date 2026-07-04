@@ -1,0 +1,84 @@
+raw `ArtisanCave_B1F_MapScripts::
+	map_script MAP_SCRIPT_ON_TRANSITION, ArtisanCave_B1F_OnTransition
+	.byte 0
+
+ArtisanCave_B1F_OnTransition:
+	setflag FLAG_LANDMARK_ARTISAN_CAVE
+	end
+
+`
+
+script Legendary_EventScript_MEWTWO {
+    lockall
+	    if (flag(FLAG_MEWTWO_DFTD)) {
+        msgbox(format("The power that was here is gone."))
+        releaseall
+        end
+    }
+    if (checkitem(ITEM_MEWTWONITE_X) || checkitem(ITEM_MEWTWONITE_Y)) {
+        msgbox(format("Speak from the heart?"), MSGBOX_YESNO)
+        switch (var(VAR_RESULT)) {
+            case YES:
+                msgbox(format("Those Words. You remind me of someone I once knew."), MSGBOX_AUTOCLOSE)
+                playmoncry(SPECIES_MEWTWO, CRY_MODE_ENCOUNTER)
+                fadescreenswapbuffers(FADE_TO_BLACK)
+                delay(40)
+                fadescreenswapbuffers(FADE_FROM_BLACK)
+                msgbox(format("I was made to be a weapon. I decided to be free. Show me which of us is stronger."), MSGBOX_AUTOCLOSE)
+                playmoncry(SPECIES_MEWTWO, CRY_MODE_ENCOUNTER)
+                delay(40)
+                waitmoncry
+                setwildbattle(SPECIES_MEWTWO, 80)
+                special(BattleSetup_StartLegendaryBattle)
+                waitstate
+                specialvar(VAR_RESULT, GetBattleOutcome)
+                if (var(VAR_RESULT) == B_OUTCOME_CAUGHT) {
+                    call(MEWTWOCaught)
+                } elif (var(VAR_RESULT) == B_OUTCOME_WON) {
+                    call(MEWTWOWon)
+                } elif (var(VAR_RESULT) == B_OUTCOME_RAN) {
+                    call(MEWTWORanAway)
+                } elif (var(VAR_RESULT) == B_OUTCOME_PLAYER_TELEPORTED) {
+                    call(MEWTWORanAway)
+                }
+                releaseall
+                end
+            case NO:
+                msgbox(format("Better not to wake what the fire left behind."))
+                releaseall
+                end
+        }
+    }
+    releaseall
+    end
+}
+
+script MEWTWOCaught {
+    fadescreenswapbuffers(FADE_TO_BLACK)
+    removeobject(2)
+    setflag(FLAG_MEWTWO_BATTLE)
+    setflag(FLAG_MEWTWO_DFTD)
+    fadescreenswapbuffers(FADE_FROM_BLACK)
+    msgbox(format("I see. I was wrong about you. You are not like the others."))
+    return
+}
+
+script MEWTWOWon {
+    fadescreenswapbuffers(FADE_TO_BLACK)
+    removeobject(2)
+    setflag(FLAG_MEWTWO_BATTLE)
+    setflag(FLAG_MEWTWO_DFTD)
+    fadescreenswapbuffers(FADE_FROM_BLACK)
+    msgbox(format("I see. I was wrong about you. You are not like the others."))
+    return
+}
+
+script MEWTWORanAway {
+    playmoncry(SPECIES_MEWTWO, CRY_MODE_ENCOUNTER)
+    delay(20)
+    fadescreenswapbuffers(FADE_TO_BLACK)
+    removeobject(2)
+    fadescreenswapbuffers(FADE_FROM_BLACK)
+    msgbox(format("All you humans are the same. I will not be caught again."))
+    return
+}

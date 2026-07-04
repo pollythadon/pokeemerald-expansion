@@ -106,12 +106,12 @@ script Legendary_EventScript_CRESSELIA {
                 end
             case NO:
                 msgbox(format("The moon will be full again. No need to rush."))
-                release
+                releaseall
                 end
         }
     }
     msgbox(format("The lake is calm and the moon is bright. A good place to rest... if only you had the right token."))
-    release
+    releaseall
     end
 }
 
@@ -130,7 +130,6 @@ script CRESSELIARanAway {
     delay(20)
     fadescreenswapbuffers(FADE_TO_WHITE)
     removeobject(10)
-    setflag(FLAG_CRESSELIA_BATTLE)
     fadescreenswapbuffers(FADE_FROM_WHITE)
     msgbox(format("She rises back into the moonlight and fades, leaving the night a little gentler than she found it."))
     return

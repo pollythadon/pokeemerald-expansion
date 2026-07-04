@@ -16,7 +16,7 @@ Legendary_EventScript_DARKRAI_4:
 # 52 "data/maps/GraniteCave_B2F/scripts.pory"
 	msgbox Legendary_EventScript_DARKRAI_Text_6
 # 53 "data/maps/GraniteCave_B2F/scripts.pory"
-	release
+	releaseall
 	end
 
 Legendary_EventScript_DARKRAI_2:
@@ -95,7 +95,7 @@ Legendary_EventScript_DARKRAI_9:
 # 47 "data/maps/GraniteCave_B2F/scripts.pory"
 	msgbox Legendary_EventScript_DARKRAI_Text_5
 # 48 "data/maps/GraniteCave_B2F/scripts.pory"
-	release
+	releaseall
 	end
 
 Legendary_EventScript_DARKRAI_11:
@@ -161,47 +161,45 @@ DARKRAIRanAway::
 # 81 "data/maps/GraniteCave_B2F/scripts.pory"
 	removeobject 10
 # 82 "data/maps/GraniteCave_B2F/scripts.pory"
-	setflag FLAG_DARKRAI_BATTLE
-# 83 "data/maps/GraniteCave_B2F/scripts.pory"
 	fadescreenswapbuffers FADE_FROM_BLACK
-# 84 "data/maps/GraniteCave_B2F/scripts.pory"
+# 83 "data/maps/GraniteCave_B2F/scripts.pory"
 	msgbox DARKRAIRanAway_Text_0
 	return
 
 
-# 88 "data/maps/GraniteCave_B2F/scripts.pory"
+# 87 "data/maps/GraniteCave_B2F/scripts.pory"
 DARKRAI_Descend:
-# 89 "data/maps/GraniteCave_B2F/scripts.pory"
+# 88 "data/maps/GraniteCave_B2F/scripts.pory"
+	walk_down
+# 88 "data/maps/GraniteCave_B2F/scripts.pory"
+	walk_down
+# 88 "data/maps/GraniteCave_B2F/scripts.pory"
+	walk_down
+# 88 "data/maps/GraniteCave_B2F/scripts.pory"
+	walk_down
+# 88 "data/maps/GraniteCave_B2F/scripts.pory"
+	walk_down
+# 88 "data/maps/GraniteCave_B2F/scripts.pory"
+	walk_down
+# 88 "data/maps/GraniteCave_B2F/scripts.pory"
+	walk_down
+# 88 "data/maps/GraniteCave_B2F/scripts.pory"
+	walk_down
+# 88 "data/maps/GraniteCave_B2F/scripts.pory"
 	walk_down
 # 89 "data/maps/GraniteCave_B2F/scripts.pory"
-	walk_down
-# 89 "data/maps/GraniteCave_B2F/scripts.pory"
-	walk_down
-# 89 "data/maps/GraniteCave_B2F/scripts.pory"
-	walk_down
-# 89 "data/maps/GraniteCave_B2F/scripts.pory"
-	walk_down
-# 89 "data/maps/GraniteCave_B2F/scripts.pory"
-	walk_down
-# 89 "data/maps/GraniteCave_B2F/scripts.pory"
-	walk_down
-# 89 "data/maps/GraniteCave_B2F/scripts.pory"
-	walk_down
-# 89 "data/maps/GraniteCave_B2F/scripts.pory"
-	walk_down
-# 90 "data/maps/GraniteCave_B2F/scripts.pory"
 	face_player
-# 91 "data/maps/GraniteCave_B2F/scripts.pory"
+# 90 "data/maps/GraniteCave_B2F/scripts.pory"
 	walk_up
-# 92 "data/maps/GraniteCave_B2F/scripts.pory"
+# 91 "data/maps/GraniteCave_B2F/scripts.pory"
+	walk_in_place_faster_up
+# 91 "data/maps/GraniteCave_B2F/scripts.pory"
 	walk_in_place_faster_up
 # 92 "data/maps/GraniteCave_B2F/scripts.pory"
-	walk_in_place_faster_up
-# 93 "data/maps/GraniteCave_B2F/scripts.pory"
 	walk_down
-# 94 "data/maps/GraniteCave_B2F/scripts.pory"
+# 93 "data/maps/GraniteCave_B2F/scripts.pory"
 	delay_16
-# 95 "data/maps/GraniteCave_B2F/scripts.pory"
+# 94 "data/maps/GraniteCave_B2F/scripts.pory"
 	face_player
 	step_end
 
@@ -257,7 +255,7 @@ DARKRAIWon_Text_0:
 	.string "over.$"
 
 DARKRAIRanAway_Text_0:
-# 84 "data/maps/GraniteCave_B2F/scripts.pory"
+# 83 "data/maps/GraniteCave_B2F/scripts.pory"
 	.string "It melts back into the shadows, alone\n"
 	.string "again. You wish, oddly, that it had\l"
 	.string "stayed.$"

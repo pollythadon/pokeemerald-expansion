@@ -39,12 +39,12 @@ script Legendary_EventScript_GIRATINA {
                 end
             case NO:
                 msgbox(format("...No. Not yet. Maybe not ever."))
-                release
+                releaseall
                 end
         }
     }
     msgbox(format("This place is too quiet. The kind of quiet that's watching back."))
-    release
+    releaseall
     end
 }
 
@@ -63,8 +63,6 @@ script GIRATINARanAway {
     delay(20)
     fadescreenswapbuffers(FADE_TO_BLACK)
     removeobject(1)
-    setvar (VAR_TEMP_0, 1)
-    setflag(FLAG_GIRATINA_BATTLE)
     fadescreenswapbuffers(FADE_FROM_BLACK)
     msgbox(format("It slipped back through to the other side."))
     return

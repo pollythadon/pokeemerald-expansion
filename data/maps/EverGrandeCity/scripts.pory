@@ -52,14 +52,14 @@ script GIRATINA_quest_starter {
         case NO:
             msgbox(format("Not very wise."))
     }
-        release
+        releaseall
         end
     }
     msgbox(format("There's a part of every myth they don't tell children. A third sibling. Cast out for its violence...\p"
                   "Sealed away in the world that lies behind our own, where rivers fall upward and gravity forgets its job."))
     msgbox(format("The devils core lies here. Perhaps maybe a champion can find it.\p"
                   "If you carry it to a still, lonely spot, it will pry open a door that was shut for good reason."))
-    release
+    releaseall
     end
 }
 
@@ -67,7 +67,7 @@ script GriseousCore_DigUp {
     lockall
     faceplayer
     if (checkitem(ITEM_GRISEOUS_CORE)) {
-        release
+        releaseall
         end
     }
     if(!flag(FLAG_LEGENDARY_BTL)) {
@@ -75,14 +75,12 @@ script GriseousCore_DigUp {
                   "Would you like to dig it up?"), MSGBOX_YESNO)
     switch (var(VAR_RESULT)) {
         case YES:
-            playfanfare(MUS_OBTAIN_ITEM)
             giveitem(ITEM_GRISEOUS_CORE)
-            waitfanfare
             msgbox(format("What!? The writing on the sign changed!"))
         case NO:
             msgbox(format("It's best I mind my business"))
     }
     }
-    release
+    releaseall
     end
 }

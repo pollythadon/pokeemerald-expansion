@@ -248,7 +248,7 @@ Legendary_EventScript_DIALGA_4:
 # 169 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	msgbox Legendary_EventScript_DIALGA_Text_6
 # 170 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	release
+	releaseall
 	end
 
 Legendary_EventScript_DIALGA_2:
@@ -327,7 +327,7 @@ Legendary_EventScript_DIALGA_9:
 # 164 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	msgbox Legendary_EventScript_DIALGA_Text_5
 # 165 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	release
+	releaseall
 	end
 
 Legendary_EventScript_DIALGA_11:
@@ -377,10 +377,8 @@ DIALGARanAway::
 # 188 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	removeobject 3
 # 189 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	setflag FLAG_DIALGA_BATTLE
-# 190 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	fadescreenswapbuffers FADE_FROM_WHITE
-# 191 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+# 190 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	msgbox DIALGARanAway_Text_0
 	return
 
@@ -425,6 +423,6 @@ DIALGAWon_or_Caught_Text_0:
 	.string "it.$"
 
 DIALGARanAway_Text_0:
-# 191 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+# 190 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	.string "Gone in an instant. To It, my whole life\n"
 	.string "is just an instant.$"
