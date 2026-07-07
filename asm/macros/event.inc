@@ -1995,6 +1995,12 @@
 	_dynmultichoice \left, \top, \ignoreBPress, \maxBeforeScroll, \shouldSort, \initialSelected, \callbacks, NULL
 	.endm
 
+	@ checks for specified pokemon in the players party
+	.macro checkpartymon species:req
+	.byte SCR_OP_CHECKPARTYMON
+	.2byte \species
+	.endm
+
 @ Supplementary
 
 	.macro goto_if_unset flag:req, dest:req
