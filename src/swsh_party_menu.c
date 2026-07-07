@@ -3723,24 +3723,66 @@ static void SetPartyMonSelectionActions(struct Pokemon *mons, u8 slotId, u8 acti
     }
 }
 
+// Field moves that are used from the overworld or via key items, so they are kept out
+// of the party menu to avoid cluttering / overflowing the action list.
+static const u16 sItemBasedFieldMoves[] =
+{
+    MOVE_CUT,
+    MOVE_SURF,
+    MOVE_STRENGTH,
+    MOVE_ROCK_SMASH,
+    MOVE_DIVE,
+    MOVE_WATERFALL,
+};
+
+static bool32 IsFieldMoveExcludedFromPartyMenu(u16 moveId)
+{
+    u32 i;
+    for (i = 0; i < ARRAY_COUNT(sItemBasedFieldMoves); i++)
+    {
+        if (sItemBasedFieldMoves[i] == moveId)
+            return TRUE;
+    }
+    return FALSE;
+}
+
 static void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 {
-    u8 i, j;
+    u32 j;
 
     sPartyMenuInternal->numActions = 0;
     AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_SUMMARY);
     AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_STAT_EDIT);
 
     // Add field moves to action list
-    for (i = 0; i < MAX_MON_MOVES; i++)
+    if (!GetMonData(&mons[slotId], MON_DATA_IS_EGG))
     {
+        u16 species = GetMonData(&mons[slotId], MON_DATA_SPECIES);
+
         for (j = 0; j != FIELD_MOVES_COUNT; j++)
         {
-            if (GetMonData(&mons[slotId], i + MON_DATA_MOVE1) == FieldMove_GetMoveId(j))
+            u16 moveId = FieldMove_GetMoveId(j);
+            bool32 offer = FALSE;
+
+            // Fly and Flash: usable by any mon that can learn them (once unlocked).
+            if (moveId == MOVE_FLY || moveId == MOVE_FLASH)
             {
-                AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, j + MENU_FIELD_MOVES);
-                break;
+                if (IsFieldMoveUnlocked(j) && CanLearnTeachableMove(species, moveId))
+                    offer = TRUE;
             }
+            // Item-based HMs are used from the overworld / key items, not the party menu.
+            else if (IsFieldMoveExcludedFromPartyMenu(moveId))
+            {
+                offer = FALSE;
+            }
+            // Everything else requires the Pokémon to actually know the move.
+            else if (MonKnowsMove(&mons[slotId], moveId))
+            {
+                offer = TRUE;
+            }
+
+            if (offer)
+                AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, j + MENU_FIELD_MOVES);
         }
     }
 
@@ -5363,7 +5405,7 @@ bool32 SetUpFieldMove_Surf(void)
     if (!CheckFollowerNPCFlag(FOLLOWER_NPC_FLAG_CAN_SURF))
         return FALSE;
 
-    if (PartyHasMonWithSurf() == TRUE && IsPlayerFacingSurfableFishableWater() == TRUE)
+    if (IsPlayerFacingSurfableFishableWater() == TRUE)
     {
         gFieldCallback2 = FieldCallback_PrepareFadeInFromMenu;
         gPostMenuFieldCallback = FieldCallback_Surf;
@@ -5389,7 +5431,7 @@ bool32 SetUpFieldMove_Fly(void)
     if (!CheckFollowerNPCFlag(FOLLOWER_NPC_FLAG_CAN_LEAVE_ROUTE))
         return FALSE;
 
-    if (Overworld_MapTypeAllowsTeleportAndFly(gMapHeader.mapType) == TRUE)
+    if (Overworld_MapTypeAllowsTeleportAndFly(gMapHeader.mapType) == TRUE && CanUseFly() == TRUE)
         return TRUE;
     else
         return FALSE;
