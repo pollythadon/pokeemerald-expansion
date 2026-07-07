@@ -1,0 +1,76 @@
+raw `
+SpaceMeteor_MapScripts::
+	.byte 0
+`
+
+script Legendary_EventScript_ARCEUS {
+    lockall
+    if (flag(FLAG_ARCEUS_DFTD)) {
+        msgbox(format("Only the hum of distant stars remains. The Original One has returned to its rest."))
+        releaseall
+        end
+    }
+    msgbox(format("A shape hangs in the void, ringed in gold. It does not move. It simply... regards you."), MSGBOX_AUTOCLOSE)
+    playmoncry(SPECIES_ARCEUS, CRY_MODE_ENCOUNTER)
+    delay(40)
+    waitmoncry
+    msgbox(format("The One that shaped all things opens its eyes and the meteor trembles."), MSGBOX_AUTOCLOSE)
+    playmoncry(SPECIES_ARCEUS, CRY_MODE_ENCOUNTER)
+    delay(40)
+    waitmoncry
+    setwildbattle(SPECIES_ARCEUS, 90)
+    special(BattleSetup_StartLegendaryBattle)
+    waitstate
+    specialvar(VAR_RESULT, GetBattleOutcome)
+    if (var(VAR_RESULT) == B_OUTCOME_CAUGHT) {
+        call(ARCEUSWon_or_Caught)
+    } elif (var(VAR_RESULT) == B_OUTCOME_WON) {
+        call(ARCEUSWon_or_Caught)
+    } elif (var(VAR_RESULT) == B_OUTCOME_RAN) {
+        call(ARCEUSRanAway)
+    } elif (var(VAR_RESULT) == B_OUTCOME_PLAYER_TELEPORTED) {
+        call(ARCEUSRanAway)
+    }
+    releaseall
+    end
+}
+
+script ARCEUSWon_or_Caught {
+    fadescreen(FADE_TO_WHITE)
+    removeobject(1)
+    setflag(FLAG_ARCEUS_BATTLE)
+    setflag(FLAG_ARCEUS_DFTD)
+    fadescreen(FADE_FROM_WHITE)
+    msgbox(format("The gold light fades. Whatever you just stood before, the universe feels a little smaller without it watching."))
+    return
+}
+
+script ARCEUSRanAway {
+    playmoncry(SPECIES_ARCEUS, CRY_MODE_ENCOUNTER)
+    delay(20)
+    fadescreen(FADE_TO_WHITE)
+    removeobject(1)
+    fadescreen(FADE_FROM_WHITE)
+    msgbox(format("The Original One dissolves into starlight, unwilling to be held. Perhaps it will judge you worthy another time."))
+    return
+}
+
+
+// ----------------------------------------------------------------------------
+//  OPTIONAL EXIT  --  attach to the Space Meteor exit warp/object to fly home.
+//  (Or simply point that warp back to Mossdeep in Porymap and delete this.)
+// ----------------------------------------------------------------------------
+script SpaceMeteor_EventScript_Exit {
+    lockall
+    msgbox(format("Leave the Space Meteor and return to Mossdeep?"), MSGBOX_YESNO)
+    if (var(VAR_RESULT) == YES) {
+        fadescreen(FADE_TO_BLACK)
+        delay(30)
+        warp(MAP_MOSSDEEP_CITY, 65,7) 
+        waitstate
+        releaseall
+        end
+    }
+    releaseall
+    end
+}

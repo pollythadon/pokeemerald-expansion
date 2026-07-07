@@ -452,3 +452,26 @@ script JIRACHI_quest_starter {
    releaseall
    end
 }
+
+script MossdeepCity_EventScript_Rocket {
+    lockall
+    if (!flag(FLAG_ARCEUS_ROCKET_UNLOCKED)) {
+        msgbox(format("A sealed launch rocket. Its systems are dark, there's no way to board it yet."))
+        releaseall
+        end
+    }
+    msgbox(format("The rocket is primed for launch.\nBoard it and fly to the Space Meteor?"), MSGBOX_YESNO)
+    if (var(VAR_RESULT) == YES) {
+        msgbox(format("You strap in. The countdown begins..."), MSGBOX_AUTOCLOSE)
+        fadescreen(FADE_TO_BLACK)
+        playse(SE_M_EXPLOSION)
+        delay(60)
+        warp(MAP_SPACE_METEOR, 15, 41)   // arrive just above the entrance warp (15,42); adjust as needed
+        waitstate
+        releaseall
+        end
+    }
+    msgbox(format("Maybe another day, then."))
+    releaseall
+    end
+}

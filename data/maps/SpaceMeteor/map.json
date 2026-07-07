@@ -24,8 +24,8 @@
       "movement_range_y": 0,
       "trainer_type": "TRAINER_TYPE_NONE",
       "trainer_sight_or_berry_tree_id": "0",
-      "script": "0",
-      "flag": "0"
+      "script": "Legendary_EventScript_ARCEUS",
+      "flag": "FLAG_ARCEUS_BATTLE"
     }
   ],
   "warp_events": [
@@ -38,6 +38,15 @@
     }
   ],
   "coord_events": [],
-  "bg_events": [],
+  "bg_events": [
+    {
+      "type": "sign",
+      "x": 16,
+      "y": 42,
+      "elevation": 0,
+      "player_facing_dir": "BG_EVENT_PLAYER_FACING_ANY",
+      "script": "SpaceMeteor_EventScript_Exit"
+    }
+  ],
   "region": "REGION_HOENN"
 }

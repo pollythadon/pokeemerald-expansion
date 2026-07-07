@@ -904,6 +904,47 @@ JIRACHI_quest_starter_10:
 	goto JIRACHI_quest_starter_4
 
 
+MossdeepCity_EventScript_Rocket::
+# 457 "data/maps/MossdeepCity/scripts.pory"
+	lockall
+# 458 "data/maps/MossdeepCity/scripts.pory"
+	goto_if_unset FLAG_ARCEUS_ROCKET_UNLOCKED, MossdeepCity_EventScript_Rocket_2
+# 463 "data/maps/MossdeepCity/scripts.pory"
+	msgbox MossdeepCity_EventScript_Rocket_Text_1, MSGBOX_YESNO
+# 464 "data/maps/MossdeepCity/scripts.pory"
+	compare VAR_RESULT, YES
+	goto_if_eq MossdeepCity_EventScript_Rocket_5
+# 474 "data/maps/MossdeepCity/scripts.pory"
+	msgbox MossdeepCity_EventScript_Rocket_Text_3
+# 475 "data/maps/MossdeepCity/scripts.pory"
+	releaseall
+	end
+
+MossdeepCity_EventScript_Rocket_2:
+# 459 "data/maps/MossdeepCity/scripts.pory"
+	msgbox MossdeepCity_EventScript_Rocket_Text_0
+# 460 "data/maps/MossdeepCity/scripts.pory"
+	releaseall
+	end
+
+MossdeepCity_EventScript_Rocket_5:
+# 465 "data/maps/MossdeepCity/scripts.pory"
+	msgbox MossdeepCity_EventScript_Rocket_Text_2, MSGBOX_AUTOCLOSE
+# 466 "data/maps/MossdeepCity/scripts.pory"
+	fadescreen FADE_TO_BLACK
+# 467 "data/maps/MossdeepCity/scripts.pory"
+	playse SE_M_EXPLOSION
+# 468 "data/maps/MossdeepCity/scripts.pory"
+	delay 60
+# 469 "data/maps/MossdeepCity/scripts.pory"
+	warp MAP_SPACE_METEOR, 15, 41
+# 470 "data/maps/MossdeepCity/scripts.pory"
+	waitstate
+# 471 "data/maps/MossdeepCity/scripts.pory"
+	releaseall
+	end
+
+
 JIRACHI_quest_starter_Text_0:
 # 435 "data/maps/MossdeepCity/scripts.pory"
 	.string "Have you made a wish yet?$"
@@ -938,3 +979,21 @@ JIRACHI_quest_starter_Text_5:
 	.string "your way there. Track one down, then\l"
 	.string "come back and show me. I'll point you\l"
 	.string "the right way.$"
+
+MossdeepCity_EventScript_Rocket_Text_0:
+# 459 "data/maps/MossdeepCity/scripts.pory"
+	.string "A sealed launch rocket. Its systems are\n"
+	.string "dark, there's no way to board it yet.$"
+
+MossdeepCity_EventScript_Rocket_Text_1:
+# 463 "data/maps/MossdeepCity/scripts.pory"
+	.string "The rocket is primed for launch.\n"
+	.string "Board it and fly to the Space Meteor?$"
+
+MossdeepCity_EventScript_Rocket_Text_2:
+# 465 "data/maps/MossdeepCity/scripts.pory"
+	.string "You strap in. The countdown begins...$"
+
+MossdeepCity_EventScript_Rocket_Text_3:
+# 474 "data/maps/MossdeepCity/scripts.pory"
+	.string "Maybe another day, then.$"
