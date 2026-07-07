@@ -2060,6 +2060,13 @@
 	.2byte \slot
 	.endm
 
+	@ Sets VAR_RESULT to TRUE if any party Pokémon is the given species, and
+	@ VAR_0x8004 to that Pokémon's slot (PARTY_SIZE if none are).
+	.macro checkpartymon species:req
+	.byte SCR_OP_CHECKPARTYMON
+	.2byte \species
+	.endm
+
 @ Supplementary
 
 	.macro goto_if_unset flag:req, dest:req

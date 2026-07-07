@@ -3181,6 +3181,26 @@ bool8 Scrcmd_checkspecies(struct ScriptContext *ctx)
     return FALSE;
 }
 
+bool8 ScrCmd_checkpartymon(struct ScriptContext *ctx)
+{
+    u8 i;
+    u16 speciesId = ScriptReadHalfword(ctx);
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        if (GetMonData(&gParties[B_TRAINER_PLAYER][i], MON_DATA_SANITY_HAS_SPECIES)
+            && GetMonData(&gParties[B_TRAINER_PLAYER][i], MON_DATA_SPECIES_OR_EGG) == speciesId)
+        {
+            gSpecialVar_Result = TRUE;
+            gSpecialVar_0x8004 = i;
+            return FALSE;
+        }
+    }
+
+    gSpecialVar_Result = FALSE;
+    gSpecialVar_0x8004 = PARTY_SIZE;
+    return FALSE;
+}
+
 bool8 Scrcmd_checkspecies_choose(struct ScriptContext *ctx)
 {
     enum Species givenSpecies = VarGet(ScriptReadHalfword(ctx));

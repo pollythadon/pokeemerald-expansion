@@ -265,6 +265,7 @@ gScriptCmdTable::
 	script_cmd_table_entry SCR_OP_GETPARTYMONLEVEL              ScrCmd_getpartymonlevel,            requests_effects=1  @ 0xf0
 	script_cmd_table_entry SCR_OP_GETPARTYMONSPECIES            ScrCmd_getpartymonspecies,          requests_effects=1  @ 0xf1
 	script_cmd_table_entry SCR_OP_GETPARTYMONHP                 ScrCmd_getpartymonhp,               requests_effects=1  @ 0xf2
+	script_cmd_table_entry SCR_OP_CHECKPARTYMON                 ScrCmd_checkpartymon,               requests_effects=1  @ 0xf3
 
 	.if ALLOCATE_SCRIPT_CMD_TABLE
 gScriptCmdTableEnd::
