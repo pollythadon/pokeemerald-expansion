@@ -9345,6 +9345,17 @@
       "border_filepath": "data/layouts/DIstortionWorld/border.bin",
       "blockdata_filepath": "data/layouts/DIstortionWorld/map.bin",
       "layout_version": "emerald"
+    },
+    {
+      "id": "LAYOUT_SPACE_METEOR",
+      "name": "SpaceMeteor_Layout",
+      "width": 30,
+      "height": 47,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_SpaceMeteor",
+      "border_filepath": "data/layouts/SpaceMeteor/border.bin",
+      "blockdata_filepath": "data/layouts/SpaceMeteor/map.bin",
+      "layout_version": "emerald"
     }
   ]
 }

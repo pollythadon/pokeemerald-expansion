@@ -1754,3 +1754,5 @@ EventScript_PalletTown_PlayersHouse_2F_TurnOnPC::
 	.include "data/maps/Star_Island/scripts.inc"
 
 	.include "data/maps/DIstortionWorld/scripts.inc"
+
+	.include "data/maps/SpaceMeteor/scripts.inc"

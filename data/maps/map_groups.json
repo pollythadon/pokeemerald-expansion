@@ -626,7 +626,8 @@
     "NavelRock_Bottom",
     "TrainerHill_Elevator",
     "Star_Island",
-    "DIstortionWorld"
+    "DIstortionWorld",
+    "SpaceMeteor"
   ],
   "gMapGroup_IndoorRoute104Prototype": [
     "Route104_Prototype",
