@@ -27,6 +27,7 @@
     - [How to add new AI Flags](tutorials/ai_logic.md)
   - [What are Dynamic AI Functions?](tutorials/ai_dynamic_functions.md)
   - [How to add new battle script commands/macros](tutorials/how_to_battle_script_command_macro.md)
+  - [Party query script commands](tutorials/how_to_party_query_commands.md)
   - [How to add a new move](tutorials/how_to_new_move.md)
   - [How to add a new trainer class]()
     - [How to add a new trainer front pic](tutorials/how_to_trainer_front_pic.md)

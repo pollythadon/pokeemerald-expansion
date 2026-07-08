@@ -95,6 +95,39 @@
     },
     "checkpartymon": {
       "var_name": "VAR_RESULT"
+    },
+    "checkpartytype": {
+      "var_name": "VAR_RESULT"
+    },
+    "checkpartyability": {
+      "var_name": "VAR_RESULT"
+    },
+    "checkpartyhelditem": {
+      "var_name": "VAR_RESULT"
+    },
+    "checkpartyshiny": {
+      "var_name": "VAR_RESULT"
+    },
+    "countpartymon": {
+      "var_name": "VAR_RESULT"
+    },
+    "countpartytype": {
+      "var_name": "VAR_RESULT"
+    },
+    "countalivemons": {
+      "var_name": "VAR_RESULT"
+    },
+    "countfaintedmons": {
+      "var_name": "VAR_RESULT"
+    },
+    "getpartymonlevel": {
+      "var_name": "VAR_RESULT"
+    },
+    "getpartymonspecies": {
+      "var_name": "VAR_RESULT"
+    },
+    "getpartymonhp": {
+      "var_name": "VAR_RESULT"
     }
   }
 }

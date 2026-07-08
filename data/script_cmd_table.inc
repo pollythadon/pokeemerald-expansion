@@ -254,6 +254,18 @@ gScriptCmdTable::
 	script_cmd_table_entry SCR_OP_HIDEFOLLOWER                  ScrCmd_hidefollower,                requests_effects=1  @ 0xe5
 	script_cmd_table_entry SCR_OP_GETBRAILLESTRINGWIDTH         ScrCmd_getbraillestringwidth,       requests_effects=1  @ 0xe6
 	script_cmd_table_entry SCR_OP_CHECKPARTYMON                 ScrCmd_checkpartymon,               requests_effects=1  @ 0xe7
+	script_cmd_table_entry SCR_OP_CHECKPARTYMOVE                ScrCmd_checkpartymove,              requests_effects=1  @ 0xe8
+	script_cmd_table_entry SCR_OP_CHECKPARTYTYPE                ScrCmd_checkpartytype,              requests_effects=1  @ 0xe9
+	script_cmd_table_entry SCR_OP_CHECKPARTYABILITY             ScrCmd_checkpartyability,           requests_effects=1  @ 0xea
+	script_cmd_table_entry SCR_OP_CHECKPARTYHELDITEM            ScrCmd_checkpartyhelditem,          requests_effects=1  @ 0xeb
+	script_cmd_table_entry SCR_OP_CHECKPARTYSHINY               ScrCmd_checkpartyshiny,             requests_effects=1  @ 0xec
+	script_cmd_table_entry SCR_OP_COUNTPARTYMON                 ScrCmd_countpartymon,               requests_effects=1  @ 0xed
+	script_cmd_table_entry SCR_OP_COUNTPARTYTYPE                ScrCmd_countpartytype,              requests_effects=1  @ 0xee
+	script_cmd_table_entry SCR_OP_COUNTALIVEMONS                ScrCmd_countalivemons,              requests_effects=1  @ 0xef
+	script_cmd_table_entry SCR_OP_COUNTFAINTEDMONS              ScrCmd_countfaintedmons,            requests_effects=1  @ 0xf0
+	script_cmd_table_entry SCR_OP_GETPARTYMONLEVEL              ScrCmd_getpartymonlevel,            requests_effects=1  @ 0xf1
+	script_cmd_table_entry SCR_OP_GETPARTYMONSPECIES            ScrCmd_getpartymonspecies,          requests_effects=1  @ 0xf2
+	script_cmd_table_entry SCR_OP_GETPARTYMONHP                 ScrCmd_getpartymonhp,               requests_effects=1  @ 0xf3
 
 	.if ALLOCATE_SCRIPT_CMD_TABLE
 gScriptCmdTableEnd::

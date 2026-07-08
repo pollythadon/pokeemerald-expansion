@@ -2001,6 +2001,82 @@
 	.2byte \species
 	.endm
 
+	@ Sets VAR_RESULT to TRUE if any party Pokémon knows the given move, and
+	@ VAR_0x8004 to that Pokémon's slot (PARTY_SIZE if none know it).
+	.macro checkpartymove move:req
+	.byte SCR_OP_CHECKPARTYMOVE
+	.2byte \move
+	.endm
+
+	@ Sets VAR_RESULT to TRUE if any party Pokémon is the given type, and
+	@ VAR_0x8004 to that Pokémon's slot (PARTY_SIZE if none are).
+	.macro checkpartytype type:req
+	.byte SCR_OP_CHECKPARTYTYPE
+	.2byte \type
+	.endm
+
+	@ Sets VAR_RESULT to TRUE if any party Pokémon has the given ability, and
+	@ VAR_0x8004 to that Pokémon's slot (PARTY_SIZE if none do).
+	.macro checkpartyability ability:req
+	.byte SCR_OP_CHECKPARTYABILITY
+	.2byte \ability
+	.endm
+
+	@ Sets VAR_RESULT to TRUE if any party Pokémon holds the given item, and
+	@ VAR_0x8004 to that Pokémon's slot (PARTY_SIZE if none do).
+	.macro checkpartyhelditem item:req
+	.byte SCR_OP_CHECKPARTYHELDITEM
+	.2byte \item
+	.endm
+
+	@ Sets VAR_RESULT to TRUE if any party Pokémon is shiny, and VAR_0x8004 to
+	@ that Pokémon's slot (PARTY_SIZE if none are).
+	.macro checkpartyshiny
+	.byte SCR_OP_CHECKPARTYSHINY
+	.endm
+
+	@ Sets VAR_RESULT to the number of party Pokémon of the given species.
+	.macro countpartymon species:req
+	.byte SCR_OP_COUNTPARTYMON
+	.2byte \species
+	.endm
+
+	@ Sets VAR_RESULT to the number of party Pokémon of the given type.
+	.macro countpartytype type:req
+	.byte SCR_OP_COUNTPARTYTYPE
+	.2byte \type
+	.endm
+
+	@ Sets VAR_RESULT to the number of non-egg party Pokémon that are not fainted.
+	.macro countalivemons
+	.byte SCR_OP_COUNTALIVEMONS
+	.endm
+
+	@ Sets VAR_RESULT to the number of non-egg party Pokémon that are fainted.
+	.macro countfaintedmons
+	.byte SCR_OP_COUNTFAINTEDMONS
+	.endm
+
+	@ Sets VAR_RESULT to the level of the Pokémon in the given party slot (0 if empty).
+	.macro getpartymonlevel slot:req
+	.byte SCR_OP_GETPARTYMONLEVEL
+	.2byte \slot
+	.endm
+
+	@ Sets VAR_RESULT to the species of the Pokémon in the given party slot
+	@ (SPECIES_EGG for an egg, SPECIES_NONE if empty).
+	.macro getpartymonspecies slot:req
+	.byte SCR_OP_GETPARTYMONSPECIES
+	.2byte \slot
+	.endm
+
+	@ Sets VAR_RESULT to the current HP and VAR_0x8004 to the max HP of the
+	@ Pokémon in the given party slot (both 0 if empty).
+	.macro getpartymonhp slot:req
+	.byte SCR_OP_GETPARTYMONHP
+	.2byte \slot
+	.endm
+
 @ Supplementary
 
 	.macro goto_if_unset flag:req, dest:req

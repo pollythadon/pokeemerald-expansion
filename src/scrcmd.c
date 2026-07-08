@@ -3271,6 +3271,282 @@ bool8 ScrCmd_checkpartymon(struct ScriptContext *ctx)
     return FALSE;
 }
 
+// Party query commands. Each writes its answer to VAR_RESULT; the "check"
+// commands also store the slot of the first match in VAR_0x8004 (PARTY_SIZE if
+// nothing matched). Eggs and empty slots are skipped.
+bool8 ScrCmd_checkpartymove(struct ScriptContext *ctx)
+{
+    u16 move = VarGet(ScriptReadHalfword(ctx));
+    u8 i, j;
+
+    Script_RequestEffects(SCREFF_V1);
+
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        struct Pokemon *mon = &gParties[B_TRAINER_PLAYER][i];
+
+        if (!GetMonData(mon, MON_DATA_SANITY_HAS_SPECIES) || GetMonData(mon, MON_DATA_IS_EGG))
+            continue;
+
+        for (j = 0; j < MAX_MON_MOVES; j++)
+        {
+            if (GetMonData(mon, MON_DATA_MOVE1 + j) == move)
+            {
+                gSpecialVar_Result = TRUE;
+                gSpecialVar_0x8004 = i;
+                return FALSE;
+            }
+        }
+    }
+
+    gSpecialVar_Result = FALSE;
+    gSpecialVar_0x8004 = PARTY_SIZE;
+    return FALSE;
+}
+
+bool8 ScrCmd_checkpartytype(struct ScriptContext *ctx)
+{
+    u16 type = VarGet(ScriptReadHalfword(ctx));
+    u8 i;
+
+    Script_RequestEffects(SCREFF_V1);
+
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        struct Pokemon *mon = &gParties[B_TRAINER_PLAYER][i];
+        u16 species;
+
+        if (!GetMonData(mon, MON_DATA_SANITY_HAS_SPECIES) || GetMonData(mon, MON_DATA_IS_EGG))
+            continue;
+
+        species = GetMonData(mon, MON_DATA_SPECIES);
+        if (GetSpeciesType(species, 0) == type || GetSpeciesType(species, 1) == type)
+        {
+            gSpecialVar_Result = TRUE;
+            gSpecialVar_0x8004 = i;
+            return FALSE;
+        }
+    }
+
+    gSpecialVar_Result = FALSE;
+    gSpecialVar_0x8004 = PARTY_SIZE;
+    return FALSE;
+}
+
+bool8 ScrCmd_checkpartyability(struct ScriptContext *ctx)
+{
+    u16 ability = VarGet(ScriptReadHalfword(ctx));
+    u8 i;
+
+    Script_RequestEffects(SCREFF_V1);
+
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        struct Pokemon *mon = &gParties[B_TRAINER_PLAYER][i];
+
+        if (!GetMonData(mon, MON_DATA_SANITY_HAS_SPECIES) || GetMonData(mon, MON_DATA_IS_EGG))
+            continue;
+
+        if (GetMonAbility(mon) == ability)
+        {
+            gSpecialVar_Result = TRUE;
+            gSpecialVar_0x8004 = i;
+            return FALSE;
+        }
+    }
+
+    gSpecialVar_Result = FALSE;
+    gSpecialVar_0x8004 = PARTY_SIZE;
+    return FALSE;
+}
+
+bool8 ScrCmd_checkpartyhelditem(struct ScriptContext *ctx)
+{
+    u16 item = VarGet(ScriptReadHalfword(ctx));
+    u8 i;
+
+    Script_RequestEffects(SCREFF_V1);
+
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        struct Pokemon *mon = &gParties[B_TRAINER_PLAYER][i];
+
+        if (!GetMonData(mon, MON_DATA_SANITY_HAS_SPECIES) || GetMonData(mon, MON_DATA_IS_EGG))
+            continue;
+
+        if (GetMonData(mon, MON_DATA_HELD_ITEM) == item)
+        {
+            gSpecialVar_Result = TRUE;
+            gSpecialVar_0x8004 = i;
+            return FALSE;
+        }
+    }
+
+    gSpecialVar_Result = FALSE;
+    gSpecialVar_0x8004 = PARTY_SIZE;
+    return FALSE;
+}
+
+bool8 ScrCmd_checkpartyshiny(struct ScriptContext *ctx)
+{
+    u8 i;
+
+    Script_RequestEffects(SCREFF_V1);
+
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        struct Pokemon *mon = &gParties[B_TRAINER_PLAYER][i];
+
+        if (!GetMonData(mon, MON_DATA_SANITY_HAS_SPECIES) || GetMonData(mon, MON_DATA_IS_EGG))
+            continue;
+
+        if (GetMonData(mon, MON_DATA_IS_SHINY))
+        {
+            gSpecialVar_Result = TRUE;
+            gSpecialVar_0x8004 = i;
+            return FALSE;
+        }
+    }
+
+    gSpecialVar_Result = FALSE;
+    gSpecialVar_0x8004 = PARTY_SIZE;
+    return FALSE;
+}
+
+bool8 ScrCmd_countpartymon(struct ScriptContext *ctx)
+{
+    u16 species = VarGet(ScriptReadHalfword(ctx));
+    u8 i, count = 0;
+
+    Script_RequestEffects(SCREFF_V1);
+
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        struct Pokemon *mon = &gParties[B_TRAINER_PLAYER][i];
+
+        if (GetMonData(mon, MON_DATA_SANITY_HAS_SPECIES)
+            && GetMonData(mon, MON_DATA_SPECIES_OR_EGG) == species)
+            count++;
+    }
+
+    gSpecialVar_Result = count;
+    return FALSE;
+}
+
+bool8 ScrCmd_countpartytype(struct ScriptContext *ctx)
+{
+    u16 type = VarGet(ScriptReadHalfword(ctx));
+    u8 i, count = 0;
+
+    Script_RequestEffects(SCREFF_V1);
+
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        struct Pokemon *mon = &gParties[B_TRAINER_PLAYER][i];
+        u16 species;
+
+        if (!GetMonData(mon, MON_DATA_SANITY_HAS_SPECIES) || GetMonData(mon, MON_DATA_IS_EGG))
+            continue;
+
+        species = GetMonData(mon, MON_DATA_SPECIES);
+        if (GetSpeciesType(species, 0) == type || GetSpeciesType(species, 1) == type)
+            count++;
+    }
+
+    gSpecialVar_Result = count;
+    return FALSE;
+}
+
+bool8 ScrCmd_countalivemons(struct ScriptContext *ctx)
+{
+    u8 i, count = 0;
+
+    Script_RequestEffects(SCREFF_V1);
+
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        struct Pokemon *mon = &gParties[B_TRAINER_PLAYER][i];
+
+        if (!GetMonData(mon, MON_DATA_SANITY_HAS_SPECIES) || GetMonData(mon, MON_DATA_IS_EGG))
+            continue;
+
+        if (GetMonData(mon, MON_DATA_HP) != 0)
+            count++;
+    }
+
+    gSpecialVar_Result = count;
+    return FALSE;
+}
+
+bool8 ScrCmd_countfaintedmons(struct ScriptContext *ctx)
+{
+    u8 i, count = 0;
+
+    Script_RequestEffects(SCREFF_V1);
+
+    for (i = 0; i < PARTY_SIZE; i++)
+    {
+        struct Pokemon *mon = &gParties[B_TRAINER_PLAYER][i];
+
+        if (!GetMonData(mon, MON_DATA_SANITY_HAS_SPECIES) || GetMonData(mon, MON_DATA_IS_EGG))
+            continue;
+
+        if (GetMonData(mon, MON_DATA_HP) == 0)
+            count++;
+    }
+
+    gSpecialVar_Result = count;
+    return FALSE;
+}
+
+bool8 ScrCmd_getpartymonlevel(struct ScriptContext *ctx)
+{
+    u16 slot = VarGet(ScriptReadHalfword(ctx));
+
+    Script_RequestEffects(SCREFF_V1);
+
+    if (slot < PARTY_SIZE && GetMonData(&gParties[B_TRAINER_PLAYER][slot], MON_DATA_SANITY_HAS_SPECIES))
+        gSpecialVar_Result = GetMonData(&gParties[B_TRAINER_PLAYER][slot], MON_DATA_LEVEL);
+    else
+        gSpecialVar_Result = 0;
+
+    return FALSE;
+}
+
+bool8 ScrCmd_getpartymonspecies(struct ScriptContext *ctx)
+{
+    u16 slot = VarGet(ScriptReadHalfword(ctx));
+
+    Script_RequestEffects(SCREFF_V1);
+
+    if (slot < PARTY_SIZE && GetMonData(&gParties[B_TRAINER_PLAYER][slot], MON_DATA_SANITY_HAS_SPECIES))
+        gSpecialVar_Result = GetMonData(&gParties[B_TRAINER_PLAYER][slot], MON_DATA_SPECIES_OR_EGG);
+    else
+        gSpecialVar_Result = SPECIES_NONE;
+
+    return FALSE;
+}
+
+bool8 ScrCmd_getpartymonhp(struct ScriptContext *ctx)
+{
+    u16 slot = VarGet(ScriptReadHalfword(ctx));
+
+    Script_RequestEffects(SCREFF_V1);
+
+    if (slot < PARTY_SIZE && GetMonData(&gParties[B_TRAINER_PLAYER][slot], MON_DATA_SANITY_HAS_SPECIES))
+    {
+        gSpecialVar_Result = GetMonData(&gParties[B_TRAINER_PLAYER][slot], MON_DATA_HP);
+        gSpecialVar_0x8004 = GetMonData(&gParties[B_TRAINER_PLAYER][slot], MON_DATA_MAX_HP);
+    }
+    else
+    {
+        gSpecialVar_Result = 0;
+        gSpecialVar_0x8004 = 0;
+    }
+
+    return FALSE;
+}
+
 bool8 Scrcmd_checkspecies_choose(struct ScriptContext *ctx)
 {
     enum Species givenSpecies = VarGet(ScriptReadHalfword(ctx));
