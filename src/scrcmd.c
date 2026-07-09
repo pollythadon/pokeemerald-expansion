@@ -3253,8 +3253,11 @@ bool8 Scrcmd_checkspecies(struct ScriptContext *ctx)
 
 bool8 ScrCmd_checkpartymon(struct ScriptContext *ctx)
 {
+    u16 speciesId = VarGet(ScriptReadHalfword(ctx));
     u8 i;
-    u16 speciesId = ScriptReadHalfword(ctx);
+
+    Script_RequestEffects(SCREFF_V1);
+
     for (i = 0; i < PARTY_SIZE; i++)
     {
         if (GetMonData(&gParties[B_TRAINER_PLAYER][i], MON_DATA_SANITY_HAS_SPECIES)
