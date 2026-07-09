@@ -415,7 +415,7 @@ pull it into your project, then rebuild:
 ```
 git remote add partyquery <REPO_URL>
 git fetch partyquery
-git merge partyquery/party-query-commands
+git merge partyquery/party-query-feature
 make -j$(nproc)
 ```
 
