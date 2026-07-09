@@ -5,8 +5,8 @@
 These are overworld script commands for asking questions about the player's
 party from a map script, without writing any C. They pick up where the built-in
 `getpartysize` leaves off: instead of only "how many Pokémon do I have", you can
-now check for a move, a type, an ability, a held item, a shiny, count things by
-species or type, and read a specific slot's level, species or HP.
+now check for a species, a move, a type, an ability, a held item, a shiny, count
+things by species or type, and read a specific slot's level, species or HP.
 
 Every command reports its answer in `VAR_RESULT`, exactly like `getpartysize`
 already does, so they slot straight into the `compare` / `goto_if` flow you
@@ -101,6 +101,7 @@ first. If you need a particular match's slot, grab it right after that command
 
 | Command | Argument | `VAR_RESULT` | `VAR_0x8004` |
 | --- | --- | --- | --- |
+| `checkpartymon <species>` | a `SPECIES_` constant (or var) | `TRUE` if any party Pokémon is that species, else `FALSE` | slot of the first match, or `PARTY_SIZE` if none |
 | `checkpartymove <move>` | a `MOVE_` constant (or var) | `TRUE` if any party Pokémon knows the move, else `FALSE` | slot of the first match, or `PARTY_SIZE` if none |
 | `checkpartytype <type>` | a `TYPE_` constant (or var) | `TRUE` if any party Pokémon is that type | slot of the first match, or `PARTY_SIZE` |
 | `checkpartyability <ability>` | an `ABILITY_` constant (or var) | `TRUE` if any party Pokémon has that ability | slot of the first match, or `PARTY_SIZE` |
@@ -130,6 +131,32 @@ A few things that apply to all of them:
 Each example is a complete poryscript `script` you can adapt. They all follow the
 same shape: run the command, then branch on `VAR_RESULT` (poryscript reads it for
 you inside `if ()`).
+
+### `checkpartymon` — is a given species in the party?
+
+The simplest question of the set: is the player carrying this Pokémon at all?
+`VAR_0x8004` gives you the slot of the first one, so you can name it. It matches
+on the exact species, so an egg reads as `SPECIES_EGG` (not the species it will
+hatch into); use `checkpartymon(SPECIES_EGG)` if you specifically want to know
+whether the player is carrying *any* egg. It's the yes/no twin of
+`countpartymon` — `checkpartymon(SPECIES_PIKACHU)` is the same test as
+`countpartymon(SPECIES_PIKACHU) >= 1`, but it also hands you the slot.
+
+```
+script OldRival_NPC {
+	lockall
+	faceplayer
+	if (checkpartymon(SPECIES_EEVEE)) {
+		bufferpartymonnick(STR_VAR_1, VAR_0x8004)
+		msgbox(format("You still have that {STR_VAR_1}?\p"
+		              "We each picked one all those years ago. Good memories."))
+	} else {
+		msgbox(format("An EEVEE can become so many things. Have you raised one?"))
+	}
+	releaseall
+	end
+}
+```
 
 ### `checkpartymove` — does anyone know this move?
 
@@ -427,12 +454,25 @@ actually calls them.
 
 ### If you use Poryscript
 
-The commands work in raw `.inc` scripts as soon as the branch is merged. To use
-them inside poryscript `if ()` conditions the way the examples above do, register
-them as AutoVars in your project's `tools/poryscript/command_config.json` — add
-these entries inside the `autovar_commands` object:
+**You don't need Poryscript to use these commands.** They're ordinary overworld
+script commands — in raw `.inc` scripts they work with `compare` / `goto_if` the
+moment the branch is merged (see the section above). Poryscript is only what lets
+you write them inside `if ()` conditions the way the examples in this guide do.
+
+For that `if ()` sugar, Poryscript has to be told which variable each command
+leaves its answer in — an *AutoVar* registration in
+`tools/poryscript/command_config.json`. **This branch ships that file with every
+party query command already registered** (each to `VAR_RESULT`), so if you have
+Poryscript set up in your project, the commands are usable in `if ()` conditions
+as soon as you merge and rebuild — nothing else to do.
+
+The one thing to know: if your project already keeps its own
+`command_config.json` (most Poryscript setups do), git will flag it during the
+merge because both sides changed it. Resolve it by keeping your file and adding
+these entries inside its `autovar_commands` object:
 
 ```
+"checkpartymon":      { "var_name": "VAR_RESULT" },
 "checkpartymove":     { "var_name": "VAR_RESULT" },
 "checkpartytype":     { "var_name": "VAR_RESULT" },
 "checkpartyability":  { "var_name": "VAR_RESULT" },
@@ -447,6 +487,5 @@ these entries inside the `autovar_commands` object:
 "getpartymonhp":      { "var_name": "VAR_RESULT" }
 ```
 
-That registration is what lets poryscript read each command's result straight
-out of `VAR_RESULT` inside an `if ()`. This branch deliberately does **not** ship
-a `command_config.json`, so it won't overwrite the one in your project.
+That registration is what lets Poryscript read each command's result straight out
+of `VAR_RESULT` inside an `if ()`.
