@@ -945,6 +945,35 @@ MossdeepCity_EventScript_Rocket_5:
 	end
 
 
+GiftAuroraTicketScript::
+# 480 "data/maps/MossdeepCity/scripts.pory"
+	lock
+# 481 "data/maps/MossdeepCity/scripts.pory"
+	faceplayer
+# 482 "data/maps/MossdeepCity/scripts.pory"
+	goto_if_set FLAG_RECEIVED_AURORA_TICKET, GiftAuroraTicketScript_2
+# 488 "data/maps/MossdeepCity/scripts.pory"
+	msgbox GiftAuroraTicketScript_Text_1
+# 491 "data/maps/MossdeepCity/scripts.pory"
+	giveitem ITEM_AURORA_TICKET
+# 492 "data/maps/MossdeepCity/scripts.pory"
+	setflag FLAG_RECEIVED_AURORA_TICKET
+# 493 "data/maps/MossdeepCity/scripts.pory"
+	setflag FLAG_ENABLE_SHIP_BIRTH_ISLAND
+# 494 "data/maps/MossdeepCity/scripts.pory"
+	msgbox GiftAuroraTicketScript_Text_2
+# 496 "data/maps/MossdeepCity/scripts.pory"
+	release
+	end
+
+GiftAuroraTicketScript_2:
+# 483 "data/maps/MossdeepCity/scripts.pory"
+	msgbox GiftAuroraTicketScript_Text_0
+# 485 "data/maps/MossdeepCity/scripts.pory"
+	release
+	end
+
+
 JIRACHI_quest_starter_Text_0:
 # 435 "data/maps/MossdeepCity/scripts.pory"
 	.string "Have you made a wish yet?$"
@@ -997,3 +1026,22 @@ MossdeepCity_EventScript_Rocket_Text_2:
 MossdeepCity_EventScript_Rocket_Text_3:
 # 474 "data/maps/MossdeepCity/scripts.pory"
 	.string "Maybe another day, then.$"
+
+GiftAuroraTicketScript_Text_0:
+# 483 "data/maps/MossdeepCity/scripts.pory"
+	.string "The Aurora Ticket is yours already!\n"
+	.string "Birth Island calls those it senses want\l"
+	.string "to dance with the stars!$"
+
+GiftAuroraTicketScript_Text_1:
+# 488 "data/maps/MossdeepCity/scripts.pory"
+	.string "Y'know.. being a man of science,\n"
+	.string "you're naturally skeptical of the\l"
+	.string "supernatural.\l"
+	.string "Go to this island. See what I saw.\l"
+	.string "Become a believer.$"
+
+GiftAuroraTicketScript_Text_2:
+# 494 "data/maps/MossdeepCity/scripts.pory"
+	.string "Board the ferry at Lilycove City.\n"
+	.string "Our eyes can't lie to us... Right?$"

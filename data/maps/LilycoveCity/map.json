@@ -126,8 +126,8 @@
       "movement_range_y": 0,
       "trainer_type": "TRAINER_TYPE_NONE",
       "trainer_sight_or_berry_tree_id": "0",
-      "script": "LilycoveCity_EventScript_ExpertF",
-      "flag": "0"
+      "script": "GiftOldSeaMapScript",
+      "flag": "FLAG_LEGENDARY_BTL"
     },
     {
       "graphics_id": "OBJ_EVENT_GFX_EXPERT_M",

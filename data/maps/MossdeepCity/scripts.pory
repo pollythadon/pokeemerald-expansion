@@ -475,3 +475,24 @@ script MossdeepCity_EventScript_Rocket {
     releaseall
     end
 }
+
+script GiftAuroraTicketScript {
+    lock
+    faceplayer
+    if (flag(FLAG_RECEIVED_AURORA_TICKET)) {
+        msgbox(format("The Aurora Ticket is yours already!\n"
+                      "Birth Island calls those it senses want to dance with the stars!"))
+        release
+        end
+    }
+    msgbox(format("Y'know.. being a man of science,\n"
+                  "you're naturally skeptical of the supernatural.\l"
+                  "Go to this island. See what I saw. Become a believer."))
+    giveitem(ITEM_AURORA_TICKET)
+    setflag(FLAG_RECEIVED_AURORA_TICKET)
+    setflag(FLAG_ENABLE_SHIP_BIRTH_ISLAND)
+    msgbox(format("Board the ferry at Lilycove City.\n"
+                  "Our eyes can't lie to us... Right?"))
+    release
+    end
+}
