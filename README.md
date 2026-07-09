@@ -1,3 +1,11 @@
+# Party Query Script Commands
+
+> **This is a feature branch.** It adds a set of overworld script commands for asking questions about the player's party directly from a map script — check for a move, type, ability, held item, or shiny; count Pokémon by species or type; and read a slot's level, species, or HP. Every command reports its answer in `VAR_RESULT`, so it drops straight into `compare`/`goto_if` and poryscript `if ()` conditions.
+>
+> 📖 **Full guide: [docs/tutorials/how_to_party_query_commands.md](docs/tutorials/how_to_party_query_commands.md)**
+
+---
+
 # About `pokeemerald-expansion`
 
 ![Gif that shows debugging functionality that is unique to pokeemerald-expansion such as rerolling Trainer ID, Cheat Start, PC from Debug Menu, Debug PC Fill, Pokémon Sprite Visualizer, Debug Warp to Map, and Battle Debug Menu](https://github.com/user-attachments/assets/cf9dfbee-4c6b-4bca-8e0a-07f116ef891c) ![Gif that shows overworld functionality that is unique to pokeemerald-expansion such as indoor running, BW2 style map popups, overworld followers, DNA Splicers, Gen 1 style fishing, OW Item descriptions, Quick Run from Battle, Use Last Ball, Wild Double Battles, and Catch from EXP](https://github.com/user-attachments/assets/383af243-0904-4d41-bced-721492fbc48e) ![Gif that shows off a number of modern Pokémon battle mechanics happening in the pokeemerald-expansion engine: 2 vs 1 battles, modern Pokémon, items, moves, abilities, fully customizable opponents and partners, Trainer Slides, and generational gimmicks](https://github.com/user-attachments/assets/50c576bc-415e-4d66-a38f-ad712f3316be)
