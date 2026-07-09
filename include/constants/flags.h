@@ -668,7 +668,7 @@
 #define FLAG_DEXNAV_SEARCHING    0x264 // Dexnav stuff
 #define FLAG_DEXNAV_GET    0x265 // Dexnav stuff
 #define FLAG_DETECTOR_MODE 0x266 // Dexnav stuff
-#define FLAG_UNUSED_0x267  0x267 // Unused Flag
+#define FLAG_DEXNAV_SHOW_ALL 0x267 // Dexnav upgrade: reveal every encounter on the route
 #define FLAG_UNUSED_0x268  0x268 // Unused Flag
 #define FLAG_UNUSED_0x269  0x269 // Unused Flag
 #define FLAG_UNUSED_0x26A  0x26A // Unused Flag

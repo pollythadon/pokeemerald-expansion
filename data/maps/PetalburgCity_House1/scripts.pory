@@ -32,10 +32,44 @@ script PetalburgCity_House1_EventScript_Scientist {
     lock
     faceplayer
     if (flag(FLAG_DEXNAV_GET)) {
-        msgbox(format("So, has my DexNav app been pulling its weight?\p"
-                      "Sniffing out those sneaky POKéMON hiding in the"
-                      "grass has to be paying off by now, right?\p"
-                      "Data, data! Tell me it's been useful!"))
+        if (flag(FLAG_DEXNAV_SHOW_ALL)) {
+            msgbox(format("So, has my DexNav app been pulling its weight?\p"
+                          "Sniffing out those sneaky POKéMON hiding in the"
+                          "grass has to be paying off by now, right?\p"
+                          "Data, data! Tell me it's been useful!"))
+            release
+            end
+        }
+        msgbox(format("Say, I've been tinkering with the DexNav some more!\p"
+                      "I can push a premium update that reveals EVERY"
+                      "POKéMON living on a route… even ones you've never"
+                      "laid eyes on.\p"
+                      "The research licensing isn't cheap, though.\n"
+                      "I'll need ¥50000 to cover it.\p"
+                      "Shall I install the upgrade?"), MSGBOX_YESNO)
+        if (var(VAR_RESULT) == NO) {
+            msgbox(format("No pressure! The offer stands whenever you're"
+                          "ready."))
+            release
+            end
+        }
+        checkmoney(50000)
+        if (var(VAR_RESULT) == FALSE) {
+            msgbox(format("Hmm, you're a little short on funds.\n"
+                          "Come back once you've saved up ¥50000!"))
+            release
+            end
+        }
+        showmoneybox(0, 0)
+        removemoney(50000)
+        updatemoneybox()
+        playfanfare(MUS_OBTAIN_ITEM)
+        setflag(FLAG_DEXNAV_SHOW_ALL)
+        waitfanfare
+        msgbox(format("There! The DexNav upgrade is installed.\p"
+                      "Now it'll list every POKéMON on the route,\n"
+                      "seen or not. Happy hunting!"))
+        hidemoneybox()
         release
         end
     }

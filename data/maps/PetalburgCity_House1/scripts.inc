@@ -60,40 +60,87 @@ PetalburgCity_House1_EventScript_Scientist::
 	faceplayer
 # 34 "data/maps/PetalburgCity_House1/scripts.pory"
 	goto_if_set FLAG_DEXNAV_GET, PetalburgCity_House1_EventScript_Scientist_2
-# 42 "data/maps/PetalburgCity_House1/scripts.pory"
-	msgbox PetalburgCity_House1_EventScript_Scientist_Text_1, MSGBOX_YESNO
-# 48 "data/maps/PetalburgCity_House1/scripts.pory"
+# 76 "data/maps/PetalburgCity_House1/scripts.pory"
+	msgbox PetalburgCity_House1_EventScript_Scientist_Text_5, MSGBOX_YESNO
+# 82 "data/maps/PetalburgCity_House1/scripts.pory"
 	compare VAR_RESULT, NO
 	goto_if_eq PetalburgCity_House1_EventScript_Scientist_5
-# 53 "data/maps/PetalburgCity_House1/scripts.pory"
+# 87 "data/maps/PetalburgCity_House1/scripts.pory"
 	playfanfare MUS_OBTAIN_ITEM
-# 54 "data/maps/PetalburgCity_House1/scripts.pory"
+# 88 "data/maps/PetalburgCity_House1/scripts.pory"
 	setflag FLAG_DEXNAV_GET
-# 55 "data/maps/PetalburgCity_House1/scripts.pory"
+# 89 "data/maps/PetalburgCity_House1/scripts.pory"
 	waitfanfare
-# 56 "data/maps/PetalburgCity_House1/scripts.pory"
-	msgbox PetalburgCity_House1_EventScript_Scientist_Text_3
-# 59 "data/maps/PetalburgCity_House1/scripts.pory"
+# 90 "data/maps/PetalburgCity_House1/scripts.pory"
+	msgbox PetalburgCity_House1_EventScript_Scientist_Text_7
+# 93 "data/maps/PetalburgCity_House1/scripts.pory"
 	release
 	end
 
 PetalburgCity_House1_EventScript_Scientist_2:
 # 35 "data/maps/PetalburgCity_House1/scripts.pory"
-	msgbox PetalburgCity_House1_EventScript_Scientist_Text_0
-# 39 "data/maps/PetalburgCity_House1/scripts.pory"
+	goto_if_set FLAG_DEXNAV_SHOW_ALL, PetalburgCity_House1_EventScript_Scientist_8
+# 43 "data/maps/PetalburgCity_House1/scripts.pory"
+	msgbox PetalburgCity_House1_EventScript_Scientist_Text_1, MSGBOX_YESNO
+# 50 "data/maps/PetalburgCity_House1/scripts.pory"
+	compare VAR_RESULT, NO
+	goto_if_eq PetalburgCity_House1_EventScript_Scientist_11
+# 56 "data/maps/PetalburgCity_House1/scripts.pory"
+	checkmoney 50000
+# 57 "data/maps/PetalburgCity_House1/scripts.pory"
+	compare VAR_RESULT, FALSE
+	goto_if_eq PetalburgCity_House1_EventScript_Scientist_14
+# 63 "data/maps/PetalburgCity_House1/scripts.pory"
+	showmoneybox 0, 0
+# 64 "data/maps/PetalburgCity_House1/scripts.pory"
+	removemoney 50000
+# 65 "data/maps/PetalburgCity_House1/scripts.pory"
+	updatemoneybox
+# 66 "data/maps/PetalburgCity_House1/scripts.pory"
+	playfanfare MUS_OBTAIN_ITEM
+# 67 "data/maps/PetalburgCity_House1/scripts.pory"
+	setflag FLAG_DEXNAV_SHOW_ALL
+# 68 "data/maps/PetalburgCity_House1/scripts.pory"
+	waitfanfare
+# 69 "data/maps/PetalburgCity_House1/scripts.pory"
+	msgbox PetalburgCity_House1_EventScript_Scientist_Text_4
+# 72 "data/maps/PetalburgCity_House1/scripts.pory"
+	hidemoneybox
+# 73 "data/maps/PetalburgCity_House1/scripts.pory"
 	release
 	end
 
 PetalburgCity_House1_EventScript_Scientist_5:
-# 49 "data/maps/PetalburgCity_House1/scripts.pory"
+# 83 "data/maps/PetalburgCity_House1/scripts.pory"
+	msgbox PetalburgCity_House1_EventScript_Scientist_Text_6
+# 84 "data/maps/PetalburgCity_House1/scripts.pory"
+	release
+	end
+
+PetalburgCity_House1_EventScript_Scientist_8:
+# 36 "data/maps/PetalburgCity_House1/scripts.pory"
+	msgbox PetalburgCity_House1_EventScript_Scientist_Text_0
+# 40 "data/maps/PetalburgCity_House1/scripts.pory"
+	release
+	end
+
+PetalburgCity_House1_EventScript_Scientist_11:
+# 51 "data/maps/PetalburgCity_House1/scripts.pory"
 	msgbox PetalburgCity_House1_EventScript_Scientist_Text_2
-# 50 "data/maps/PetalburgCity_House1/scripts.pory"
+# 53 "data/maps/PetalburgCity_House1/scripts.pory"
+	release
+	end
+
+PetalburgCity_House1_EventScript_Scientist_14:
+# 58 "data/maps/PetalburgCity_House1/scripts.pory"
+	msgbox PetalburgCity_House1_EventScript_Scientist_Text_3
+# 60 "data/maps/PetalburgCity_House1/scripts.pory"
 	release
 	end
 
 
 PetalburgCity_House1_EventScript_Scientist_Text_0:
-# 35 "data/maps/PetalburgCity_House1/scripts.pory"
+# 36 "data/maps/PetalburgCity_House1/scripts.pory"
 	.string "So, has my DexNav app been pulling its\n"
 	.string "weight?\p"
 	.string "Sniffing out those sneaky POKéMON\n"
@@ -102,7 +149,37 @@ PetalburgCity_House1_EventScript_Scientist_Text_0:
 	.string "Data, data! Tell me it's been useful!$"
 
 PetalburgCity_House1_EventScript_Scientist_Text_1:
-# 42 "data/maps/PetalburgCity_House1/scripts.pory"
+# 43 "data/maps/PetalburgCity_House1/scripts.pory"
+	.string "Say, I've been tinkering with the\n"
+	.string "DexNav some more!\p"
+	.string "I can push a premium update that\n"
+	.string "reveals EVERY POKéMON living on a\l"
+	.string "route… even ones you've never laid eyes\l"
+	.string "on.\p"
+	.string "The research licensing isn't cheap,\n"
+	.string "though.\n"
+	.string "I'll need ¥50000 to cover it.\p"
+	.string "Shall I install the upgrade?$"
+
+PetalburgCity_House1_EventScript_Scientist_Text_2:
+# 51 "data/maps/PetalburgCity_House1/scripts.pory"
+	.string "No pressure! The offer stands whenever\n"
+	.string "you're ready.$"
+
+PetalburgCity_House1_EventScript_Scientist_Text_3:
+# 58 "data/maps/PetalburgCity_House1/scripts.pory"
+	.string "Hmm, you're a little short on funds.\n"
+	.string "Come back once you've saved up ¥50000!$"
+
+PetalburgCity_House1_EventScript_Scientist_Text_4:
+# 69 "data/maps/PetalburgCity_House1/scripts.pory"
+	.string "There! The DexNav upgrade is installed.\p"
+	.string "Now it'll list every POKéMON on the\n"
+	.string "route,\n"
+	.string "seen or not. Happy hunting!$"
+
+PetalburgCity_House1_EventScript_Scientist_Text_5:
+# 76 "data/maps/PetalburgCity_House1/scripts.pory"
 	.string "Oho! A fellow traveler with a ROTOM\n"
 	.string "PHONE!\p"
 	.string "I've just finished coding a brand-new\n"
@@ -114,13 +191,13 @@ PetalburgCity_House1_EventScript_Scientist_Text_1:
 	.string "Want me to install it onto your ROTOM\n"
 	.string "PHONE?$"
 
-PetalburgCity_House1_EventScript_Scientist_Text_2:
-# 49 "data/maps/PetalburgCity_House1/scripts.pory"
+PetalburgCity_House1_EventScript_Scientist_Text_6:
+# 83 "data/maps/PetalburgCity_House1/scripts.pory"
 	.string "No pressure! Swing by whenever you'd\n"
 	.string "like it.$"
 
-PetalburgCity_House1_EventScript_Scientist_Text_3:
-# 56 "data/maps/PetalburgCity_House1/scripts.pory"
+PetalburgCity_House1_EventScript_Scientist_Text_7:
+# 90 "data/maps/PetalburgCity_House1/scripts.pory"
 	.string "There! The DexNav is now installed.\p"
 	.string "You'll find it inside your ROTOM PHONE.\n"
 	.string "Go put it to good use!$"

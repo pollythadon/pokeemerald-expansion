@@ -8,6 +8,7 @@
 #define DN_FLAG_SEARCHING             FLAG_DEXNAV_SEARCHING // Searching for mon
 #define DN_FLAG_DEXNAV_GET            FLAG_DEXNAV_GET    // DexNav shows in start menu
 #define DN_FLAG_DETECTOR_MODE         FLAG_DETECTOR_MODE // Allow player to find hidden mons
+#define DN_FLAG_SHOW_ALL              FLAG_DEXNAV_SHOW_ALL // When set, the DexNav lists every species on the route instead of hiding unseen ones
 #define DN_VAR_SPECIES                VAR_DN_VAR_SPECIES                // Registered DexNav species
 #define DN_VAR_STEP_COUNTER           VAR_DN_VAR_STEP_COUNTER           // Steps for finding hidden Pokémon
 
