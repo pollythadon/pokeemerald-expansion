@@ -120,6 +120,7 @@ script CRESSELIAWon_or_Caught {
     removeobject(10)
     setflag(FLAG_CRESSELIA_BATTLE)
     setflag(FLAG_CRESSELIA_DFTD)
+    completequest(QUEST_CRESSELIA)
     fadescreenswapbuffers(FADE_FROM_WHITE)
     msgbox(format("A lone Lunar Wing settles on the shore where she stood. You feel rested in a way sleep never quite manages."))
     return

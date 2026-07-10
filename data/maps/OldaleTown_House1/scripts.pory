@@ -31,6 +31,7 @@ script CELEBIquest_starter {
                  setflag (FLAG_CELEBI_GIFT)
                  setflag (FLAG_CELEBI_LADY)
                  giveitem(ITEM_TEA)
+                 startquest(QUEST_CELEBI)
                  msgbox(format("Sammy also told me this Pokémon has a thing for forests. Bye now."))
             case NO:
                  msgbox("I understand...")

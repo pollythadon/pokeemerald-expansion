@@ -536,6 +536,7 @@ script CELEBIWon_or_Caught {
     removeobject(14)
     setflag (FLAG_CELEBI_BATTLE)
 	setflag (FLAG_CELEBI_DFTD)
+	completequest(QUEST_CELEBI)
     fadescreenswapbuffers(FADE_FROM_BLACK)
     msgbox(format("The things I saw... A family... Best I move on."))
     return

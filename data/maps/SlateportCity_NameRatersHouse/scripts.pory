@@ -131,6 +131,7 @@ script DARKRAI_quest_starter {
             setflag(FLAG_DARKRAI_GIFT)
             playfanfare(MUS_OBTAIN_ITEM)
             giveitem(ITEM_DARKRANITE)
+            startquest(QUEST_DARKRAI)
             waitfanfare
             msgbox(format("Maybe you'll be the first face that didn't run from it."))
         case NO:

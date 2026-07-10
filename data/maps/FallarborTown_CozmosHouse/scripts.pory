@@ -133,6 +133,7 @@ script PALKIA_quest_starter {
     switch (var(VAR_RESULT)) {
         case YES:
             giveitem(ITEM_LUSTROUS_ORB)
+            startquest(QUEST_PALKIA)
             clearflag(FLAG_PALKIA_BATTLE)
             msgbox(format("Here and there, near and far... It decides which is which. Go carefully."))
         case NO:

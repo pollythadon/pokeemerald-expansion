@@ -58,6 +58,7 @@ script MEWTWOCaught {
     removeobject(2)
     setflag(FLAG_MEWTWO_BATTLE)
     setflag(FLAG_MEWTWO_DFTD)
+    completequest(QUEST_MEWTWO)
     fadescreenswapbuffers(FADE_FROM_BLACK)
     msgbox(format("I see. I was wrong about you. You are not like the others."))
     return
@@ -68,6 +69,7 @@ script MEWTWOWon {
     removeobject(2)
     setflag(FLAG_MEWTWO_BATTLE)
     setflag(FLAG_MEWTWO_DFTD)
+    completequest(QUEST_MEWTWO)
     fadescreenswapbuffers(FADE_FROM_BLACK)
     msgbox(format("I see. I was wrong about you. You are not like the others."))
     return

@@ -1077,49 +1077,51 @@ CELEBIWon_or_Caught::
 # 538 "data/maps/PetalburgWoods/scripts.pory"
 	setflag FLAG_CELEBI_DFTD
 # 539 "data/maps/PetalburgWoods/scripts.pory"
-	fadescreenswapbuffers FADE_FROM_BLACK
+	completequest QUEST_CELEBI
 # 540 "data/maps/PetalburgWoods/scripts.pory"
+	fadescreenswapbuffers FADE_FROM_BLACK
+# 541 "data/maps/PetalburgWoods/scripts.pory"
 	msgbox CELEBIWon_or_Caught_Text_0
 	return
 
 
 CELEBIRanAway::
-# 545 "data/maps/PetalburgWoods/scripts.pory"
-	playmoncry SPECIES_CELEBI, CRY_MODE_ENCOUNTER
 # 546 "data/maps/PetalburgWoods/scripts.pory"
-	delay 20
+	playmoncry SPECIES_CELEBI, CRY_MODE_ENCOUNTER
 # 547 "data/maps/PetalburgWoods/scripts.pory"
-	fadescreenswapbuffers FADE_TO_BLACK
+	delay 20
 # 548 "data/maps/PetalburgWoods/scripts.pory"
-	hideobjectat 14, MAP_PETALBURG_WOODS
+	fadescreenswapbuffers FADE_TO_BLACK
 # 549 "data/maps/PetalburgWoods/scripts.pory"
-	fadescreenswapbuffers FADE_FROM_BLACK
+	hideobjectat 14, MAP_PETALBURG_WOODS
 # 550 "data/maps/PetalburgWoods/scripts.pory"
+	fadescreenswapbuffers FADE_FROM_BLACK
+# 551 "data/maps/PetalburgWoods/scripts.pory"
 	msgbox CELEBIWon_or_Caught_Text_0
 	return
 
 
-# 554 "data/maps/PetalburgWoods/scripts.pory"
+# 555 "data/maps/PetalburgWoods/scripts.pory"
 Celebi_Descend:
-# 555 "data/maps/PetalburgWoods/scripts.pory"
-	walk_down
-# 555 "data/maps/PetalburgWoods/scripts.pory"
-	walk_down
-# 555 "data/maps/PetalburgWoods/scripts.pory"
-	walk_down
-# 555 "data/maps/PetalburgWoods/scripts.pory"
-	walk_down
-# 555 "data/maps/PetalburgWoods/scripts.pory"
-	walk_down
-# 555 "data/maps/PetalburgWoods/scripts.pory"
-	walk_down
-# 555 "data/maps/PetalburgWoods/scripts.pory"
-	walk_down
-# 555 "data/maps/PetalburgWoods/scripts.pory"
-	walk_down
-# 555 "data/maps/PetalburgWoods/scripts.pory"
+# 556 "data/maps/PetalburgWoods/scripts.pory"
 	walk_down
 # 556 "data/maps/PetalburgWoods/scripts.pory"
+	walk_down
+# 556 "data/maps/PetalburgWoods/scripts.pory"
+	walk_down
+# 556 "data/maps/PetalburgWoods/scripts.pory"
+	walk_down
+# 556 "data/maps/PetalburgWoods/scripts.pory"
+	walk_down
+# 556 "data/maps/PetalburgWoods/scripts.pory"
+	walk_down
+# 556 "data/maps/PetalburgWoods/scripts.pory"
+	walk_down
+# 556 "data/maps/PetalburgWoods/scripts.pory"
+	walk_down
+# 556 "data/maps/PetalburgWoods/scripts.pory"
+	walk_down
+# 557 "data/maps/PetalburgWoods/scripts.pory"
 	face_player
 	step_end
 
@@ -1155,6 +1157,6 @@ Legendary_EventScript_CELEBI_Text_6:
 	.string "spot...$"
 
 CELEBIWon_or_Caught_Text_0:
-# 540 "data/maps/PetalburgWoods/scripts.pory"
+# 541 "data/maps/PetalburgWoods/scripts.pory"
 	.string "The things I saw... A family... Best I\n"
 	.string "move on.$"

@@ -111,6 +111,7 @@ script SHAYMIN_quest_starter {
             playse(SE_PIN)
             setflag(FLAG_GRACIDEA_GIFT)
             giveitem(ITEM_GRACIDEA)
+            startquest(QUEST_SHAYMIN)
             msgbox(format("There. Keep it in bloom, and keep your heart the same.\p"
                           "Gratitude is the only thing that ever coaxes it out. Go gently."))
         case NO:

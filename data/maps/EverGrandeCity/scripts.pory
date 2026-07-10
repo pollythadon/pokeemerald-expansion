@@ -76,6 +76,7 @@ script GriseousCore_DigUp {
     switch (var(VAR_RESULT)) {
         case YES:
             giveitem(ITEM_GRISEOUS_CORE)
+            startquest(QUEST_GIRATINA)
             msgbox(format("What!? The writing on the sign changed!"))
         case NO:
             msgbox(format("It's best I mind my business"))

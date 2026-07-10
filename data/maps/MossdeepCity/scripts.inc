@@ -866,10 +866,10 @@ JIRACHI_quest_starter::
 # 0 "data/maps/MossdeepCity/scripts.pory"
 	compare VAR_RESULT, 0
 	goto_if_ne JIRACHI_quest_starter_5
-# 450 "data/maps/MossdeepCity/scripts.pory"
+# 451 "data/maps/MossdeepCity/scripts.pory"
 	msgbox JIRACHI_quest_starter_Text_5
 JIRACHI_quest_starter_4:
-# 452 "data/maps/MossdeepCity/scripts.pory"
+# 453 "data/maps/MossdeepCity/scripts.pory"
 	releaseall
 	end
 
@@ -887,7 +887,7 @@ JIRACHI_quest_starter_5:
 	switch VAR_RESULT
 # 443 "data/maps/MossdeepCity/scripts.pory"
 	case YES, JIRACHI_quest_starter_9
-# 446 "data/maps/MossdeepCity/scripts.pory"
+# 447 "data/maps/MossdeepCity/scripts.pory"
 	case NO, JIRACHI_quest_starter_10
 	goto JIRACHI_quest_starter_4
 
@@ -895,81 +895,83 @@ JIRACHI_quest_starter_9:
 # 444 "data/maps/MossdeepCity/scripts.pory"
 	setflag FLAG_JIRACHI_GIFT
 # 445 "data/maps/MossdeepCity/scripts.pory"
+	bumpquest QUEST_JIRACHI
+# 446 "data/maps/MossdeepCity/scripts.pory"
 	msgbox JIRACHI_quest_starter_Text_3
 	goto JIRACHI_quest_starter_4
 
 JIRACHI_quest_starter_10:
-# 447 "data/maps/MossdeepCity/scripts.pory"
+# 448 "data/maps/MossdeepCity/scripts.pory"
 	msgbox JIRACHI_quest_starter_Text_4
 	goto JIRACHI_quest_starter_4
 
 
 MossdeepCity_EventScript_Rocket::
-# 457 "data/maps/MossdeepCity/scripts.pory"
-	lockall
 # 458 "data/maps/MossdeepCity/scripts.pory"
+	lockall
+# 459 "data/maps/MossdeepCity/scripts.pory"
 	goto_if_unset FLAG_ARCEUS_ROCKET_UNLOCKED, MossdeepCity_EventScript_Rocket_2
-# 463 "data/maps/MossdeepCity/scripts.pory"
-	msgbox MossdeepCity_EventScript_Rocket_Text_1, MSGBOX_YESNO
 # 464 "data/maps/MossdeepCity/scripts.pory"
+	msgbox MossdeepCity_EventScript_Rocket_Text_1, MSGBOX_YESNO
+# 465 "data/maps/MossdeepCity/scripts.pory"
 	compare VAR_RESULT, YES
 	goto_if_eq MossdeepCity_EventScript_Rocket_5
-# 474 "data/maps/MossdeepCity/scripts.pory"
-	msgbox MossdeepCity_EventScript_Rocket_Text_3
 # 475 "data/maps/MossdeepCity/scripts.pory"
+	msgbox MossdeepCity_EventScript_Rocket_Text_3
+# 476 "data/maps/MossdeepCity/scripts.pory"
 	releaseall
 	end
 
 MossdeepCity_EventScript_Rocket_2:
-# 459 "data/maps/MossdeepCity/scripts.pory"
-	msgbox MossdeepCity_EventScript_Rocket_Text_0
 # 460 "data/maps/MossdeepCity/scripts.pory"
+	msgbox MossdeepCity_EventScript_Rocket_Text_0
+# 461 "data/maps/MossdeepCity/scripts.pory"
 	releaseall
 	end
 
 MossdeepCity_EventScript_Rocket_5:
-# 465 "data/maps/MossdeepCity/scripts.pory"
-	msgbox MossdeepCity_EventScript_Rocket_Text_2, MSGBOX_AUTOCLOSE
 # 466 "data/maps/MossdeepCity/scripts.pory"
-	fadescreen FADE_TO_BLACK
+	msgbox MossdeepCity_EventScript_Rocket_Text_2, MSGBOX_AUTOCLOSE
 # 467 "data/maps/MossdeepCity/scripts.pory"
-	playse SE_M_EXPLOSION
+	fadescreen FADE_TO_BLACK
 # 468 "data/maps/MossdeepCity/scripts.pory"
-	delay 60
+	playse SE_M_EXPLOSION
 # 469 "data/maps/MossdeepCity/scripts.pory"
-	warp MAP_SPACE_METEOR, 15, 41
+	delay 60
 # 470 "data/maps/MossdeepCity/scripts.pory"
-	waitstate
+	warp MAP_SPACE_METEOR, 15, 41
 # 471 "data/maps/MossdeepCity/scripts.pory"
+	waitstate
+# 472 "data/maps/MossdeepCity/scripts.pory"
 	releaseall
 	end
 
 
 GiftAuroraTicketScript::
-# 480 "data/maps/MossdeepCity/scripts.pory"
-	lock
 # 481 "data/maps/MossdeepCity/scripts.pory"
-	faceplayer
+	lock
 # 482 "data/maps/MossdeepCity/scripts.pory"
+	faceplayer
+# 483 "data/maps/MossdeepCity/scripts.pory"
 	goto_if_set FLAG_RECEIVED_AURORA_TICKET, GiftAuroraTicketScript_2
-# 488 "data/maps/MossdeepCity/scripts.pory"
+# 489 "data/maps/MossdeepCity/scripts.pory"
 	msgbox GiftAuroraTicketScript_Text_1
-# 491 "data/maps/MossdeepCity/scripts.pory"
-	giveitem ITEM_AURORA_TICKET
 # 492 "data/maps/MossdeepCity/scripts.pory"
-	setflag FLAG_RECEIVED_AURORA_TICKET
+	giveitem ITEM_AURORA_TICKET
 # 493 "data/maps/MossdeepCity/scripts.pory"
-	setflag FLAG_ENABLE_SHIP_BIRTH_ISLAND
+	setflag FLAG_RECEIVED_AURORA_TICKET
 # 494 "data/maps/MossdeepCity/scripts.pory"
+	setflag FLAG_ENABLE_SHIP_BIRTH_ISLAND
+# 495 "data/maps/MossdeepCity/scripts.pory"
 	msgbox GiftAuroraTicketScript_Text_2
-# 496 "data/maps/MossdeepCity/scripts.pory"
+# 497 "data/maps/MossdeepCity/scripts.pory"
 	release
 	end
 
 GiftAuroraTicketScript_2:
-# 483 "data/maps/MossdeepCity/scripts.pory"
+# 484 "data/maps/MossdeepCity/scripts.pory"
 	msgbox GiftAuroraTicketScript_Text_0
-# 485 "data/maps/MossdeepCity/scripts.pory"
+# 486 "data/maps/MossdeepCity/scripts.pory"
 	release
 	end
 
@@ -992,49 +994,49 @@ JIRACHI_quest_starter_Text_2:
 	.string "Let the stranger draw on the map?$"
 
 JIRACHI_quest_starter_Text_3:
-# 445 "data/maps/MossdeepCity/scripts.pory"
+# 446 "data/maps/MossdeepCity/scripts.pory"
 	.string "Go to Pacifidlog Town. A sailor there\n"
 	.string "will take you to where all wishes come\l"
 	.string "true!$"
 
 JIRACHI_quest_starter_Text_4:
-# 447 "data/maps/MossdeepCity/scripts.pory"
+# 448 "data/maps/MossdeepCity/scripts.pory"
 	.string "You don't know what you're missing out\n"
 	.string "on.$"
 
 JIRACHI_quest_starter_Text_5:
-# 450 "data/maps/MossdeepCity/scripts.pory"
+# 451 "data/maps/MossdeepCity/scripts.pory"
 	.string "But you'll need an Old Sea Map to find\n"
 	.string "your way there. Track one down, then\l"
 	.string "come back and show me. I'll point you\l"
 	.string "the right way.$"
 
 MossdeepCity_EventScript_Rocket_Text_0:
-# 459 "data/maps/MossdeepCity/scripts.pory"
+# 460 "data/maps/MossdeepCity/scripts.pory"
 	.string "A sealed launch rocket. Its systems are\n"
 	.string "dark, there's no way to board it yet.$"
 
 MossdeepCity_EventScript_Rocket_Text_1:
-# 463 "data/maps/MossdeepCity/scripts.pory"
+# 464 "data/maps/MossdeepCity/scripts.pory"
 	.string "The rocket is primed for launch.\n"
 	.string "Board it and fly to the Space Meteor?$"
 
 MossdeepCity_EventScript_Rocket_Text_2:
-# 465 "data/maps/MossdeepCity/scripts.pory"
+# 466 "data/maps/MossdeepCity/scripts.pory"
 	.string "You strap in. The countdown begins...$"
 
 MossdeepCity_EventScript_Rocket_Text_3:
-# 474 "data/maps/MossdeepCity/scripts.pory"
+# 475 "data/maps/MossdeepCity/scripts.pory"
 	.string "Maybe another day, then.$"
 
 GiftAuroraTicketScript_Text_0:
-# 483 "data/maps/MossdeepCity/scripts.pory"
+# 484 "data/maps/MossdeepCity/scripts.pory"
 	.string "The Aurora Ticket is yours already!\n"
 	.string "Birth Island calls those it senses want\l"
 	.string "to dance with the stars!$"
 
 GiftAuroraTicketScript_Text_1:
-# 488 "data/maps/MossdeepCity/scripts.pory"
+# 489 "data/maps/MossdeepCity/scripts.pory"
 	.string "Y'know.. being a man of science,\n"
 	.string "you're naturally skeptical of the\l"
 	.string "supernatural.\l"
@@ -1042,6 +1044,6 @@ GiftAuroraTicketScript_Text_1:
 	.string "Become a believer.$"
 
 GiftAuroraTicketScript_Text_2:
-# 494 "data/maps/MossdeepCity/scripts.pory"
+# 495 "data/maps/MossdeepCity/scripts.pory"
 	.string "Board the ferry at Lilycove City.\n"
 	.string "Our eyes can't lie to us... Right?$"

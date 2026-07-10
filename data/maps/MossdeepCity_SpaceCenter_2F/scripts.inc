@@ -996,10 +996,10 @@ DIALGA_quest_starter::
 	switch VAR_RESULT
 # 505 "data/maps/MossdeepCity_SpaceCenter_2F/scripts.pory"
 	case YES, DIALGA_quest_starter_6
-# 510 "data/maps/MossdeepCity_SpaceCenter_2F/scripts.pory"
+# 511 "data/maps/MossdeepCity_SpaceCenter_2F/scripts.pory"
 	case NO, DIALGA_quest_starter_7
 DIALGA_quest_starter_4:
-# 513 "data/maps/MossdeepCity_SpaceCenter_2F/scripts.pory"
+# 514 "data/maps/MossdeepCity_SpaceCenter_2F/scripts.pory"
 	release
 	end
 
@@ -1016,13 +1016,15 @@ DIALGA_quest_starter_6:
 # 507 "data/maps/MossdeepCity_SpaceCenter_2F/scripts.pory"
 	giveitem ITEM_ADAMANT_ORB
 # 508 "data/maps/MossdeepCity_SpaceCenter_2F/scripts.pory"
-	waitfanfare
+	startquest QUEST_DIALGA
 # 509 "data/maps/MossdeepCity_SpaceCenter_2F/scripts.pory"
+	waitfanfare
+# 510 "data/maps/MossdeepCity_SpaceCenter_2F/scripts.pory"
 	msgbox DIALGA_quest_starter_Text_3
 	goto DIALGA_quest_starter_4
 
 DIALGA_quest_starter_7:
-# 511 "data/maps/MossdeepCity_SpaceCenter_2F/scripts.pory"
+# 512 "data/maps/MossdeepCity_SpaceCenter_2F/scripts.pory"
 	msgbox DIALGA_quest_starter_Text_4
 	goto DIALGA_quest_starter_4
 
@@ -1050,10 +1052,10 @@ DIALGA_quest_starter_Text_2:
 	.string "originated... and don't be late.$"
 
 DIALGA_quest_starter_Text_3:
-# 509 "data/maps/MossdeepCity_SpaceCenter_2F/scripts.pory"
+# 510 "data/maps/MossdeepCity_SpaceCenter_2F/scripts.pory"
 	.string "Past, present, future... to the Roar of\n"
 	.string "Time, they're all the same page. Go.$"
 
 DIALGA_quest_starter_Text_4:
-# 511 "data/maps/MossdeepCity_SpaceCenter_2F/scripts.pory"
+# 512 "data/maps/MossdeepCity_SpaceCenter_2F/scripts.pory"
 	.string "Hm. I suppose it can wait. It always can.$"

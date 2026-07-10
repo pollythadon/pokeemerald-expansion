@@ -77,10 +77,10 @@ ARCEUS_quest_starter::
 	compare VAR_RESULT, 0
 	goto_if_ne ARCEUS_quest_starter_8
 ARCEUS_quest_starter_6:
-# 51 "data/maps/SootopolisCity_House2/scripts.pory"
+# 52 "data/maps/SootopolisCity_House2/scripts.pory"
 	msgbox ARCEUS_quest_starter_Text_2
 ARCEUS_quest_starter_4:
-# 54 "data/maps/SootopolisCity_House2/scripts.pory"
+# 55 "data/maps/SootopolisCity_House2/scripts.pory"
 	releaseall
 	end
 
@@ -97,6 +97,8 @@ ARCEUS_quest_starter_5:
 # 47 "data/maps/SootopolisCity_House2/scripts.pory"
 	setflag FLAG_ARCEUS_ROCKET_UNLOCKED
 # 48 "data/maps/SootopolisCity_House2/scripts.pory"
+	startquest QUEST_ARCEUS
+# 49 "data/maps/SootopolisCity_House2/scripts.pory"
 	msgbox ARCEUS_quest_starter_Text_1
 	goto ARCEUS_quest_starter_4
 
@@ -121,7 +123,7 @@ ARCEUS_quest_starter_Text_0:
 	.string "heavens are yours to reach.$"
 
 ARCEUS_quest_starter_Text_1:
-# 48 "data/maps/SootopolisCity_House2/scripts.pory"
+# 49 "data/maps/SootopolisCity_House2/scripts.pory"
 	.string "...Time. Space. Antimatter. All three\n"
 	.string "answer to you.\p"
 	.string "Then it's true, you're ready. The rocket\n"
@@ -129,7 +131,7 @@ ARCEUS_quest_starter_Text_1:
 	.string "the sky, and meet your Maker.$"
 
 ARCEUS_quest_starter_Text_2:
-# 51 "data/maps/SootopolisCity_House2/scripts.pory"
+# 52 "data/maps/SootopolisCity_House2/scripts.pory"
 	.string "They say three beasts created the\n"
 	.string "three pillars of reality, one for time,\l"
 	.string "one for space, one for the void\l"

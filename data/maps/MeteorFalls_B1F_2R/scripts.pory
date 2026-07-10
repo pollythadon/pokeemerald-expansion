@@ -55,6 +55,7 @@ script PALKIAWon_or_Caught {
     removeobject(2)
     setflag(FLAG_PALKIA_BATTLE)
     setflag (FLAG_PALKIA_DFTD)
+    completequest(QUEST_PALKIA)
     fadescreenswapbuffers(FADE_FROM_WHITE)
     msgbox(format("The horizon snaps back into place. The world feels... measured again."))
     return

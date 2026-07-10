@@ -52,6 +52,8 @@ script GIRATINAWon_or_Caught {
     fadescreenswapbuffers(FADE_TO_BLACK)
     removeobject(1)
     setvar (VAR_TEMP_0, 1)
+    setflag(FLAG_GIRATINA_DFTD)
+    completequest(QUEST_GIRATINA)
     setflag(FLAG_GIRATINA_BATTLE)
     fadescreenswapbuffers(FADE_FROM_BLACK)
     msgbox(format("The wound in the world seals. The shadows point the right way again... mostly."))

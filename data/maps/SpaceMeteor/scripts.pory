@@ -40,6 +40,7 @@ script ARCEUSWon_or_Caught {
     removeobject(1)
     setflag(FLAG_ARCEUS_BATTLE)
     setflag(FLAG_ARCEUS_DFTD)
+    completequest(QUEST_ARCEUS)
     fadescreen(FADE_FROM_WHITE)
     msgbox(format("The gold light fades. Whatever you just stood before, the universe feels a little smaller without it watching."))
     return

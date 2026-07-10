@@ -22,21 +22,17 @@ static const u8 sQuestDesc_Palkia[] = _("Bring the Lustrous Orb to\nMeteor Falls
 static const u8 sQuestDone_Palkia[] = _("Space itself folded as you faced\nPalkia in Meteor Falls.");
 static const u8 sQuestMap_Palkia[] = _("Meteor Falls");
 
-// QUEST_GIRATINA (2 states)
+// QUEST_GIRATINA
 static const u8 sQuestName_Giratina[] = _("The Renegade");
-static const u8 sQuestDesc_Giratina_0[] = _("Dig up the Griseous Core from\nthe marked spot near Ever Grande.");
-static const u8 sQuestDesc_Giratina_1[] = _("Show the Griseous Core to the\ntraveler in Ever Grande City.");
+static const u8 sQuestDesc_Giratina[] = _("Take the Griseous Core to the\ntraveler in Ever Grande City.");
 static const u8 sQuestDone_Giratina[] = _("You crossed into the Distortion\nWorld and faced Giratina.");
-static const u8 sQuestMap_Giratina_0[] = _("Ever Grande City");
-static const u8 sQuestMap_Giratina_1[] = _("Ever Grande City");
+static const u8 sQuestMap_Giratina[] = _("Ever Grande City");
 
-// QUEST_ARCEUS (2 states)
+// QUEST_ARCEUS
 static const u8 sQuestName_Arceus[] = _("The Original One");
-static const u8 sQuestDesc_Arceus_0[] = _("Catch Dialga, Palkia and Giratina,\nthen see the elder in Sootopolis.");
-static const u8 sQuestDesc_Arceus_1[] = _("Board the rocket in Mossdeep City\nto reach the Space Meteor.");
+static const u8 sQuestDesc_Arceus[] = _("Board the rocket in Mossdeep City\nto reach the Space Meteor.");
 static const u8 sQuestDone_Arceus[] = _("You ascended to the Space Meteor\nand faced Arceus itself.");
-static const u8 sQuestMap_Arceus_0[] = _("Sootopolis City");
-static const u8 sQuestMap_Arceus_1[] = _("Mossdeep City");
+static const u8 sQuestMap_Arceus[] = _("Mossdeep City");
 
 // QUEST_JIRACHI (2 states)
 static const u8 sQuestName_Jirachi[] = _("The Wishmaker");

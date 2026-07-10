@@ -769,6 +769,7 @@ script GiftOldSeaMapScript {
                   "I found this map in a bottle washed up on the beach.\l"
                   "This map will surely guide you to an island far, far away."))
     giveitem(ITEM_OLD_SEA_MAP)
+    startquest(QUEST_JIRACHI)
     setflag(FLAG_RECEIVED_OLD_SEA_MAP)
     setflag(FLAG_ENABLE_SHIP_FARAWAY_ISLAND)
     msgbox(format("Present this map at the ferry in town.\n"

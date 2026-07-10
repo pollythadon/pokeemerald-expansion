@@ -3207,3 +3207,10 @@
     call_if_eq VAR_RESULT, FALSE, \dest
     .endm
 
+
+	@ Advances a complex quest's state variable WITHOUT the announcement/menu that
+	@ updatequest shows -- for use mid-cutscene where opening the menu is jarring.
+	.macro bumpquest questId:req
+	.byte SCR_OP_UPDATEQUEST
+	.byte \questId
+	.endm

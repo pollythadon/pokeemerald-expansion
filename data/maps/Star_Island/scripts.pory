@@ -66,6 +66,7 @@ script JIRACHIWon_or_Caught {
     removeobject(1)
     setflag (FLAG_JIRACHI_BATTLE)
     setflag (FLAG_JIRACHI_DFTD)
+    completequest(QUEST_JIRACHI)
     fadescreen(FADE_FROM_BLACK)
     msgbox(format("My wish was to catch a Rare Pokémon."))
     return

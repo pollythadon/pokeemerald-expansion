@@ -505,6 +505,7 @@ script DIALGA_quest_starter {
         case YES:
             playfanfare(MUS_OBTAIN_ITEM)
             giveitem(ITEM_ADAMANT_ORB)
+            startquest(QUEST_DIALGA)
             waitfanfare
             msgbox(format("Past, present, future... to the Roar of Time, they're all the same page. Go."))
         case NO:

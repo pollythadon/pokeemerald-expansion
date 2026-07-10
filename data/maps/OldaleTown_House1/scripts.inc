@@ -42,10 +42,10 @@ CELEBIquest_starter::
 	switch VAR_RESULT
 # 30 "data/maps/OldaleTown_House1/scripts.pory"
 	case YES, CELEBIquest_starter_6
-# 35 "data/maps/OldaleTown_House1/scripts.pory"
+# 36 "data/maps/OldaleTown_House1/scripts.pory"
 	case NO, CELEBIquest_starter_7
 CELEBIquest_starter_4:
-# 38 "data/maps/OldaleTown_House1/scripts.pory"
+# 39 "data/maps/OldaleTown_House1/scripts.pory"
 	release
 	end
 
@@ -64,11 +64,13 @@ CELEBIquest_starter_6:
 # 33 "data/maps/OldaleTown_House1/scripts.pory"
 	giveitem ITEM_TEA
 # 34 "data/maps/OldaleTown_House1/scripts.pory"
+	startquest QUEST_CELEBI
+# 35 "data/maps/OldaleTown_House1/scripts.pory"
 	msgbox CELEBIquest_starter_Text_3
 	goto CELEBIquest_starter_4
 
 CELEBIquest_starter_7:
-# 36 "data/maps/OldaleTown_House1/scripts.pory"
+# 37 "data/maps/OldaleTown_House1/scripts.pory"
 	msgbox CELEBIquest_starter_Text_4
 	goto CELEBIquest_starter_4
 
@@ -91,10 +93,10 @@ CELEBIquest_starter_Text_2:
 	.string "Want some?$"
 
 CELEBIquest_starter_Text_3:
-# 34 "data/maps/OldaleTown_House1/scripts.pory"
+# 35 "data/maps/OldaleTown_House1/scripts.pory"
 	.string "Sammy also told me this Pokémon has a\n"
 	.string "thing for forests. Bye now.$"
 
 CELEBIquest_starter_Text_4:
-# 36 "data/maps/OldaleTown_House1/scripts.pory"
+# 37 "data/maps/OldaleTown_House1/scripts.pory"
 	.string "I understand...$"

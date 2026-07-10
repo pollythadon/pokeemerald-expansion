@@ -151,6 +151,7 @@ script MEWTWO_quest_starter {
             clearflag(FLAG_MEWTWO_BATTLE)
             giveitem(ITEM_MEWTWONITE_X)
             giveitem(ITEM_MEWTWONITE_Y)
+            startquest(QUEST_MEWTWO)
             msgbox(format("Don't expect gratitude. It owes us nothing. Honestly... Less than nothing."))
         case NO:
             msgbox(format("...Maybe that's mercy. For both of you."))

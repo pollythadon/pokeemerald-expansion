@@ -1596,10 +1596,10 @@ CRESSELIA_quest_starter::
 	switch VAR_RESULT
 # 808 "data/maps/DewfordTown/scripts.pory"
 	case YES, CRESSELIA_quest_starter_6
-# 814 "data/maps/DewfordTown/scripts.pory"
+# 815 "data/maps/DewfordTown/scripts.pory"
 	case NO, CRESSELIA_quest_starter_7
 CRESSELIA_quest_starter_4:
-# 817 "data/maps/DewfordTown/scripts.pory"
+# 818 "data/maps/DewfordTown/scripts.pory"
 	release
 	end
 
@@ -1618,13 +1618,15 @@ CRESSELIA_quest_starter_6:
 # 811 "data/maps/DewfordTown/scripts.pory"
 	giveitem ITEM_DREAD_PLATE
 # 812 "data/maps/DewfordTown/scripts.pory"
-	waitfanfare
+	startquest QUEST_CRESSELIA
 # 813 "data/maps/DewfordTown/scripts.pory"
+	waitfanfare
+# 814 "data/maps/DewfordTown/scripts.pory"
 	msgbox CRESSELIA_quest_starter_Text_3
 	goto CRESSELIA_quest_starter_4
 
 CRESSELIA_quest_starter_7:
-# 815 "data/maps/DewfordTown/scripts.pory"
+# 816 "data/maps/DewfordTown/scripts.pory"
 	msgbox CRESSELIA_quest_starter_Text_4
 	goto CRESSELIA_quest_starter_4
 
@@ -1658,10 +1660,10 @@ CRESSELIA_quest_starter_Text_2:
 	.string "the water, and you may meet her.$"
 
 CRESSELIA_quest_starter_Text_3:
-# 813 "data/maps/DewfordTown/scripts.pory"
+# 814 "data/maps/DewfordTown/scripts.pory"
 	.string "May your dreams be soft ones from now\n"
 	.string "on.$"
 
 CRESSELIA_quest_starter_Text_4:
-# 815 "data/maps/DewfordTown/scripts.pory"
+# 816 "data/maps/DewfordTown/scripts.pory"
 	.string "The offer stands. The moon is patient.$"

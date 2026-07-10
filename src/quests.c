@@ -606,26 +606,26 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_GIRATINA] =
 	{
 		.name = sQuestName_Giratina,
-		.desc = {sQuestDesc_Giratina_0, sQuestDesc_Giratina_1},
+		.desc = {sQuestDesc_Giratina},
 		.donedesc = sQuestDone_Giratina,
-		.map = {sQuestMap_Giratina_0, sQuestMap_Giratina_1},
-		.sprite = {SPECIES_GIRATINA, SPECIES_GIRATINA},
-		.spritetype = {PKMN, PKMN},
+		.map = {sQuestMap_Giratina},
+		.sprite = {SPECIES_GIRATINA},
+		.spritetype = {PKMN},
 		.subquests = NULL,
 		.numSubquests = 0,
-		.questVariable = VAR_DEWFORD_TOWN_STATE, // repurposed unused var
+		.questVariable = 0,
 	},
 	[QUEST_ARCEUS] =
 	{
 		.name = sQuestName_Arceus,
-		.desc = {sQuestDesc_Arceus_0, sQuestDesc_Arceus_1},
+		.desc = {sQuestDesc_Arceus},
 		.donedesc = sQuestDone_Arceus,
-		.map = {sQuestMap_Arceus_0, sQuestMap_Arceus_1},
-		.sprite = {SPECIES_ARCEUS, SPECIES_ARCEUS},
-		.spritetype = {PKMN, PKMN},
+		.map = {sQuestMap_Arceus},
+		.sprite = {SPECIES_ARCEUS},
+		.spritetype = {PKMN},
 		.subquests = NULL,
 		.numSubquests = 0,
-		.questVariable = VAR_VERDANTURF_TOWN_STATE, // repurposed unused var
+		.questVariable = 0,
 	},
 	[QUEST_JIRACHI] =
 	{

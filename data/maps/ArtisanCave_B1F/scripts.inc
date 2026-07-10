@@ -131,40 +131,44 @@ MEWTWOCaught::
 # 60 "data/maps/ArtisanCave_B1F/scripts.pory"
 	setflag FLAG_MEWTWO_DFTD
 # 61 "data/maps/ArtisanCave_B1F/scripts.pory"
-	fadescreenswapbuffers FADE_FROM_BLACK
+	completequest QUEST_MEWTWO
 # 62 "data/maps/ArtisanCave_B1F/scripts.pory"
+	fadescreenswapbuffers FADE_FROM_BLACK
+# 63 "data/maps/ArtisanCave_B1F/scripts.pory"
 	msgbox MEWTWOCaught_Text_0
 	return
 
 
 MEWTWOWon::
-# 67 "data/maps/ArtisanCave_B1F/scripts.pory"
-	fadescreenswapbuffers FADE_TO_BLACK
 # 68 "data/maps/ArtisanCave_B1F/scripts.pory"
-	removeobject 2
+	fadescreenswapbuffers FADE_TO_BLACK
 # 69 "data/maps/ArtisanCave_B1F/scripts.pory"
-	setflag FLAG_MEWTWO_BATTLE
+	removeobject 2
 # 70 "data/maps/ArtisanCave_B1F/scripts.pory"
-	setflag FLAG_MEWTWO_DFTD
+	setflag FLAG_MEWTWO_BATTLE
 # 71 "data/maps/ArtisanCave_B1F/scripts.pory"
-	fadescreenswapbuffers FADE_FROM_BLACK
+	setflag FLAG_MEWTWO_DFTD
 # 72 "data/maps/ArtisanCave_B1F/scripts.pory"
+	completequest QUEST_MEWTWO
+# 73 "data/maps/ArtisanCave_B1F/scripts.pory"
+	fadescreenswapbuffers FADE_FROM_BLACK
+# 74 "data/maps/ArtisanCave_B1F/scripts.pory"
 	msgbox MEWTWOCaught_Text_0
 	return
 
 
 MEWTWORanAway::
-# 77 "data/maps/ArtisanCave_B1F/scripts.pory"
-	playmoncry SPECIES_MEWTWO, CRY_MODE_ENCOUNTER
-# 78 "data/maps/ArtisanCave_B1F/scripts.pory"
-	delay 20
 # 79 "data/maps/ArtisanCave_B1F/scripts.pory"
-	fadescreenswapbuffers FADE_TO_BLACK
+	playmoncry SPECIES_MEWTWO, CRY_MODE_ENCOUNTER
 # 80 "data/maps/ArtisanCave_B1F/scripts.pory"
-	hideobjectat 2, MAP_ARTISAN_CAVE_B1F
+	delay 20
 # 81 "data/maps/ArtisanCave_B1F/scripts.pory"
-	fadescreenswapbuffers FADE_FROM_BLACK
+	fadescreenswapbuffers FADE_TO_BLACK
 # 82 "data/maps/ArtisanCave_B1F/scripts.pory"
+	hideobjectat 2, MAP_ARTISAN_CAVE_B1F
+# 83 "data/maps/ArtisanCave_B1F/scripts.pory"
+	fadescreenswapbuffers FADE_FROM_BLACK
+# 84 "data/maps/ArtisanCave_B1F/scripts.pory"
 	msgbox MEWTWORanAway_Text_0
 	return
 
@@ -194,11 +198,11 @@ Legendary_EventScript_MEWTWO_Text_4:
 	.string "behind.$"
 
 MEWTWOCaught_Text_0:
-# 62 "data/maps/ArtisanCave_B1F/scripts.pory"
+# 63 "data/maps/ArtisanCave_B1F/scripts.pory"
 	.string "I see. I was wrong about you. You are\n"
 	.string "not like the others.$"
 
 MEWTWORanAway_Text_0:
-# 82 "data/maps/ArtisanCave_B1F/scripts.pory"
+# 84 "data/maps/ArtisanCave_B1F/scripts.pory"
 	.string "All you humans are the same. I will not\n"
 	.string "be caught again.$"

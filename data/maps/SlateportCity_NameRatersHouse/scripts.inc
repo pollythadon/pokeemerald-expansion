@@ -236,10 +236,10 @@ DARKRAI_quest_starter::
 	switch VAR_RESULT
 # 130 "data/maps/SlateportCity_NameRatersHouse/scripts.pory"
 	case YES, DARKRAI_quest_starter_6
-# 136 "data/maps/SlateportCity_NameRatersHouse/scripts.pory"
+# 137 "data/maps/SlateportCity_NameRatersHouse/scripts.pory"
 	case NO, DARKRAI_quest_starter_7
 DARKRAI_quest_starter_4:
-# 139 "data/maps/SlateportCity_NameRatersHouse/scripts.pory"
+# 140 "data/maps/SlateportCity_NameRatersHouse/scripts.pory"
 	release
 	end
 
@@ -258,13 +258,15 @@ DARKRAI_quest_starter_6:
 # 133 "data/maps/SlateportCity_NameRatersHouse/scripts.pory"
 	giveitem ITEM_DARKRANITE
 # 134 "data/maps/SlateportCity_NameRatersHouse/scripts.pory"
-	waitfanfare
+	startquest QUEST_DARKRAI
 # 135 "data/maps/SlateportCity_NameRatersHouse/scripts.pory"
+	waitfanfare
+# 136 "data/maps/SlateportCity_NameRatersHouse/scripts.pory"
 	msgbox DARKRAI_quest_starter_Text_3
 	goto DARKRAI_quest_starter_4
 
 DARKRAI_quest_starter_7:
-# 137 "data/maps/SlateportCity_NameRatersHouse/scripts.pory"
+# 138 "data/maps/SlateportCity_NameRatersHouse/scripts.pory"
 	msgbox DARKRAI_quest_starter_Text_4
 	goto DARKRAI_quest_starter_4
 
@@ -296,11 +298,11 @@ DARKRAI_quest_starter_Text_2:
 	.string "it.$"
 
 DARKRAI_quest_starter_Text_3:
-# 135 "data/maps/SlateportCity_NameRatersHouse/scripts.pory"
+# 136 "data/maps/SlateportCity_NameRatersHouse/scripts.pory"
 	.string "Maybe you'll be the first face that\n"
 	.string "didn't run from it.$"
 
 DARKRAI_quest_starter_Text_4:
-# 137 "data/maps/SlateportCity_NameRatersHouse/scripts.pory"
+# 138 "data/maps/SlateportCity_NameRatersHouse/scripts.pory"
 	.string "That's alright. Not everyone's ready to\n"
 	.string "meet the dark.$"

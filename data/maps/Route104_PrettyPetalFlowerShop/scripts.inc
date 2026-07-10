@@ -202,10 +202,10 @@ SHAYMIN_quest_starter::
 	switch VAR_RESULT
 # 110 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
 	case YES, SHAYMIN_quest_starter_6
-# 116 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+# 117 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
 	case NO, SHAYMIN_quest_starter_7
 SHAYMIN_quest_starter_4:
-# 119 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+# 120 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
 	releaseall
 	end
 
@@ -224,11 +224,13 @@ SHAYMIN_quest_starter_6:
 # 113 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
 	giveitem ITEM_GRACIDEA
 # 114 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	startquest QUEST_SHAYMIN
+# 115 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
 	msgbox SHAYMIN_quest_starter_Text_2
 	goto SHAYMIN_quest_starter_4
 
 SHAYMIN_quest_starter_7:
-# 117 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+# 118 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
 	msgbox SHAYMIN_quest_starter_Text_3
 	goto SHAYMIN_quest_starter_4
 
@@ -253,13 +255,13 @@ SHAYMIN_quest_starter_Text_1:
 	.string "grateful heart. Will you?$"
 
 SHAYMIN_quest_starter_Text_2:
-# 114 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+# 115 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
 	.string "There. Keep it in bloom, and keep your\n"
 	.string "heart the same.\p"
 	.string "Gratitude is the only thing that ever\n"
 	.string "coaxes it out. Go gently.$"
 
 SHAYMIN_quest_starter_Text_3:
-# 117 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+# 118 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
 	.string "The flowers will keep. And so will the\n"
 	.string "little one hiding in them.$"

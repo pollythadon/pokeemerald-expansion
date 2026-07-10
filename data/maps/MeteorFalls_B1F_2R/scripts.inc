@@ -121,24 +121,26 @@ PALKIAWon_or_Caught::
 # 57 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
 	setflag FLAG_PALKIA_DFTD
 # 58 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
-	fadescreenswapbuffers FADE_FROM_WHITE
+	completequest QUEST_PALKIA
 # 59 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
+	fadescreenswapbuffers FADE_FROM_WHITE
+# 60 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
 	msgbox PALKIAWon_or_Caught_Text_0
 	return
 
 
 PALKIARanAway::
-# 64 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
-	playmoncry SPECIES_PALKIA, CRY_MODE_ENCOUNTER
 # 65 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
-	delay 20
+	playmoncry SPECIES_PALKIA, CRY_MODE_ENCOUNTER
 # 66 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
-	fadescreenswapbuffers FADE_TO_WHITE
+	delay 20
 # 67 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
-	hideobjectat 2, MAP_METEOR_FALLS_B1F_2R
+	fadescreenswapbuffers FADE_TO_WHITE
 # 68 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
-	fadescreenswapbuffers FADE_FROM_WHITE
+	hideobjectat 2, MAP_METEOR_FALLS_B1F_2R
 # 69 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
+	fadescreenswapbuffers FADE_FROM_WHITE
+# 70 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
 	msgbox PALKIARanAway_Text_0
 	return
 
@@ -177,11 +179,11 @@ Legendary_EventScript_PALKIA_Text_6:
 	.string "refuses to stay still...$"
 
 PALKIAWon_or_Caught_Text_0:
-# 59 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
+# 60 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
 	.string "The horizon snaps back into place. The\n"
 	.string "world feels... measured again.$"
 
 PALKIARanAway_Text_0:
-# 69 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
+# 70 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
 	.string "It folded the space between us and was\n"
 	.string "simply... elsewhere.$"

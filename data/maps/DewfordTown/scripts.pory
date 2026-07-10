@@ -809,6 +809,7 @@ script CRESSELIA_quest_starter {
             setflag(FLAG_CRESSELIA_GIFT)
             playfanfare(MUS_OBTAIN_ITEM)
             giveitem(ITEM_DREAD_PLATE)
+            startquest(QUEST_CRESSELIA)
             waitfanfare
             msgbox(format("May your dreams be soft ones from now on."))
         case NO:

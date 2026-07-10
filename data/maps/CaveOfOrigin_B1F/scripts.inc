@@ -361,24 +361,26 @@ DIALGAWon_or_Caught::
 # 178 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	setflag FLAG_DIALGA_DFTD
 # 179 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	fadescreenswapbuffers FADE_FROM_WHITE
+	completequest QUEST_DIALGA
 # 180 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	fadescreenswapbuffers FADE_FROM_WHITE
+# 181 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	msgbox DIALGAWon_or_Caught_Text_0
 	return
 
 
 DIALGARanAway::
-# 185 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	playmoncry SPECIES_DIALGA, CRY_MODE_ENCOUNTER
 # 186 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	delay 20
+	playmoncry SPECIES_DIALGA, CRY_MODE_ENCOUNTER
 # 187 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	fadescreenswapbuffers FADE_TO_WHITE
+	delay 20
 # 188 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	hideobjectat 3, MAP_CAVE_OF_ORIGIN_B1F
+	fadescreenswapbuffers FADE_TO_WHITE
 # 189 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	fadescreenswapbuffers FADE_FROM_WHITE
+	hideobjectat 3, MAP_CAVE_OF_ORIGIN_B1F
 # 190 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	fadescreenswapbuffers FADE_FROM_WHITE
+# 191 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	msgbox DIALGARanAway_Text_0
 	return
 
@@ -417,12 +419,12 @@ Legendary_EventScript_DIALGA_Text_6:
 	.string "breath.$"
 
 DIALGAWon_or_Caught_Text_0:
-# 180 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+# 181 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	.string "The clock starts again. However much\n"
 	.string "time I just lost... I think it was worth\l"
 	.string "it.$"
 
 DIALGARanAway_Text_0:
-# 190 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+# 191 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	.string "Gone in an instant. To It, my whole life\n"
 	.string "is just an instant.$"

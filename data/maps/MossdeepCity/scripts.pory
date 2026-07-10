@@ -442,6 +442,7 @@ script JIRACHI_quest_starter {
         switch (var(VAR_RESULT)) {
             case YES:
                  setflag (FLAG_JIRACHI_GIFT)
+                 bumpquest(QUEST_JIRACHI)
                  msgbox(format("Go to Pacifidlog Town. A sailor there will take you to where all wishes come true!"))
             case NO:
                  msgbox(format("You don't know what you're missing out on."))

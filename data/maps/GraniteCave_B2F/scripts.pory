@@ -59,6 +59,7 @@ script DARKRAICaught {
     removeobject(10)
     setflag(FLAG_DARKRAI_BATTLE)
     setflag(FLAG_DARKRAI_DFTD)
+    completequest(QUEST_DARKRAI)
     fadescreenswapbuffers(FADE_FROM_BLACK)
     msgbox(format("For the first time, it didn't have to slip away into the dark alone. It almost looks... relieved."))
     return
@@ -69,6 +70,7 @@ script DARKRAIWon {
     removeobject(10)
     setflag(FLAG_DARKRAI_BATTLE)
     setflag(FLAG_DARKRAI_DFTD)
+    completequest(QUEST_DARKRAI)
     fadescreenswapbuffers(FADE_FROM_BLACK)
     msgbox(format("You wake on the cold ground. No nightmare came. Maybe it just wanted someone to stay until the dream was over."))
     return

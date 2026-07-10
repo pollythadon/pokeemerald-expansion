@@ -45,6 +45,7 @@ script ARCEUS_quest_starter {
     if (checkpartymon(SPECIES_DIALGA) && checkpartymon(SPECIES_PALKIA) && checkpartymon(SPECIES_GIRATINA)) {
         playse(SE_PIN)
         setflag(FLAG_ARCEUS_ROCKET_UNLOCKED)
+        startquest(QUEST_ARCEUS)
         msgbox(format("...Time. Space. Antimatter. All three answer to you.\p"
                       "Then it's true, you're ready. The rocket is yours. Ride it to the meteor beyond the sky, and meet your Maker."))
     } else {

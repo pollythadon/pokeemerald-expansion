@@ -131,7 +131,7 @@ GriseousCore_DigUp::
 # 73 "data/maps/EverGrandeCity/scripts.pory"
 	goto_if_unset FLAG_LEGENDARY_BTL, GriseousCore_DigUp_5
 GriseousCore_DigUp_4:
-# 84 "data/maps/EverGrandeCity/scripts.pory"
+# 85 "data/maps/EverGrandeCity/scripts.pory"
 	releaseall
 	end
 
@@ -147,7 +147,7 @@ GriseousCore_DigUp_5:
 	switch VAR_RESULT
 # 77 "data/maps/EverGrandeCity/scripts.pory"
 	case YES, GriseousCore_DigUp_8
-# 80 "data/maps/EverGrandeCity/scripts.pory"
+# 81 "data/maps/EverGrandeCity/scripts.pory"
 	case NO, GriseousCore_DigUp_9
 	goto GriseousCore_DigUp_4
 
@@ -155,11 +155,13 @@ GriseousCore_DigUp_8:
 # 78 "data/maps/EverGrandeCity/scripts.pory"
 	giveitem ITEM_GRISEOUS_CORE
 # 79 "data/maps/EverGrandeCity/scripts.pory"
+	startquest QUEST_GIRATINA
+# 80 "data/maps/EverGrandeCity/scripts.pory"
 	msgbox GriseousCore_DigUp_Text_1
 	goto GriseousCore_DigUp_4
 
 GriseousCore_DigUp_9:
-# 81 "data/maps/EverGrandeCity/scripts.pory"
+# 82 "data/maps/EverGrandeCity/scripts.pory"
 	msgbox GriseousCore_DigUp_Text_2
 	goto GriseousCore_DigUp_4
 
@@ -196,9 +198,9 @@ GriseousCore_DigUp_Text_0:
 	.string "Would you like to dig it up?$"
 
 GriseousCore_DigUp_Text_1:
-# 79 "data/maps/EverGrandeCity/scripts.pory"
+# 80 "data/maps/EverGrandeCity/scripts.pory"
 	.string "What!? The writing on the sign changed!$"
 
 GriseousCore_DigUp_Text_2:
-# 81 "data/maps/EverGrandeCity/scripts.pory"
+# 82 "data/maps/EverGrandeCity/scripts.pory"
 	.string "It's best I mind my business$"

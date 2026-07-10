@@ -152,6 +152,7 @@ script SHAYMINWon_or_Caught {
     hideobjectat(OBJ_SHAYMIN_SKY, MAP_FLOWER_PARADISE)
     setflag(FLAG_SHAYMIN_BATTLE)   // keep the Sky Forme hidden for good
     setflag(FLAG_SHAYMIN_DFTD)     // Shaymin is settled -- no more encounters (also hides the Land Forme, whose flag is FLAG_SHAYMIN_DFTD)
+    completequest(QUEST_SHAYMIN)
     fadescreenswapbuffers(FADE_FROM_WHITE)
     msgbox(format("Flowers spring up in a ring where it stood, a small thank-you left behind.\p"
                   "Give it the Gracidea any time to shift it between its Land and Sky Formes. Kindness always comes back in bloom."))

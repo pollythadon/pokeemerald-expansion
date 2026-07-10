@@ -251,51 +251,53 @@ CRESSELIAWon_or_Caught::
 # 122 "data/maps/Route126/scripts.pory"
 	setflag FLAG_CRESSELIA_DFTD
 # 123 "data/maps/Route126/scripts.pory"
-	fadescreenswapbuffers FADE_FROM_WHITE
+	completequest QUEST_CRESSELIA
 # 124 "data/maps/Route126/scripts.pory"
+	fadescreenswapbuffers FADE_FROM_WHITE
+# 125 "data/maps/Route126/scripts.pory"
 	msgbox CRESSELIAWon_or_Caught_Text_0
 	return
 
 
 CRESSELIARanAway::
-# 129 "data/maps/Route126/scripts.pory"
-	playmoncry SPECIES_CRESSELIA, CRY_MODE_ENCOUNTER
 # 130 "data/maps/Route126/scripts.pory"
-	delay 20
+	playmoncry SPECIES_CRESSELIA, CRY_MODE_ENCOUNTER
 # 131 "data/maps/Route126/scripts.pory"
-	fadescreenswapbuffers FADE_TO_WHITE
+	delay 20
 # 132 "data/maps/Route126/scripts.pory"
-	hideobjectat 10, MAP_ROUTE126
+	fadescreenswapbuffers FADE_TO_WHITE
 # 133 "data/maps/Route126/scripts.pory"
-	fadescreenswapbuffers FADE_FROM_WHITE
+	hideobjectat 10, MAP_ROUTE126
 # 134 "data/maps/Route126/scripts.pory"
+	fadescreenswapbuffers FADE_FROM_WHITE
+# 135 "data/maps/Route126/scripts.pory"
 	msgbox CRESSELIARanAway_Text_0
 	return
 
 
-# 138 "data/maps/Route126/scripts.pory"
+# 139 "data/maps/Route126/scripts.pory"
 CRESSELIA_Descend:
-# 139 "data/maps/Route126/scripts.pory"
-	walk_down
-# 139 "data/maps/Route126/scripts.pory"
-	walk_down
-# 139 "data/maps/Route126/scripts.pory"
-	walk_down
-# 139 "data/maps/Route126/scripts.pory"
-	walk_down
-# 139 "data/maps/Route126/scripts.pory"
-	walk_down
-# 139 "data/maps/Route126/scripts.pory"
-	walk_down
-# 139 "data/maps/Route126/scripts.pory"
-	walk_down
-# 139 "data/maps/Route126/scripts.pory"
-	walk_down
-# 139 "data/maps/Route126/scripts.pory"
+# 140 "data/maps/Route126/scripts.pory"
 	walk_down
 # 140 "data/maps/Route126/scripts.pory"
-	delay_16
+	walk_down
+# 140 "data/maps/Route126/scripts.pory"
+	walk_down
+# 140 "data/maps/Route126/scripts.pory"
+	walk_down
+# 140 "data/maps/Route126/scripts.pory"
+	walk_down
+# 140 "data/maps/Route126/scripts.pory"
+	walk_down
+# 140 "data/maps/Route126/scripts.pory"
+	walk_down
+# 140 "data/maps/Route126/scripts.pory"
+	walk_down
+# 140 "data/maps/Route126/scripts.pory"
+	walk_down
 # 141 "data/maps/Route126/scripts.pory"
+	delay_16
+# 142 "data/maps/Route126/scripts.pory"
 	face_player
 	step_end
 
@@ -339,13 +341,13 @@ Legendary_EventScript_CRESSELIA_Text_6:
 	.string "the right token.$"
 
 CRESSELIAWon_or_Caught_Text_0:
-# 124 "data/maps/Route126/scripts.pory"
+# 125 "data/maps/Route126/scripts.pory"
 	.string "A lone Lunar Wing settles on the shore\n"
 	.string "where she stood. You feel rested in a\l"
 	.string "way sleep never quite manages.$"
 
 CRESSELIARanAway_Text_0:
-# 134 "data/maps/Route126/scripts.pory"
+# 135 "data/maps/Route126/scripts.pory"
 	.string "She rises back into the moonlight and\n"
 	.string "fades, leaving the night a little\l"
 	.string "gentler than she found it.$"

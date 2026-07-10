@@ -284,10 +284,10 @@ MEWTWO_quest_starter::
 	switch VAR_RESULT
 # 150 "data/maps/Route119_WeatherInstitute_1F/scripts.pory"
 	case YES, MEWTWO_quest_starter_8
-# 155 "data/maps/Route119_WeatherInstitute_1F/scripts.pory"
+# 156 "data/maps/Route119_WeatherInstitute_1F/scripts.pory"
 	case NO, MEWTWO_quest_starter_9
 MEWTWO_quest_starter_6:
-# 158 "data/maps/Route119_WeatherInstitute_1F/scripts.pory"
+# 159 "data/maps/Route119_WeatherInstitute_1F/scripts.pory"
 	releaseall
 	end
 
@@ -306,11 +306,13 @@ MEWTWO_quest_starter_8:
 # 153 "data/maps/Route119_WeatherInstitute_1F/scripts.pory"
 	giveitem ITEM_MEWTWONITE_Y
 # 154 "data/maps/Route119_WeatherInstitute_1F/scripts.pory"
+	startquest QUEST_MEWTWO
+# 155 "data/maps/Route119_WeatherInstitute_1F/scripts.pory"
 	msgbox MEWTWO_quest_starter_Text_3
 	goto MEWTWO_quest_starter_6
 
 MEWTWO_quest_starter_9:
-# 156 "data/maps/Route119_WeatherInstitute_1F/scripts.pory"
+# 157 "data/maps/Route119_WeatherInstitute_1F/scripts.pory"
 	msgbox MEWTWO_quest_starter_Text_4
 	goto MEWTWO_quest_starter_6
 
@@ -339,10 +341,10 @@ MEWTWO_quest_starter_Text_2:
 	.string "place.$"
 
 MEWTWO_quest_starter_Text_3:
-# 154 "data/maps/Route119_WeatherInstitute_1F/scripts.pory"
+# 155 "data/maps/Route119_WeatherInstitute_1F/scripts.pory"
 	.string "Don't expect gratitude. It owes us\n"
 	.string "nothing. Honestly... Less than nothing.$"
 
 MEWTWO_quest_starter_Text_4:
-# 156 "data/maps/Route119_WeatherInstitute_1F/scripts.pory"
+# 157 "data/maps/Route119_WeatherInstitute_1F/scripts.pory"
 	.string "...Maybe that's mercy. For both of you.$"

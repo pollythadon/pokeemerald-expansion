@@ -176,6 +176,7 @@ script DIALGAWon_or_Caught {
     removeobject(3)
     setflag(FLAG_DIALGA_BATTLE)
 	setflag(FLAG_DIALGA_DFTD)
+	completequest(QUEST_DIALGA)
     fadescreenswapbuffers(FADE_FROM_WHITE)
     msgbox(format("The clock starts again. However much time I just lost... I think it was worth it."))
     return
