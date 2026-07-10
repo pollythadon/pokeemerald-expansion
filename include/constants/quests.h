@@ -45,7 +45,20 @@
 #define QUEST_28        27
 #define QUEST_29        28
 #define QUEST_30        29
-#define QUEST_COUNT     (QUEST_30 + 1)
+
+// Legendary quest aliases (post-game framework tie-in)
+#define QUEST_MEWTWO     QUEST_1
+#define QUEST_DIALGA     QUEST_2
+#define QUEST_PALKIA     QUEST_3
+#define QUEST_GIRATINA   QUEST_4
+#define QUEST_ARCEUS     QUEST_5
+#define QUEST_JIRACHI    QUEST_6
+#define QUEST_CELEBI     QUEST_7
+#define QUEST_DARKRAI    QUEST_8
+#define QUEST_CRESSELIA  QUEST_9
+#define QUEST_SHAYMIN    QUEST_10
+
+#define QUEST_COUNT     10
 
 #define SUB_QUEST_1          0
 #define SUB_QUEST_2          1

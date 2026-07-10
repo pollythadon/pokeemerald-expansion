@@ -84,7 +84,7 @@
 #define FLAG_GRACIDEA_GIFT   0x3D // Set when the player receives the Gracidea Flower; Gracidea Flower enables the player to sail to Flower Paradise to catch Shaymin.
 #define FLAG_SHAYMIN_BATTLE  0x3E // Shaymin Sky Forme sprite hide flag; cleared to make it appear during the transform.
 #define FLAG_SHAYMIN_DFTD    0x3F // Set when Shaymin is caught/defeated, so it doesn't reappear.
-#define FLAG_UNUSED_0x040    0x40 // Unused Flag
+#define FLAG_GIRATINA_DFTD   0x40 // Giratina caught/defeated (quest completion tracking)
 #define FLAG_UNUSED_0x041    0x41 // Unused Flag
 #define FLAG_UNUSED_0x042    0x42 // Unused Flag
 #define FLAG_UNUSED_0x043    0x43 // Unused Flag
