@@ -38,6 +38,11 @@
 #include "complex_quests.h"
 #include "quest_placeholder_strings.h"
 #include "quest_data.h"
+#include "field_effect.h"
+#include "field_effect_helpers.h"
+#include "trainer_see.h"
+#include "constants/field_effects.h"
+#include "constants/trainer_types.h"
 
 #define tPageItems      data[4]
 #define tItemPcParam    data[6]
@@ -2684,4 +2689,90 @@ u32 QuestMenu_GetQuestVariableId(u8 quest)
 u32 QuestMenu_GetQuestVariable(u8 quest)
 {
     return VarGet(QuestMenu_GetQuestVariableId(quest));
+}
+// ==================== Overworld quest-giver icons (ported from Starbound) ====================
+
+static void RemoveQuestIconFieldEffect(struct ObjectEvent *objectEvent)
+{
+	objectEvent->hasQuestIcon = FALSE;
+
+	if (FieldEffectActiveListContains(FLDEFF_QUEST_ICON))
+	{
+		u8 spriteId = objectEvent->spriteId;
+		struct Sprite *sprite = &gSprites[spriteId];
+		FieldEffectStop(sprite, FLDEFF_QUEST_ICON);
+	}
+}
+
+static bool32 ObjectEventAlreadyHasQuest(bool32 hasQuestIcon)
+{
+	if (!FieldEffectActiveListContains(FLDEFF_QUEST_ICON))
+		return FALSE;
+
+	return hasQuestIcon;
+}
+
+static void SetQuestIconOnObject(struct ObjectEvent *objectEvent)
+{
+	objectEvent->hasQuestIcon = TRUE;
+}
+
+static void SpawnQuestIconForObject(struct ObjectEvent *objectEvent, u32 objectEventId)
+{
+	SetQuestIconOnObject(objectEvent);
+	StartFieldEffectForObjectEvent(FLDEFF_QUEST_ICON, objectEvent);
+}
+
+void ResetQuestIconOnObject(struct ObjectEvent *objectEvent)
+{
+	objectEvent->hasQuestIcon = FALSE;
+}
+
+void HandleQuestIconForSingleObjectEvent(struct ObjectEvent *objectEvent, u32 objectEventId)
+{
+	u32 localId = objectEvent->localId;
+	u32 mapNum = objectEvent->mapNum;
+	u32 mapGroup = objectEvent->mapGroup;
+	u32 questId;
+	const struct ObjectEventTemplate *obj;
+
+	// Never attempt to put a quest icon on the player
+	if (objectEvent->movementType == MOVEMENT_TYPE_PLAYER)
+		return;
+
+	obj = GetObjectEventTemplateByLocalIdAndMap(localId, mapNum, mapGroup);
+	if (obj == NULL)
+		return;
+
+	if (obj->trainerType != TRAINER_TYPE_QUEST_GIVER)
+		return;
+
+	questId = obj->questId;
+	if (questId == QUEST_NONE)
+		return;
+
+	// Remove icon if the quest is completed
+	if (QuestMenu_GetSetQuestState(questId, FLAG_GET_COMPLETED))
+	{
+		RemoveQuestIconFieldEffect(objectEvent);
+		return;
+	}
+
+	// Already has icon? Do nothing
+	if (ObjectEventAlreadyHasQuest(objectEvent->hasQuestIcon))
+		return;
+
+	// Add icon to NPCs who have quests
+	if (!objectEvent->hasQuestIcon && !FieldEffectActiveListContains(FLDEFF_QUEST_ICON))
+		SpawnQuestIconForObject(objectEvent, objectEventId);
+}
+
+void RefreshQuestIcons(void)
+{
+	u8 i;
+	for (i = 0; i < OBJECT_EVENTS_COUNT; i++)
+	{
+		if (gObjectEvents[i].active)
+			HandleQuestIconForSingleObjectEvent(&gObjectEvents[i], i);
+	}
 }

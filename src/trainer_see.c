@@ -1,6 +1,8 @@
 #include "global.h"
+#include "main.h"
 #include "battle_setup.h"
 #include "event_data.h"
+#include "quests.h"
 #include "event_object_movement.h"
 #include "event_scripts.h"
 #include "field_effect.h"
@@ -52,6 +54,7 @@ static bool8 JumpInPlaceBuriedTrainer(u8 taskId, struct Task *task, struct Objec
 static bool8 WaitRevealBuriedTrainer(u8 taskId, struct Task *task, struct ObjectEvent *trainerObj);
 
 static void SpriteCB_TrainerIcons(struct Sprite *sprite);
+static void StopQuestFieldEffect(struct Sprite *sprite, u32 objEventId);
 
 // IWRAM common
 COMMON_DATA u16 gWhichTrainerToFaceAfterBattle = 0;
@@ -70,6 +73,7 @@ static const u8 sEmotion_QuestionMarkGfx[] = INCGFX_U8("graphics/field_effects/p
 static const u8 sEmotion_HeartGfx[] = INCGFX_U8("graphics/field_effects/pics/emotion_heart.png", ".4bpp");
 static const u8 sEmotion_DoubleExclamationMarkGfx[] = INCGFX_U8("graphics/field_effects/pics/emotion_double_exclamation.png", ".4bpp");
 static const u8 sEmotion_XGfx[] = INCGFX_U8("graphics/field_effects/pics/emote_x.png", ".4bpp");
+static const u8 sQuest_Gfx[] = INCGFX_U8("graphics/misc/quests_icons.png", ".4bpp");
 // HGSS emote graphics ripped by Lemon on The Spriters Resource: https://www.spriters-resource.com/ds_dsi/pokemonheartgoldsoulsilver/sheet/30497/
 static const u8 sEmotion_Gfx[] = INCGFX_U8("graphics/misc/emotes.png", ".4bpp", "-mwidth 2 -mheight 2");
 
@@ -240,6 +244,25 @@ static const struct SpriteFrameImage sSpriteImageTable_HeartIcon[] =
         .data = sEmotion_HeartGfx,
         .size = sizeof(sEmotion_HeartGfx)
     }
+};
+
+static const union AnimCmd sSpriteAnim_QuestIcon[] =
+{
+    ANIMCMD_FRAME(0, 30),
+    ANIMCMD_FRAME(1, 25),
+    ANIMCMD_FRAME(0, 30),
+    ANIMCMD_JUMP(0)
+};
+
+static const union AnimCmd *const sSpriteAnimTable_QuestIcon[] =
+{
+    sSpriteAnim_QuestIcon
+};
+
+static const struct SpriteFrameImage sSpriteImageTable_QuestIcon[] =
+{
+    overworld_frame(sQuest_Gfx, 2, 2, 0),
+    overworld_frame(sQuest_Gfx, 2, 2, 1),
 };
 
 static const struct SpriteFrameImage sSpriteImageTable_Emotes[] =
@@ -432,6 +455,17 @@ static const struct SpriteTemplate sSpriteTemplate_Emote =
     .anims = sSpriteAnimTable_Emotes,
     .images = sSpriteImageTable_Emotes,
     .callback = SpriteCB_TrainerIcons
+};
+
+static const struct SpriteTemplate sSpriteTemplate_Quest =
+{
+    .tileTag = TAG_NONE,
+    .paletteTag = OBJ_EVENT_PAL_TAG_EMOTES,
+    .oam = &sOamData_Icons,
+    .anims = sSpriteAnimTable_QuestIcon,
+    .images = sSpriteImageTable_QuestIcon,
+    .affineAnims = gDummySpriteAffineAnimTable,
+    .callback = SpriteCB_QuestIcon
 };
 
 // code
@@ -1097,6 +1131,58 @@ u8 FldEff_HeartIcon(void)
     }
 
     return 0;
+}
+
+u8 FldEff_QuestIcon(void)
+{
+    u8 spriteId = CreateSpriteAtEnd(&sSpriteTemplate_Quest, 0, 0, 0x53);
+    struct Sprite *sprite;
+
+    if (spriteId == MAX_SPRITES)
+        return 0;
+
+    sprite = &gSprites[spriteId];
+    SetIconSpriteData(sprite, FLDEFF_QUEST_ICON, 0);
+    UpdateSpritePaletteByTemplate(&sSpriteTemplate_Emote, sprite);
+    return 0;
+}
+
+void SpriteCB_QuestIcon(struct Sprite *sprite)
+{
+    u8 objEventId;
+    struct Sprite *objEventSprite;
+
+    // Object gone? Stop the icon.
+    if (TryGetObjectEventIdByLocalIdAndMap(sprite->sLocalId, sprite->sMapNum, sprite->sMapGroup, &objEventId))
+    {
+        FieldEffectStop(sprite, sprite->sFldEffId);
+        return;
+    }
+
+    // If the player just talked to this quest-giver and completed the quest, stop the icon.
+    if (gObjectEvents[objEventId].localId == gSpecialVar_LastTalked)
+    {
+        u16 questId = GetObjectEventTemplateByLocalIdAndMap(
+            gObjectEvents[objEventId].localId,
+            gObjectEvents[objEventId].mapNum,
+            gObjectEvents[objEventId].mapGroup)->questId;
+
+        if (questId != QUEST_NONE && QuestMenu_GetSetQuestState(questId, FLAG_GET_COMPLETED))
+        {
+            StopQuestFieldEffect(sprite, objEventId);
+            return;
+        }
+    }
+
+    objEventSprite = &gSprites[gObjectEvents[objEventId].spriteId];
+    sprite->x = objEventSprite->x;
+    sprite->y = objEventSprite->y - 16;
+}
+
+static void StopQuestFieldEffect(struct Sprite *sprite, u32 objEventId)
+{
+    ResetQuestIconOnObject(&gObjectEvents[objEventId]);
+    FieldEffectStop(sprite, sprite->sFldEffId);
 }
 
 u8 FldEff_DoubleExclMarkIcon(void)

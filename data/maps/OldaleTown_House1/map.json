@@ -35,10 +35,11 @@
       "movement_type": "MOVEMENT_TYPE_WANDER_AROUND",
       "movement_range_x": 0,
       "movement_range_y": 0,
-      "trainer_type": "TRAINER_TYPE_NONE",
+      "trainer_type": "TRAINER_TYPE_QUEST_GIVER",
       "trainer_sight_or_berry_tree_id": "0",
       "script": "CELEBIquest_starter",
-      "flag": "FLAG_CELEBI_LADY"
+      "flag": "FLAG_CELEBI_LADY",
+      "quest_id": "QUEST_CELEBI"
     }
   ],
   "warp_events": [
