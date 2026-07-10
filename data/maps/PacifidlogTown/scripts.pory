@@ -56,30 +56,136 @@ PacifidlogTown_Text_TownSign:
 
 `
 
-script EventScript_WARP_STAR_ISLAND {
+// Object event local ids on this map (order in map.json = local id).
+const OBJ_PACIFIDLOG_SAILOR = 4   // the sailor who ferries the player to hidden isles
+const OBJ_PACIFIDLOG_BOAT   = 5   // Mr Briney's boat at the west pier (0,22)
+
+script EventScript_SAIL2LEGENDS {
     lock
     faceplayer
+    // Star Island opens once the Mossdeep quest marks the map (FLAG_JIRACHI_GIFT).
+    // Flower Paradise opens while the player is carrying a Gracidea.
     if (flag(FLAG_JIRACHI_GIFT)) {
-        msgbox(format("Ahoy. I only sail to charted waters, friend.\n"
-                      "That map of yours leads nowhere yet."))
+        if (checkitem(ITEM_GRACIDEA)) {
+            // Both destinations are open, so let the player choose.
+            msgbox(format("Ahoy! I can chart a course for two hidden\n"
+                          "waters this day.\p"
+                          "Set sail for the star-blessed island?"), MSGBOX_YESNO)
+            if (var(VAR_RESULT) == YES) {
+                goto(EventScript_SailToStarIsland)
+            }
+            msgbox(format("Then shall I steer for the isle of endless\n"
+                          "flowers instead?"), MSGBOX_YESNO)
+            if (var(VAR_RESULT) == YES) {
+                goto(EventScript_SailToFlowerParadise)
+            }
+            msgbox(format("Change your mind and the tide'll still be here."))
+            release
+            end
+        }
+        // Only Star Island is open.
+        msgbox(format("That map... That sketch... aye, I know those waters. They say wishes come true out there.\p"
+                      "Set sail for the island?"), MSGBOX_YESNO)
+        if (var(VAR_RESULT) == YES) {
+            goto(EventScript_SailToStarIsland)
+        }
+        msgbox(format("Change your mind and the tide'll still be here."))
         release
         end
     }
-    msgbox(format("That map... That sketch... aye, I know those waters. They say wishes come true out there.\p"
-                  "Set sail for the island?"), MSGBOX_YESNO)
-    switch (var(VAR_RESULT)) {
-        case YES:
-            msgbox(format("Then hold on tight. The stars'll guide us in."))
-            closemessage
-            fadescreen(FADE_TO_BLACK)
-            playse(SE_SHIP)
-            delay(60)
-            // Adjust the map + coords above to point at your island.
-            warp(MAP_STAR_ISLAND, 15, 34)
-            waitstate
-        case NO:
-            msgbox(format("Change your mind and the tide'll still be here."))
+    if (checkitem(ITEM_GRACIDEA)) {
+        // Only Flower Paradise is open.
+        msgbox(format("That flower you're carrying… it only blooms in"
+                      "one faraway place.\p"
+                      "Shall I take you to the isle of endless flowers?"), MSGBOX_YESNO)
+        if (var(VAR_RESULT) == YES) {
+            goto(EventScript_SailToFlowerParadise)
+        }
+        msgbox(format("Change your mind and the tide'll still be here."))
+        release
+        end
     }
+    // Nowhere charted yet.
+    msgbox(format("Ahoy. I only sail to charted waters, friend.\n"
+                  "You've nowhere to go just yet."))
     release
     end
+}
+
+// --- Sail-off destinations ---------------------------------------------------
+// Each destination just shows its send-off line, plays the shared boarding
+// cinematic, then warps. To add a future sail-off, copy this three-line pattern:
+//     msgbox(...); call(EventScript_PacifidlogSailAway); warp(MAP_X, x, y)
+// followed by waitstate / release / end.
+
+script EventScript_SailToStarIsland {
+    msgbox(format("Then hold on tight. The stars'll guide us in."))
+    call(EventScript_PacifidlogSailAway)
+    warp(MAP_STAR_ISLAND, 15, 34)
+    waitstate
+    release
+    end
+}
+
+script EventScript_SailToFlowerParadise {
+    msgbox(format("Then hold on tight. We'll follow the petals on"
+                  "the wind."))
+    call(EventScript_PacifidlogSailAway)
+    warp(MAP_FLOWER_PARADISE, 18, 74)
+    waitstate
+    release
+    end
+}
+
+// Shared boarding cinematic used by every Pacifidlog sail-off. The player boards
+// the boat at the west pier, the sailor follows in behind, and the boat casts off
+// to the west out to sea as the screen fades to black. Returns on a black screen;
+// the caller then warps to the destination.
+// (Scripted applymovement is forced, so everyone moves over the impassable water
+// tiles just like the vanilla Mr Briney boat.)
+script EventScript_PacifidlogSailAway {
+    closemessage
+    // Return any follower Pokemon to its Ball first (OW_FOLLOWERS_ENABLED): the
+    // follower is a separate object, so hideobjectat on the player won't hide it and
+    // its sprite would linger on the pier.
+    hidefollower(1)
+    // The player boards the boat...
+    applymovement(LOCALID_PLAYER, Movement_PacifidlogPlayerBoard)
+    waitmovement(0)
+    hideobjectat(LOCALID_PLAYER, MAP_PACIFIDLOG_TOWN)
+    // ...the sailor follows in behind. Use hideobjectat, NOT removeobject:
+    // removeobject FlagSets the object's hide flag (FLAG_JIRACHI_SAIL here), which
+    // many other scripts depend on. hideobjectat is session-only and never touches
+    // the flag, so the sailor + boat respawn on the next visit.
+    applymovement(OBJ_PACIFIDLOG_SAILOR, Movement_PacifidlogSailorFollow)
+    waitmovement(0)
+    hideobjectat(OBJ_PACIFIDLOG_SAILOR, MAP_PACIFIDLOG_TOWN)
+    // ...and the boat casts off, the fade covering its run to the open sea.
+    playse(SE_SHIP)
+    applymovement(OBJ_PACIFIDLOG_BOAT, Movement_PacifidlogBoatDepart)
+    delay(30)
+    fadescreen(FADE_TO_BLACK)
+    waitmovement(0)
+    hideobjectat(OBJ_PACIFIDLOG_BOAT, MAP_PACIFIDLOG_TOWN)
+    return
+}
+
+// Player steps from the pier (1,22) west onto the boat (0,22), then vanishes on
+// the same step (set_invisible) so it never lingers a frame on top of the boat.
+movement Movement_PacifidlogPlayerBoard {
+    walk_left
+    set_invisible
+}
+
+// Sailor steps down from (1,21) to (1,22), in behind the player.
+movement Movement_PacifidlogSailorFollow {
+    walk_down
+    delay_16
+}
+
+// Boat pulls away west, out toward the Route 131 sea.
+movement Movement_PacifidlogBoatDepart {
+    walk_left
+    walk_left
+    walk_left
 }

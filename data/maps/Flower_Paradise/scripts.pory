@@ -1,0 +1,177 @@
+raw `
+Flower_Paradise_MapScripts::
+	.byte 0
+`
+
+// Object event local ids on this map (order in map.json = local id).
+const OBJ_SAILOR      = 1   // pier sailor -- ferries the player home
+const OBJ_BOAT        = 2   // Mr Briney's boat at the pier (18,76)
+const OBJ_SHAYMIN     = 3   // Shaymin Land Forme -- the sprite the player talks to
+const OBJ_SHAYMIN_SKY = 4   // Shaymin Sky Forme -- hidden by FLAG_SHAYMIN_BATTLE until the transform
+const SHAYMIN_LEVEL   = 70
+
+
+// ----------------------------------------------------------------------------
+//  Pier sailor -- ride the boat back to Pacifidlog Town.
+//  Sailor stands at (19,74) with the boat just east at (20,74); the player reaches
+//  it from the west (18,74) or north (19,73). Boarding: the player steps onto the
+//  boat, the sailor follows on, and the boat casts off south to the open sea.
+//  (Scripted applymovement is forced, so player/sailor/boat move over the
+//  impassable water tiles just like the vanilla Mr Briney boat sails.)
+// ----------------------------------------------------------------------------
+script Flower_Paradise_EventScript_SailHome {
+    lock
+    faceplayer
+    msgbox(format("Seen your fill of the flowers?\n"
+                  "Shall I ferry you back to Pacifidlog?"), MSGBOX_YESNO)
+    if (var(VAR_RESULT) == NO) {
+        msgbox(format("Take your time. The blossoms keep good company."))
+        release
+        end
+    }
+    msgbox(format("Climb aboard, then. Mind your step!"))
+    closemessage
+    // Return any follower Pokemon to its Ball first (OW_FOLLOWERS_ENABLED): the
+    // follower is a separate object, so hiding the player won't hide it and its
+    // sprite would linger on the pier.
+    hidefollower(1)
+    // The boat sits at (20,74) and the ONLY walkable tile touching it is the sailor's
+    // own tile (19,74). So the sailor leads onto the boat and the player follows one
+    // step behind in the SAME motion (no waitmovement between them) -- it reads as
+    // boarding in a line, never walking through the sailor. The player reaches the
+    // sailor from the west (18,74) or north (19,73); set_invisible ends each board
+    // move so nobody lingers a frame on top of the boat.
+    applymovement(OBJ_SAILOR, Flower_Paradise_Movement_SailorBoard)
+    getplayerxy(VAR_TEMP_0, VAR_TEMP_1)
+    if (var(VAR_TEMP_0) == 18) {
+        applymovement(LOCALID_PLAYER, Flower_Paradise_Movement_PlayerBoardWest)
+    } else {
+        applymovement(LOCALID_PLAYER, Flower_Paradise_Movement_PlayerBoardNorth)
+    }
+    waitmovement(0)
+    // Cast off south to the open sea; the fade covers the boat's run off-screen.
+    playse(SE_SHIP)
+    applymovement(OBJ_BOAT, Flower_Paradise_Movement_BoatDepart)
+    delay(30)
+    fadescreen(FADE_TO_BLACK)
+    waitmovement(0)
+    warp(MAP_PACIFIDLOG_TOWN, 1, 22)
+    waitstate
+    release
+    end
+}
+
+// West approach: (18,74) -> (19,74) -> boat (20,74), one step behind the sailor
+// (who vacates 19,74 in the same motion).
+movement Flower_Paradise_Movement_PlayerBoardWest {
+    walk_right
+    walk_right
+    set_invisible
+}
+
+// North approach: (19,73) -> (19,74) -> boat (20,74), following the sailor down
+// into the tile they just cleared.
+movement Flower_Paradise_Movement_PlayerBoardNorth {
+    walk_down
+    walk_right
+    set_invisible
+}
+
+// Sailor leads from (19,74) east onto the boat (20,74), clearing the way behind it.
+movement Flower_Paradise_Movement_SailorBoard {
+    walk_right
+    set_invisible
+}
+
+// Boat pulls away south, out to the open sea (5 tiles keeps it on-map to y79).
+movement Flower_Paradise_Movement_BoatDepart {
+    walk_down
+    walk_down
+    walk_down
+    walk_down
+    walk_down
+}
+
+
+// ----------------------------------------------------------------------------
+//  SHAYMIN -- offer a blooming Gracidea, watch the Land Forme unfold into its
+//  Sky Forme in a flash of light, then battle it.
+// ----------------------------------------------------------------------------
+script Legendary_EventScript_SHAYMIN {
+    lockall
+    if (flag(FLAG_SHAYMIN_DFTD)) {
+        msgbox(format("The meadow sways in a clean, sweet breeze. The little one that hid among the flowers is at peace now."))
+        releaseall
+        end
+    }
+    if (checkitem(ITEM_GRACIDEA)) {
+        // --- a simple interaction with the Land Forme ---
+        msgbox(format("The Gracidea in your bag trembles, its petals opening wide.\p"
+                      "Shaymin lifts its head from the flowers and looks up at you..."), MSGBOX_AUTOCLOSE)
+        playmoncry(SPECIES_SHAYMIN, CRY_MODE_ENCOUNTER)
+        delay(40)
+        waitmoncry
+
+        // --- the Gracidea takes hold: a white flash hides the sprite swap ---
+        fadescreenswapbuffers(FADE_TO_WHITE)
+        delay(20)
+        hideobjectat(OBJ_SHAYMIN, MAP_FLOWER_PARADISE)   // Land Forme vanishes (session-only: removeobject would set FLAG_SHAYMIN_DFTD early and soft-lock a flee)
+        clearflag(FLAG_SHAYMIN_BATTLE)     // let the Sky Forme spawn...
+        addobject(OBJ_SHAYMIN_SKY)         // ...high above, out of the flash
+        fadescreenswapbuffers(FADE_FROM_WHITE)
+
+        // --- cinematic descent: Sky Forme rides the wind down onto its spot ---
+        playmoncry(SPECIES_SHAYMIN_SKY, CRY_MODE_ENCOUNTER)
+        applymovement(OBJ_SHAYMIN_SKY, SHAYMIN_SkyDescend)
+        waitmovement(0)
+        delay(20)
+        msgbox(format("Shaymin has unfolded into its Sky Forme! It settles before you on the wind, ready to test the heart that called it out!"), MSGBOX_AUTOCLOSE)
+        playmoncry(SPECIES_SHAYMIN_SKY, CRY_MODE_ENCOUNTER)
+        delay(40)
+        waitmoncry
+
+        setwildbattle(SPECIES_SHAYMIN_SKY, SHAYMIN_LEVEL)
+        special(BattleSetup_StartLegendaryBattle)
+        waitstate
+        specialvar(VAR_RESULT, GetBattleOutcome)
+        if (var(VAR_RESULT) == B_OUTCOME_CAUGHT || var(VAR_RESULT) == B_OUTCOME_WON) {
+            call(SHAYMINWon_or_Caught)
+        } elif (var(VAR_RESULT) == B_OUTCOME_RAN || var(VAR_RESULT) == B_OUTCOME_PLAYER_TELEPORTED) {
+            call(SHAYMINRanAway)
+        }
+        releaseall
+        end
+    }
+    msgbox(format("A shy little Pokemon peeks out from the blossoms, then hides again. Only a Gracidea offered in gratitude will coax it into the open."))
+    releaseall
+    end
+}
+
+script SHAYMINWon_or_Caught {
+    fadescreenswapbuffers(FADE_TO_WHITE)
+    hideobjectat(OBJ_SHAYMIN_SKY, MAP_FLOWER_PARADISE)
+    setflag(FLAG_SHAYMIN_BATTLE)   // keep the Sky Forme hidden for good
+    setflag(FLAG_SHAYMIN_DFTD)     // Shaymin is settled -- no more encounters (also hides the Land Forme, whose flag is FLAG_SHAYMIN_DFTD)
+    fadescreenswapbuffers(FADE_FROM_WHITE)
+    msgbox(format("Flowers spring up in a ring where it stood, a small thank-you left behind.\p"
+                  "Give it the Gracidea any time to shift it between its Land and Sky Formes. Kindness always comes back in bloom."))
+    return
+}
+
+script SHAYMINRanAway {
+    playmoncry(SPECIES_SHAYMIN_SKY, CRY_MODE_ENCOUNTER)
+    delay(20)
+    fadescreenswapbuffers(FADE_TO_WHITE)
+    hideobjectat(OBJ_SHAYMIN_SKY, MAP_FLOWER_PARADISE)
+    setflag(FLAG_SHAYMIN_BATTLE)   // re-hide the Sky Forme; DFTD stays clear so the Land Forme returns to retry
+    fadescreenswapbuffers(FADE_FROM_WHITE)
+    msgbox(format("It rides a gust back into the blossoms and is gone. Gratitude can't be rushed -- come back when the meadow is ready."))
+    return
+}
+
+// Sky Forme drops from the top of the map (y0) onto the Land Forme's tile (y6).
+movement SHAYMIN_SkyDescend {
+    walk_down * 6
+    delay_16
+    face_player
+}

@@ -574,18 +574,23 @@ void BattleSetup_StartLegendaryBattle(void)
     case SPECIES_DIALGA:
     case SPECIES_PALKIA:
     case SPECIES_GIRATINA:
+    case SPECIES_GIRATINA_ORIGIN:
+    case SPECIES_ARCEUS:
     case SPECIES_CELEBI:
+    case SPECIES_TORNADUS:
+    case SPECIES_THUNDURUS:
+    case SPECIES_LANDORUS:
+    case SPECIES_KYUREM:
     case SPECIES_DARKRAI:
     case SPECIES_CRESSELIA:
     case SPECIES_HEATRAN:
     case SPECIES_ZEKROM:
     case SPECIES_RESHIRAM:
-    case SPECIES_KYUREM:
     case SPECIES_JIRACHI:
     case SPECIES_MEWTWO:
     case SPECIES_MANAPHY:
     case SPECIES_SHAYMIN:
-    case SPECIES_ARCEUS:
+    case SPECIES_SHAYMIN_SKY:
     case SPECIES_VICTINI:
     case SPECIES_KELDEO:
     case SPECIES_MELOETTA:

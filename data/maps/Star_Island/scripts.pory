@@ -75,7 +75,7 @@ script JIRACHIRanAway {
     playmoncry(SPECIES_JIRACHI, CRY_MODE_ENCOUNTER)
     delay(20)
     fadescreen(FADE_TO_BLACK)
-    removeobject(1)
+    hideobjectat(1, MAP_STAR_ISLAND)   // session-only: leaves FLAG_JIRACHI_BATTLE clear so the mon respawns for a retry
     fadescreen(FADE_FROM_BLACK)
     msgbox(format("It granted itself one last wish... and vanished."))
     return

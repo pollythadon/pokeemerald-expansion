@@ -414,3 +414,6 @@ const u16 gMetatileAttributes_DistortionWorld[] = INCBIN_U16("data/tilesets/seco
 
 const u16 gMetatiles_SpaceMeteor[] = INCBIN_U16("data/tilesets/secondary/space_meteor/metatiles.bin");
 const u16 gMetatileAttributes_SpaceMeteor[] = INCBIN_U16("data/tilesets/secondary/space_meteor/metatile_attributes.bin");
+
+const u16 gMetatiles_LugiaAlter[] = INCBIN_U16("data/tilesets/secondary/lugia_alter/metatiles.bin");
+const u16 gMetatileAttributes_LugiaAlter[] = INCBIN_U16("data/tilesets/secondary/lugia_alter/metatile_attributes.bin");

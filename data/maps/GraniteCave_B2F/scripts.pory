@@ -78,7 +78,7 @@ script DARKRAIRanAway {
     playmoncry(SPECIES_DARKRAI, CRY_MODE_ENCOUNTER)
     delay(20)
     fadescreenswapbuffers(FADE_TO_BLACK)
-    removeobject(10)
+    hideobjectat(10, MAP_GRANITE_CAVE_B2F)   // session-only: leaves FLAG_DARKRAI_BATTLE clear so the mon respawns for a retry
     fadescreenswapbuffers(FADE_FROM_BLACK)
     msgbox(format("It melts back into the shadows, alone again. You wish, oddly, that it had stayed."))
     return

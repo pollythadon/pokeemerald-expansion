@@ -265,7 +265,7 @@ CRESSELIARanAway::
 # 131 "data/maps/Route126/scripts.pory"
 	fadescreenswapbuffers FADE_TO_WHITE
 # 132 "data/maps/Route126/scripts.pory"
-	removeobject 10
+	hideobjectat 10, MAP_ROUTE126
 # 133 "data/maps/Route126/scripts.pory"
 	fadescreenswapbuffers FADE_FROM_WHITE
 # 134 "data/maps/Route126/scripts.pory"

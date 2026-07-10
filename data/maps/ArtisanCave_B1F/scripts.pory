@@ -77,7 +77,7 @@ script MEWTWORanAway {
     playmoncry(SPECIES_MEWTWO, CRY_MODE_ENCOUNTER)
     delay(20)
     fadescreenswapbuffers(FADE_TO_BLACK)
-    removeobject(2)
+    hideobjectat(2, MAP_ARTISAN_CAVE_B1F)   // session-only: leaves FLAG_MEWTWO_BATTLE clear so the mon respawns for a retry
     fadescreenswapbuffers(FADE_FROM_BLACK)
     msgbox(format("All you humans are the same. I will not be caught again."))
     return

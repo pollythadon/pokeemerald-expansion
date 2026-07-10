@@ -1563,3 +1563,14 @@ const struct Tileset gTileset_SpaceMeteor =
     .metatileAttributes = gMetatileAttributes_SpaceMeteor,
     .callback = NULL,
 };
+
+const struct Tileset gTileset_LugiaAlter =
+{
+    .isCompressed = TRUE,
+    .isSecondary = TRUE,
+    .tiles = gTilesetTiles_LugiaAlter,
+    .palettes = gTilesetPalettes_LugiaAlter,
+    .metatiles = gMetatiles_LugiaAlter,
+    .metatileAttributes = gMetatileAttributes_LugiaAlter,
+    .callback = NULL,
+};

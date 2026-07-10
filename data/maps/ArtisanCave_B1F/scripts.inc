@@ -161,7 +161,7 @@ MEWTWORanAway::
 # 79 "data/maps/ArtisanCave_B1F/scripts.pory"
 	fadescreenswapbuffers FADE_TO_BLACK
 # 80 "data/maps/ArtisanCave_B1F/scripts.pory"
-	removeobject 2
+	hideobjectat 2, MAP_ARTISAN_CAVE_B1F
 # 81 "data/maps/ArtisanCave_B1F/scripts.pory"
 	fadescreenswapbuffers FADE_FROM_BLACK
 # 82 "data/maps/ArtisanCave_B1F/scripts.pory"

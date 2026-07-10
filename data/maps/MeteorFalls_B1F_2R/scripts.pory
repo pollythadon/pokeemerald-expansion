@@ -64,7 +64,7 @@ script PALKIARanAway {
     playmoncry(SPECIES_PALKIA, CRY_MODE_ENCOUNTER)
     delay(20)
     fadescreenswapbuffers(FADE_TO_WHITE)
-    removeobject(2)
+    hideobjectat(2, MAP_METEOR_FALLS_B1F_2R)   // session-only: leaves FLAG_PALKIA_BATTLE clear so the mon respawns for a retry
     fadescreenswapbuffers(FADE_FROM_WHITE)
     msgbox(format("It folded the space between us and was simply... elsewhere."))
     return

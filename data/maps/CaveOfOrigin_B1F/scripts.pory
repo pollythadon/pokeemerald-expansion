@@ -185,7 +185,7 @@ script DIALGARanAway {
     playmoncry(SPECIES_DIALGA, CRY_MODE_ENCOUNTER)
     delay(20)
     fadescreenswapbuffers(FADE_TO_WHITE)
-    removeobject(3)
+    hideobjectat(3, MAP_CAVE_OF_ORIGIN_B1F)   // session-only: leaves FLAG_DIALGA_BATTLE clear so the mon respawns for a retry
     fadescreenswapbuffers(FADE_FROM_WHITE)
     msgbox(format("Gone in an instant. To It, my whole life is just an instant."))
     return

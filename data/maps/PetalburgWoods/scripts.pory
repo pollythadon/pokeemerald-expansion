@@ -545,7 +545,7 @@ script CELEBIRanAway {
     playmoncry(SPECIES_CELEBI, CRY_MODE_ENCOUNTER)
     delay(20)
     fadescreenswapbuffers(FADE_TO_BLACK)
-    removeobject(14)
+    hideobjectat(14, MAP_PETALBURG_WOODS)   // session-only: leaves FLAG_CELEBI_BATTLE clear so the mon respawns for a retry
     fadescreenswapbuffers(FADE_FROM_BLACK)
     msgbox(format("The things I saw... A family... Best I move on."))
     return

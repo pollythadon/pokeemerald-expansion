@@ -490,7 +490,7 @@
     },
     {
       "id": "MAPSEC_ABANDONED_SHIP",
-      "name": "ABANDONED SHIP",
+      "name": "FLOWER PARADISE",
       "x": 6,
       "y": 14,
       "width": 1,
@@ -1570,6 +1570,14 @@
     {
       "id": "MAPSEC_SPACE_METEOR",
       "name": "SPACE METEOR",
+      "x": 0,
+      "y": 0,
+      "width": 1,
+      "height": 1
+    },
+    {
+      "id": "MAPSEC_FLOWER_PARADISE",
+      "name": "FLOWER PARADISE",
       "x": 0,
       "y": 0,
       "width": 1,

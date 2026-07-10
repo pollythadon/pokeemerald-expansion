@@ -375,7 +375,7 @@ DIALGARanAway::
 # 187 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	fadescreenswapbuffers FADE_TO_WHITE
 # 188 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	removeobject 3
+	hideobjectat 3, MAP_CAVE_OF_ORIGIN_B1F
 # 189 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	fadescreenswapbuffers FADE_FROM_WHITE
 # 190 "data/maps/CaveOfOrigin_B1F/scripts.pory"

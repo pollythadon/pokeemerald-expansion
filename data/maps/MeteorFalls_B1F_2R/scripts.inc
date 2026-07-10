@@ -135,7 +135,7 @@ PALKIARanAway::
 # 66 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
 	fadescreenswapbuffers FADE_TO_WHITE
 # 67 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
-	removeobject 2
+	hideobjectat 2, MAP_METEOR_FALLS_B1F_2R
 # 68 "data/maps/MeteorFalls_B1F_2R/scripts.pory"
 	fadescreenswapbuffers FADE_FROM_WHITE
 # 69 "data/maps/MeteorFalls_B1F_2R/scripts.pory"

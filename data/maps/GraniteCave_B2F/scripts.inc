@@ -159,7 +159,7 @@ DARKRAIRanAway::
 # 80 "data/maps/GraniteCave_B2F/scripts.pory"
 	fadescreenswapbuffers FADE_TO_BLACK
 # 81 "data/maps/GraniteCave_B2F/scripts.pory"
-	removeobject 10
+	hideobjectat 10, MAP_GRANITE_CAVE_B2F
 # 82 "data/maps/GraniteCave_B2F/scripts.pory"
 	fadescreenswapbuffers FADE_FROM_BLACK
 # 83 "data/maps/GraniteCave_B2F/scripts.pory"

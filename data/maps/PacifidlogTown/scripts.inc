@@ -107,75 +107,223 @@ PacifidlogTown_Text_TownSign:
 # 54 "data/maps/PacifidlogTown/scripts.pory"
 	.string "the waters.”$"
 
-EventScript_WARP_STAR_ISLAND::
-# 60 "data/maps/PacifidlogTown/scripts.pory"
+EventScript_SAIL2LEGENDS::
+# 64 "data/maps/PacifidlogTown/scripts.pory"
 	lock
-# 61 "data/maps/PacifidlogTown/scripts.pory"
+# 65 "data/maps/PacifidlogTown/scripts.pory"
 	faceplayer
-# 62 "data/maps/PacifidlogTown/scripts.pory"
-	goto_if_set FLAG_JIRACHI_GIFT, EventScript_WARP_STAR_ISLAND_2
 # 68 "data/maps/PacifidlogTown/scripts.pory"
-	msgbox EventScript_WARP_STAR_ISLAND_Text_1, MSGBOX_YESNO
-# 70 "data/maps/PacifidlogTown/scripts.pory"
-	switch VAR_RESULT
+	goto_if_set FLAG_JIRACHI_GIFT, EventScript_SAIL2LEGENDS_2
+	checkitem ITEM_GRACIDEA
+# 0 "data/maps/PacifidlogTown/scripts.pory"
+	compare VAR_RESULT, 0
+	goto_if_ne EventScript_SAIL2LEGENDS_5
+# 109 "data/maps/PacifidlogTown/scripts.pory"
+	msgbox EventScript_SAIL2LEGENDS_Text_5
+# 111 "data/maps/PacifidlogTown/scripts.pory"
+	release
+	end
+
+EventScript_SAIL2LEGENDS_2:
+	checkitem ITEM_GRACIDEA
+# 0 "data/maps/PacifidlogTown/scripts.pory"
+	compare VAR_RESULT, 0
+	goto_if_ne EventScript_SAIL2LEGENDS_8
+# 87 "data/maps/PacifidlogTown/scripts.pory"
+	msgbox EventScript_SAIL2LEGENDS_Text_3, MSGBOX_YESNO
+# 89 "data/maps/PacifidlogTown/scripts.pory"
+	compare VAR_RESULT, YES
+	goto_if_eq EventScript_SAIL2LEGENDS_14
+EventScript_SAIL2LEGENDS_13:
+# 92 "data/maps/PacifidlogTown/scripts.pory"
+	msgbox EventScript_SAIL2LEGENDS_Text_2
+# 93 "data/maps/PacifidlogTown/scripts.pory"
+	release
+	end
+
+EventScript_SAIL2LEGENDS_5:
+# 98 "data/maps/PacifidlogTown/scripts.pory"
+	msgbox EventScript_SAIL2LEGENDS_Text_4, MSGBOX_YESNO
+# 101 "data/maps/PacifidlogTown/scripts.pory"
+	compare VAR_RESULT, YES
+	goto_if_eq EventScript_SAIL2LEGENDS_11
+EventScript_SAIL2LEGENDS_10:
+# 104 "data/maps/PacifidlogTown/scripts.pory"
+	msgbox EventScript_SAIL2LEGENDS_Text_2
+# 105 "data/maps/PacifidlogTown/scripts.pory"
+	release
+	end
+
+EventScript_SAIL2LEGENDS_8:
 # 71 "data/maps/PacifidlogTown/scripts.pory"
-	case YES, EventScript_WARP_STAR_ISLAND_6
-# 80 "data/maps/PacifidlogTown/scripts.pory"
-	case NO, EventScript_WARP_STAR_ISLAND_7
-EventScript_WARP_STAR_ISLAND_4:
+	msgbox EventScript_SAIL2LEGENDS_Text_0, MSGBOX_YESNO
+# 74 "data/maps/PacifidlogTown/scripts.pory"
+	compare VAR_RESULT, YES
+	goto_if_eq EventScript_SAIL2LEGENDS_17
+EventScript_SAIL2LEGENDS_16:
+# 77 "data/maps/PacifidlogTown/scripts.pory"
+	msgbox EventScript_SAIL2LEGENDS_Text_1, MSGBOX_YESNO
+# 79 "data/maps/PacifidlogTown/scripts.pory"
+	compare VAR_RESULT, YES
+	goto_if_eq EventScript_SAIL2LEGENDS_20
+EventScript_SAIL2LEGENDS_19:
+# 82 "data/maps/PacifidlogTown/scripts.pory"
+	msgbox EventScript_SAIL2LEGENDS_Text_2
 # 83 "data/maps/PacifidlogTown/scripts.pory"
 	release
 	end
 
-EventScript_WARP_STAR_ISLAND_2:
-# 63 "data/maps/PacifidlogTown/scripts.pory"
-	msgbox EventScript_WARP_STAR_ISLAND_Text_0
-# 65 "data/maps/PacifidlogTown/scripts.pory"
+EventScript_SAIL2LEGENDS_11:
+# 102 "data/maps/PacifidlogTown/scripts.pory"
+	goto EventScript_SailToFlowerParadise
+	goto EventScript_SAIL2LEGENDS_10
+
+EventScript_SAIL2LEGENDS_14:
+# 90 "data/maps/PacifidlogTown/scripts.pory"
+	goto EventScript_SailToStarIsland
+	goto EventScript_SAIL2LEGENDS_13
+
+EventScript_SAIL2LEGENDS_17:
+# 75 "data/maps/PacifidlogTown/scripts.pory"
+	goto EventScript_SailToStarIsland
+	goto EventScript_SAIL2LEGENDS_16
+
+EventScript_SAIL2LEGENDS_20:
+# 80 "data/maps/PacifidlogTown/scripts.pory"
+	goto EventScript_SailToFlowerParadise
+	goto EventScript_SAIL2LEGENDS_19
+
+
+EventScript_SailToStarIsland::
+# 122 "data/maps/PacifidlogTown/scripts.pory"
+	msgbox EventScript_SailToStarIsland_Text_0
+# 123 "data/maps/PacifidlogTown/scripts.pory"
+	call EventScript_PacifidlogSailAway
+# 124 "data/maps/PacifidlogTown/scripts.pory"
+	warp MAP_STAR_ISLAND, 15, 34
+# 125 "data/maps/PacifidlogTown/scripts.pory"
+	waitstate
+# 126 "data/maps/PacifidlogTown/scripts.pory"
 	release
 	end
 
-EventScript_WARP_STAR_ISLAND_6:
-# 72 "data/maps/PacifidlogTown/scripts.pory"
-	msgbox EventScript_WARP_STAR_ISLAND_Text_2
-# 73 "data/maps/PacifidlogTown/scripts.pory"
-	closemessage
-# 74 "data/maps/PacifidlogTown/scripts.pory"
-	fadescreen FADE_TO_BLACK
-# 75 "data/maps/PacifidlogTown/scripts.pory"
-	playse SE_SHIP
-# 76 "data/maps/PacifidlogTown/scripts.pory"
-	delay 60
-# 78 "data/maps/PacifidlogTown/scripts.pory"
-	warp MAP_STAR_ISLAND, 15, 34
-# 79 "data/maps/PacifidlogTown/scripts.pory"
+
+EventScript_SailToFlowerParadise::
+# 131 "data/maps/PacifidlogTown/scripts.pory"
+	msgbox EventScript_SailToFlowerParadise_Text_0
+# 133 "data/maps/PacifidlogTown/scripts.pory"
+	call EventScript_PacifidlogSailAway
+# 134 "data/maps/PacifidlogTown/scripts.pory"
+	warp MAP_FLOWER_PARADISE, 18, 74
+# 135 "data/maps/PacifidlogTown/scripts.pory"
 	waitstate
-	goto EventScript_WARP_STAR_ISLAND_4
-
-EventScript_WARP_STAR_ISLAND_7:
-# 81 "data/maps/PacifidlogTown/scripts.pory"
-	msgbox EventScript_WARP_STAR_ISLAND_Text_3
-	goto EventScript_WARP_STAR_ISLAND_4
+# 136 "data/maps/PacifidlogTown/scripts.pory"
+	release
+	end
 
 
-EventScript_WARP_STAR_ISLAND_Text_0:
-# 63 "data/maps/PacifidlogTown/scripts.pory"
-	.string "Ahoy. I only sail to charted waters,\n"
-	.string "friend.\n"
-	.string "That map of yours leads nowhere yet.$"
+EventScript_PacifidlogSailAway::
+# 147 "data/maps/PacifidlogTown/scripts.pory"
+	closemessage
+# 151 "data/maps/PacifidlogTown/scripts.pory"
+	hidefollower 1
+# 153 "data/maps/PacifidlogTown/scripts.pory"
+	applymovement LOCALID_PLAYER, Movement_PacifidlogPlayerBoard
+# 154 "data/maps/PacifidlogTown/scripts.pory"
+	waitmovement 0
+# 155 "data/maps/PacifidlogTown/scripts.pory"
+	hideobjectat LOCALID_PLAYER, MAP_PACIFIDLOG_TOWN
+# 160 "data/maps/PacifidlogTown/scripts.pory"
+	applymovement 4, Movement_PacifidlogSailorFollow
+# 161 "data/maps/PacifidlogTown/scripts.pory"
+	waitmovement 0
+# 162 "data/maps/PacifidlogTown/scripts.pory"
+	hideobjectat 4, MAP_PACIFIDLOG_TOWN
+# 164 "data/maps/PacifidlogTown/scripts.pory"
+	playse SE_SHIP
+# 165 "data/maps/PacifidlogTown/scripts.pory"
+	applymovement 5, Movement_PacifidlogBoatDepart
+# 166 "data/maps/PacifidlogTown/scripts.pory"
+	delay 30
+# 167 "data/maps/PacifidlogTown/scripts.pory"
+	fadescreen FADE_TO_BLACK
+# 168 "data/maps/PacifidlogTown/scripts.pory"
+	waitmovement 0
+# 169 "data/maps/PacifidlogTown/scripts.pory"
+	hideobjectat 5, MAP_PACIFIDLOG_TOWN
+	return
 
-EventScript_WARP_STAR_ISLAND_Text_1:
-# 68 "data/maps/PacifidlogTown/scripts.pory"
+
+# 175 "data/maps/PacifidlogTown/scripts.pory"
+Movement_PacifidlogPlayerBoard:
+# 176 "data/maps/PacifidlogTown/scripts.pory"
+	walk_left
+# 177 "data/maps/PacifidlogTown/scripts.pory"
+	set_invisible
+	step_end
+
+# 181 "data/maps/PacifidlogTown/scripts.pory"
+Movement_PacifidlogSailorFollow:
+# 182 "data/maps/PacifidlogTown/scripts.pory"
+	walk_down
+# 183 "data/maps/PacifidlogTown/scripts.pory"
+	delay_16
+	step_end
+
+# 187 "data/maps/PacifidlogTown/scripts.pory"
+Movement_PacifidlogBoatDepart:
+# 188 "data/maps/PacifidlogTown/scripts.pory"
+	walk_left
+# 189 "data/maps/PacifidlogTown/scripts.pory"
+	walk_left
+# 190 "data/maps/PacifidlogTown/scripts.pory"
+	walk_left
+	step_end
+
+EventScript_SAIL2LEGENDS_Text_0:
+# 71 "data/maps/PacifidlogTown/scripts.pory"
+	.string "Ahoy! I can chart a course for two\n"
+	.string "hidden\n"
+	.string "waters this day.\p"
+	.string "Set sail for the star-blessed island?$"
+
+EventScript_SAIL2LEGENDS_Text_1:
+# 77 "data/maps/PacifidlogTown/scripts.pory"
+	.string "Then shall I steer for the isle of\n"
+	.string "endless\n"
+	.string "flowers instead?$"
+
+EventScript_SAIL2LEGENDS_Text_2:
+# 82 "data/maps/PacifidlogTown/scripts.pory"
+	.string "Change your mind and the tide'll still be\n"
+	.string "here.$"
+
+EventScript_SAIL2LEGENDS_Text_3:
+# 87 "data/maps/PacifidlogTown/scripts.pory"
 	.string "That map... That sketch... aye, I know\n"
 	.string "those waters. They say wishes come\l"
 	.string "true out there.\p"
 	.string "Set sail for the island?$"
 
-EventScript_WARP_STAR_ISLAND_Text_2:
-# 72 "data/maps/PacifidlogTown/scripts.pory"
+EventScript_SAIL2LEGENDS_Text_4:
+# 98 "data/maps/PacifidlogTown/scripts.pory"
+	.string "That flower you're carrying… it only\n"
+	.string "blooms in one faraway place.\p"
+	.string "Shall I take you to the isle of endless\n"
+	.string "flowers?$"
+
+EventScript_SAIL2LEGENDS_Text_5:
+# 109 "data/maps/PacifidlogTown/scripts.pory"
+	.string "Ahoy. I only sail to charted waters,\n"
+	.string "friend.\n"
+	.string "You've nowhere to go just yet.$"
+
+EventScript_SailToStarIsland_Text_0:
+# 122 "data/maps/PacifidlogTown/scripts.pory"
 	.string "Then hold on tight. The stars'll guide us\n"
 	.string "in.$"
 
-EventScript_WARP_STAR_ISLAND_Text_3:
-# 81 "data/maps/PacifidlogTown/scripts.pory"
-	.string "Change your mind and the tide'll still be\n"
-	.string "here.$"
+EventScript_SailToFlowerParadise_Text_0:
+# 131 "data/maps/PacifidlogTown/scripts.pory"
+	.string "Then hold on tight. We'll follow the\n"
+	.string "petals on the wind.$"

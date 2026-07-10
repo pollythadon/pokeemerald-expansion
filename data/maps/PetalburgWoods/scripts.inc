@@ -1091,7 +1091,7 @@ CELEBIRanAway::
 # 547 "data/maps/PetalburgWoods/scripts.pory"
 	fadescreenswapbuffers FADE_TO_BLACK
 # 548 "data/maps/PetalburgWoods/scripts.pory"
-	removeobject 14
+	hideobjectat 14, MAP_PETALBURG_WOODS
 # 549 "data/maps/PetalburgWoods/scripts.pory"
 	fadescreenswapbuffers FADE_FROM_BLACK
 # 550 "data/maps/PetalburgWoods/scripts.pory"

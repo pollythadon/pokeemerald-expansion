@@ -9356,6 +9356,17 @@
       "border_filepath": "data/layouts/SpaceMeteor/border.bin",
       "blockdata_filepath": "data/layouts/SpaceMeteor/map.bin",
       "layout_version": "emerald"
+    },
+    {
+      "id": "LAYOUT_FLOWER_PARADISE",
+      "name": "Flower_Paradise_Layout",
+      "width": 40,
+      "height": 80,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_LugiaAlter",
+      "border_filepath": "data/layouts/Flower_Paradise/border.bin",
+      "blockdata_filepath": "data/layouts/Flower_Paradise/map.bin",
+      "layout_version": "emerald"
     }
   ]
 }

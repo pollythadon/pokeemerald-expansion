@@ -281,6 +281,7 @@ EventScript_ResetAllMapFlags::
 	setflag FLAG_JIRACHI_GIRL
 	setflag FLAG_JIRACHI_BATTLE
 	setflag FLAG_JIRACHI_SAIL
+	setflag FLAG_SHAYMIN_BATTLE
 	setflag FLAG_LEGENDARY_BTL
 	setflag FLAG_DIALGA_BATTLE
 	setflag FLAG_PALKIA_BATTLE

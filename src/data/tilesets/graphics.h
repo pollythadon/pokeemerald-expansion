@@ -3086,3 +3086,22 @@ const u16 gTilesetPalettes_SpaceMeteor[][16] =
 };
 
 const u32 gTilesetTiles_SpaceMeteor[] = INCBIN_U32("data/tilesets/secondary/space_meteor/tiles.4bpp.lz");
+
+const u16 gTilesetPalettes_LugiaAlter[][16] =
+{
+    INCBIN_U16("data/tilesets/secondary/lugia_alter/palettes/00.gbapal"),
+    INCBIN_U16("data/tilesets/secondary/lugia_alter/palettes/01.gbapal"),
+    INCBIN_U16("data/tilesets/secondary/lugia_alter/palettes/02.gbapal"),
+    INCBIN_U16("data/tilesets/secondary/lugia_alter/palettes/03.gbapal"),
+    INCBIN_U16("data/tilesets/secondary/lugia_alter/palettes/04.gbapal"),
+    INCBIN_U16("data/tilesets/secondary/lugia_alter/palettes/05.gbapal"),
+    INCBIN_U16("data/tilesets/secondary/lugia_alter/palettes/06.gbapal"),
+    INCBIN_U16("data/tilesets/secondary/lugia_alter/palettes/07.gbapal"),
+    INCBIN_U16("data/tilesets/secondary/lugia_alter/palettes/08.gbapal"),
+    INCBIN_U16("data/tilesets/secondary/lugia_alter/palettes/09.gbapal"),
+    INCBIN_U16("data/tilesets/secondary/lugia_alter/palettes/10.gbapal"),
+    INCBIN_U16("data/tilesets/secondary/lugia_alter/palettes/11.gbapal"),
+    INCBIN_U16("data/tilesets/secondary/lugia_alter/palettes/12.gbapal"),
+};
+
+const u32 gTilesetTiles_LugiaAlter[] = INCBIN_U32("data/tilesets/secondary/lugia_alter/tiles.4bpp.lz");

@@ -62,7 +62,7 @@ script GIRATINARanAway {
     playmoncry(SPECIES_GIRATINA, CRY_MODE_ENCOUNTER)
     delay(20)
     fadescreenswapbuffers(FADE_TO_BLACK)
-    removeobject(1)
+    hideobjectat(1, MAP_DISTORTION_WORLD)   // session-only: leaves FLAG_GIRATINA_BATTLE clear so the mon respawns for a retry
     fadescreenswapbuffers(FADE_FROM_BLACK)
     msgbox(format("It slipped back through to the other side."))
     return

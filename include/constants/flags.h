@@ -81,9 +81,9 @@
 #define FLAG_ARCEUS_ROCKET_UNLOCKED    0x3A // Allows player to board the rocket in Mossdeep City to reach the Space Meteor and battle Arceus.
 #define FLAG_ARCEUS_BATTLE    0x3B // Arceus Sprite hide flag; cleared to make Arceus appear.
 #define FLAG_ARCEUS_DFTD    0x3C // Set when Arceus is defeated, so it doesn't reappear after the player leaves the area.
-#define FLAG_UNUSED_0x03D    0x3D // Unused Flag
-#define FLAG_UNUSED_0x03E    0x3E // Unused Flag
-#define FLAG_UNUSED_0x03F    0x3F // Unused Flag
+#define FLAG_GRACIDEA_GIFT   0x3D // Set when the player receives the Gracidea Flower; Gracidea Flower enables the player to sail to Flower Paradise to catch Shaymin.
+#define FLAG_SHAYMIN_BATTLE  0x3E // Shaymin Sky Forme sprite hide flag; cleared to make it appear during the transform.
+#define FLAG_SHAYMIN_DFTD    0x3F // Set when Shaymin is caught/defeated, so it doesn't reappear.
 #define FLAG_UNUSED_0x040    0x40 // Unused Flag
 #define FLAG_UNUSED_0x041    0x41 // Unused Flag
 #define FLAG_UNUSED_0x042    0x42 // Unused Flag

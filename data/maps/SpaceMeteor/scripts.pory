@@ -49,7 +49,7 @@ script ARCEUSRanAway {
     playmoncry(SPECIES_ARCEUS, CRY_MODE_ENCOUNTER)
     delay(20)
     fadescreen(FADE_TO_WHITE)
-    removeobject(1)
+    hideobjectat(1, MAP_SPACE_METEOR)   // session-only: leaves FLAG_ARCEUS_BATTLE clear so the mon respawns for a retry
     fadescreen(FADE_FROM_WHITE)
     msgbox(format("The Original One dissolves into starlight, unwilling to be held. Perhaps it will judge you worthy another time."))
     return

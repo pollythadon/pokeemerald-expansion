@@ -129,7 +129,7 @@ script CRESSELIARanAway {
     playmoncry(SPECIES_CRESSELIA, CRY_MODE_ENCOUNTER)
     delay(20)
     fadescreenswapbuffers(FADE_TO_WHITE)
-    removeobject(10)
+    hideobjectat(10, MAP_ROUTE126)   // session-only: leaves FLAG_CRESSELIA_BATTLE clear so the mon respawns for a retry
     fadescreenswapbuffers(FADE_FROM_WHITE)
     msgbox(format("She rises back into the moonlight and fades, leaving the night a little gentler than she found it."))
     return
