@@ -266,6 +266,10 @@ gScriptCmdTable::
 	script_cmd_table_entry SCR_OP_GETPARTYMONLEVEL              ScrCmd_getpartymonlevel,            requests_effects=1  @ 0xf1
 	script_cmd_table_entry SCR_OP_GETPARTYMONSPECIES            ScrCmd_getpartymonspecies,          requests_effects=1  @ 0xf2
 	script_cmd_table_entry SCR_OP_GETPARTYMONHP                 ScrCmd_getpartymonhp,               requests_effects=1  @ 0xf3
+	script_cmd_table_entry SCR_OP_QUESTMENU                     ScrCmd_questmenu                                        @ 0xf4
+	script_cmd_table_entry SCR_OP_SUBQUESTMENU                  ScrCmd_subquestmenu                                     @ 0xf5
+	script_cmd_table_entry SCR_OP_RETURNQUESTSTATE             ScrCmd_returnqueststate                                 @ 0xf6
+	script_cmd_table_entry SCR_OP_UPDATEQUEST                   ScrCmd_updatequest                                      @ 0xf7
 
 	.if ALLOCATE_SCRIPT_CMD_TABLE
 gScriptCmdTableEnd::

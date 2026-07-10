@@ -13,6 +13,7 @@
 #include "constants/unbound_start_menu.h"
 #include "constants/global.h"
 #include "constants/flags.h"
+#include "constants/quests.h"
 #include "constants/vars.h"
 #include "constants/species.h"
 #include "constants/pokedex.h"
@@ -630,7 +631,9 @@ struct SaveBlock2
 #endif //FREE_RECORD_MIXING_HALL_RECORDS
     /*0x624*/ u16 contestLinkResults[CONTEST_CATEGORIES_COUNT][CONTESTANT_COUNT];
     /*0x64C*/ struct BattleFrontier frontier;
-}; // sizeof=0xF2C
+    /*0xF2C*/ u8 questData[QUEST_COUNT * 5 / 8 + 1]; // Quest menu: 5 state bits per quest
+    /*0xF3F*/ u8 subQuests[SUB_QUEST_COUNT / 8 + 1]; // Quest menu: 1 bit per subquest
+}; // sizeof=0xF43
 
 extern struct SaveBlock2 *gSaveBlock2Ptr;
 
