@@ -25,6 +25,7 @@
 #include "party_menu.h"
 #include "pokedex.h"
 #include "pokemon_icon.h"
+#include "quests.h"
 #include "pokenav.h"
 #include "random.h"
 #include "region_map.h"
@@ -207,6 +208,7 @@ static void RotomPhone_StartMenu_SelectedFunc_RotomReality(void);
 static void RotomPhone_StartMenu_SelectedFunc_DexNav(void);
 static void RotomPhone_StartMenu_SelectedFunc_Clock(void);
 static void RotomPhone_StartMenu_SelectedFunc_Daycare(void);
+static void RotomPhone_StartMenu_SelectedFunc_Quests(void);
 
 
 // Init Rotom Start Menu
@@ -506,6 +508,7 @@ enum RotomPhone_MenuItems
     RP_MENU_TRAINER_CARD,
     RP_MENU_SAVE,
     RP_MENU_OPTIONS,
+    RP_MENU_QUESTS,
     RP_MENU_COUNT,
 };
 #define RP_MENU_FIRST_OPTION RP_MENU_COUNT - RP_MENU_COUNT
@@ -1339,6 +1342,17 @@ static const struct RotomPhone_MenuOptions sRotomPhoneOptions[RP_MENU_COUNT] =
         .selectedFunc = RotomPhone_StartMenu_SelectedFunc_Daycare,
         .rotomRealityPanel = TRUE,
         .rrAnim = RP_ICON_ANIM_NINE,
+        .rrSpriteTemplate = &sSpriteTemplate_RotomRealityIcons_One,
+    },
+    [RP_MENU_QUESTS] =
+    {
+        .menuName = COMPOUND_STRING("Quests"),
+        .rotomSpeech = COMPOUND_STRING("to review your Quests?"),
+        .unlockedFunc = RotomPhone_StartMenu_UnlockedFunc_Unlocked,
+        .selectedFunc = RotomPhone_StartMenu_SelectedFunc_Quests,
+        .owIconPalSlot = PAL_ICON_GREEN, // TODO(Phase 3): swap to the quest-marker icon art
+        .owAnim = RP_ICON_ANIM_ONE,      // placeholder frame (reuses an existing icon)
+        .rrAnim = RP_ICON_ANIM_ONE,      // placeholder frame
         .rrSpriteTemplate = &sSpriteTemplate_RotomRealityIcons_One,
     },
 };
@@ -3994,6 +4008,14 @@ static void RotomPhone_StartMenu_SelectedFunc_DexNav(void)
         RotomPhone_StartMenu_DoCleanUpAndChangeTaskFunc(FindTaskIdByFunc(Task_RotomPhone_OverworldMenu_HandleMainInput), Task_OpenDexNavFromStartMenu);
     else
         RotomPhone_StartMenu_DoCleanUpAndCreateTask(Task_OpenDexNavFromStartMenu, 0);
+}
+
+static void RotomPhone_StartMenu_SelectedFunc_Quests(void)
+{
+    if (!RotomPhone_StartMenu_IsRotomReality())
+        RotomPhone_StartMenu_DoCleanUpAndChangeTaskFunc(FindTaskIdByFunc(Task_RotomPhone_OverworldMenu_HandleMainInput), Task_QuestMenu_OpenFromStartMenu);
+    else
+        RotomPhone_StartMenu_DoCleanUpAndCreateTask(Task_QuestMenu_OpenFromStartMenu, 0);
 }
 
 static void RotomPhone_StartMenu_SelectedFunc_Clock(void)
