@@ -1,6 +1,6 @@
 # Party Query Script Commands
 
-> **This is a feature branch.** It adds a set of overworld script commands for asking questions about the player's party directly from a map script — check for a move, type, ability, held item, or shiny; count Pokémon by species or type; and read a slot's level, species, or HP. Every command reports its answer in `VAR_RESULT`, so it drops straight into `compare`/`goto_if` and poryscript `if ()` conditions.
+> **This is a feature branch.** It adds a set of overworld script commands for asking questions about the player's party directly from a map script check for a move, type, ability, held item, or shiny; count Pokémon by species or type; and read a slot's level, species, or HP. Every command reports its answer in `VAR_RESULT`, so it drops straight into `compare`/`goto_if` and poryscript `if ()` conditions.
 >
 > 📖 **Full guide: [docs/tutorials/how_to_party_query_commands.md](docs/tutorials/how_to_party_query_commands.md)**
 
