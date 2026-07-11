@@ -260,6 +260,8 @@ struct PACKED Usm_SavedItems {
     u8 count;
 };
 
+#define ROTOM_REALITY_SAVED_APP_CAPACITY 32
+
 struct SaveBlock3
 {
 #if OW_USE_FAKE_RTC
@@ -280,6 +282,9 @@ struct SaveBlock3
     u8 apricornTrees[NUM_APRICORN_TREE_BYTES];
 #endif
     struct Usm_SavedItems usmSaved;
+    u16 rotomRealityMenuOrderMagic;
+    u8 rotomRealityMenuOrderCount;
+    u8 rotomRealityMenuOrder[ROTOM_REALITY_SAVED_APP_CAPACITY];
 }; /* max size 1624 bytes */
 
 extern struct SaveBlock3 *gSaveBlock3Ptr;
