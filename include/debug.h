@@ -12,4 +12,7 @@ void DebugNative_Party_SetFriendship(void);
 extern EWRAM_DATA bool8 gIsDebugBattle;
 extern EWRAM_DATA u64 gDebugAIFlags;
 
+// Opens the Pokémon Creator from a field script (see the OpenPokemonCreator special).
+void OpenPokemonCreator(void);
+
 #endif // GUARD_DEBUG_H
