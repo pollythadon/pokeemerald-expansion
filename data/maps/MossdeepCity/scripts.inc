@@ -959,12 +959,14 @@ GiftAuroraTicketScript::
 # 492 "data/maps/MossdeepCity/scripts.pory"
 	giveitem ITEM_AURORA_TICKET
 # 493 "data/maps/MossdeepCity/scripts.pory"
-	setflag FLAG_RECEIVED_AURORA_TICKET
+	startquest QUEST_DEOXYS
 # 494 "data/maps/MossdeepCity/scripts.pory"
-	setflag FLAG_ENABLE_SHIP_BIRTH_ISLAND
+	setflag FLAG_RECEIVED_AURORA_TICKET
 # 495 "data/maps/MossdeepCity/scripts.pory"
+	setflag FLAG_ENABLE_SHIP_BIRTH_ISLAND
+# 496 "data/maps/MossdeepCity/scripts.pory"
 	msgbox GiftAuroraTicketScript_Text_2
-# 497 "data/maps/MossdeepCity/scripts.pory"
+# 498 "data/maps/MossdeepCity/scripts.pory"
 	release
 	end
 
@@ -1044,6 +1046,6 @@ GiftAuroraTicketScript_Text_1:
 	.string "Become a believer.$"
 
 GiftAuroraTicketScript_Text_2:
-# 495 "data/maps/MossdeepCity/scripts.pory"
+# 496 "data/maps/MossdeepCity/scripts.pory"
 	.string "Board the ferry at Lilycove City.\n"
 	.string "Our eyes can't lie to us... Right?$"

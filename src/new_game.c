@@ -32,6 +32,7 @@
 #include "apprentice.h"
 #include "frontier_util.h"
 #include "pokedex.h"
+#include "quests.h"
 #include "save.h"
 #include "link_rfu.h"
 #include "main.h"
@@ -232,6 +233,7 @@ void NewGameInitData(void)
     ResetContestLinkResults();
     SetCurrentDifficultyLevel(DIFFICULTY_NORMAL);
     ResetItemFlags();
+    QuestMenu_InitNewGameQuests();
     ResetDexNav();
     ClearFollowerNPCData();
     gSaveBlock3Ptr->followerIndex = OW_FOLLOWER_NOT_SET;

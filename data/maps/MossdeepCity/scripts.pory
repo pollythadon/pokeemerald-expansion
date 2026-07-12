@@ -490,6 +490,7 @@ script GiftAuroraTicketScript {
                   "you're naturally skeptical of the supernatural.\l"
                   "Go to this island. See what I saw. Become a believer."))
     giveitem(ITEM_AURORA_TICKET)
+    startquest(QUEST_DEOXYS)
     setflag(FLAG_RECEIVED_AURORA_TICKET)
     setflag(FLAG_ENABLE_SHIP_BIRTH_ISLAND)
     msgbox(format("Board the ferry at Lilycove City.\n"

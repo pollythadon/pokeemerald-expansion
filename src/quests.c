@@ -15,6 +15,8 @@
 #include "malloc.h"
 #include "menu.h"
 #include "menu_helpers.h"
+#include "money.h"
+#include "pokedex.h"
 #include "palette.h"
 #include "party_menu.h"
 #include "scanline_effect.h"
@@ -119,6 +121,10 @@ static u8 CountNumberListRows();
 static u8 *DefineQuestOrder();
 static u8 GenerateSubquestList();
 static u8 GenerateList(bool8 isFiltered);
+static bool8 QuestMenu_IsQuestAvailable(u8 questId);
+static u8 CountAvailableQuests(void);
+static void QuestMenu_TryAdvanceConditionalQuests(void);
+static void TryClaimQuestReward(u8 taskId, u8 questId);
 static void AssignCancelNameAndId(u8 numRow);
 
 static u8 CountUnlockedQuests(void);
@@ -235,10 +241,8 @@ static const u8 sText_Reward[] = _("Reward");
 static const u8 sText_Complete[] = _("Done");
 static const u8 sText_ShowLocation[] =
       _("Location: {STR_VAR_2}");
-static const u8 sText_StartForMore[] =
-      _("Start for more details.");
 static const u8 sText_ReturnRecieveReward[] =
-      _("Return to {STR_VAR_2}\nto recieve your reward!");
+      _("Press {A_BUTTON} to claim\nyour reward!");
 static const u8 sText_SubQuestButton[] = _(" {A_BUTTON}");
 static const u8 sText_Type[] = _("{R_BUTTON}Type");
 static const u8 sText_Caught[] = _("Caught");
@@ -247,6 +251,9 @@ static const u8 sText_Read[] = _("Read");
 static const u8 sText_Back[] = _("Back");
 static const u8 sText_DotSpace[] = _(". ");
 static const u8 sText_Close[] = _("Close");
+static const u8 sText_NoQuests[] = _("No missions yet.");
+static const u8 sText_NoQuestsHint[] =
+      _("New missions will appear here\nas your adventure unfolds.");
 static const u8 sText_ColorGreen[] = _("{COLOR}{GREEN}");
 static const u8 sText_AZ[] = _(" A-Z");
 
@@ -575,6 +582,8 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_MEWTWO] =
 	{
 		.name = sQuestName_Mewtwo,
+		.startmap = sQuestStartMap_Mewtwo,
+		.startdesc = sQuestStart_Mewtwo,
 		.desc = {sQuestDesc_Mewtwo},
 		.donedesc = sQuestDone_Mewtwo,
 		.map = {sQuestMap_Mewtwo},
@@ -583,10 +592,13 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 		.subquests = NULL,
 		.numSubquests = 0,
 		.questVariable = 0,
+		.availType = QUEST_AVAIL_POSTGAME,
 	},
 	[QUEST_DIALGA] =
 	{
 		.name = sQuestName_Dialga,
+		.startmap = sQuestStartMap_Dialga,
+		.startdesc = sQuestStart_Dialga,
 		.desc = {sQuestDesc_Dialga},
 		.donedesc = sQuestDone_Dialga,
 		.map = {sQuestMap_Dialga},
@@ -595,10 +607,13 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 		.subquests = NULL,
 		.numSubquests = 0,
 		.questVariable = 0,
+		.availType = QUEST_AVAIL_POSTGAME,
 	},
 	[QUEST_PALKIA] =
 	{
 		.name = sQuestName_Palkia,
+		.startmap = sQuestStartMap_Palkia,
+		.startdesc = sQuestStart_Palkia,
 		.desc = {sQuestDesc_Palkia},
 		.donedesc = sQuestDone_Palkia,
 		.map = {sQuestMap_Palkia},
@@ -607,10 +622,13 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 		.subquests = NULL,
 		.numSubquests = 0,
 		.questVariable = 0,
+		.availType = QUEST_AVAIL_POSTGAME,
 	},
 	[QUEST_GIRATINA] =
 	{
 		.name = sQuestName_Giratina,
+		.startmap = sQuestStartMap_Giratina,
+		.startdesc = sQuestStart_Giratina,
 		.desc = {sQuestDesc_Giratina},
 		.donedesc = sQuestDone_Giratina,
 		.map = {sQuestMap_Giratina},
@@ -619,10 +637,13 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 		.subquests = NULL,
 		.numSubquests = 0,
 		.questVariable = 0,
+		.availType = QUEST_AVAIL_POSTGAME,
 	},
 	[QUEST_ARCEUS] =
 	{
 		.name = sQuestName_Arceus,
+		.startmap = sQuestStartMap_Arceus,
+		.startdesc = sQuestStart_Arceus,
 		.desc = {sQuestDesc_Arceus},
 		.donedesc = sQuestDone_Arceus,
 		.map = {sQuestMap_Arceus},
@@ -631,10 +652,13 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 		.subquests = NULL,
 		.numSubquests = 0,
 		.questVariable = 0,
+		.availType = QUEST_AVAIL_POSTGAME,
 	},
 	[QUEST_JIRACHI] =
 	{
 		.name = sQuestName_Jirachi,
+		.startmap = sQuestStartMap_Jirachi,
+		.startdesc = sQuestStart_Jirachi,
 		.desc = {sQuestDesc_Jirachi_0, sQuestDesc_Jirachi_1},
 		.donedesc = sQuestDone_Jirachi,
 		.map = {sQuestMap_Jirachi_0, sQuestMap_Jirachi_1},
@@ -643,10 +667,13 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 		.subquests = NULL,
 		.numSubquests = 0,
 		.questVariable = VAR_UNUSED_0x404E, // repurposed unused var
+		.availType = QUEST_AVAIL_POSTGAME,
 	},
 	[QUEST_CELEBI] =
 	{
 		.name = sQuestName_Celebi,
+		.startmap = sQuestStartMap_Celebi,
+		.startdesc = sQuestStart_Celebi,
 		.desc = {sQuestDesc_Celebi},
 		.donedesc = sQuestDone_Celebi,
 		.map = {sQuestMap_Celebi},
@@ -655,10 +682,13 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 		.subquests = NULL,
 		.numSubquests = 0,
 		.questVariable = 0,
+		.availType = QUEST_AVAIL_POSTGAME,
 	},
 	[QUEST_DARKRAI] =
 	{
 		.name = sQuestName_Darkrai,
+		.startmap = sQuestStartMap_Darkrai,
+		.startdesc = sQuestStart_Darkrai,
 		.desc = {sQuestDesc_Darkrai},
 		.donedesc = sQuestDone_Darkrai,
 		.map = {sQuestMap_Darkrai},
@@ -667,10 +697,13 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 		.subquests = NULL,
 		.numSubquests = 0,
 		.questVariable = 0,
+		.availType = QUEST_AVAIL_POSTGAME,
 	},
 	[QUEST_CRESSELIA] =
 	{
 		.name = sQuestName_Cresselia,
+		.startmap = sQuestStartMap_Cresselia,
+		.startdesc = sQuestStart_Cresselia,
 		.desc = {sQuestDesc_Cresselia},
 		.donedesc = sQuestDone_Cresselia,
 		.map = {sQuestMap_Cresselia},
@@ -679,10 +712,13 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 		.subquests = NULL,
 		.numSubquests = 0,
 		.questVariable = 0,
+		.availType = QUEST_AVAIL_POSTGAME,
 	},
 	[QUEST_SHAYMIN] =
 	{
 		.name = sQuestName_Shaymin,
+		.startmap = sQuestStartMap_Shaymin,
+		.startdesc = sQuestStart_Shaymin,
 		.desc = {sQuestDesc_Shaymin},
 		.donedesc = sQuestDone_Shaymin,
 		.map = {sQuestMap_Shaymin},
@@ -691,6 +727,296 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 		.subquests = NULL,
 		.numSubquests = 0,
 		.questVariable = 0,
+		.availType = QUEST_AVAIL_POSTGAME,
+	},
+	[QUEST_MEW] =
+	{
+		.name = sQuestName_Mew,
+		.startmap = sQuestStartMap_Mew,
+		.startdesc = sQuestStart_Mew,
+		.desc = {sQuestDesc_Mew},
+		.donedesc = sQuestDone_Mew,
+		.map = {sQuestMap_Mew},
+		.sprite = {SPECIES_MEW},
+		.spritetype = {PKMN},
+		.availType = QUEST_AVAIL_POSTGAME,
+	},
+	[QUEST_LUGIA] =
+	{
+		.name = sQuestName_Lugia,
+		.startmap = sQuestStartMap_Lugia,
+		.startdesc = sQuestStart_Lugia,
+		.desc = {sQuestDesc_Lugia},
+		.donedesc = sQuestDone_Lugia,
+		.map = {sQuestMap_Lugia},
+		.sprite = {SPECIES_LUGIA},
+		.spritetype = {PKMN},
+		.availType = QUEST_AVAIL_POSTGAME,
+	},
+	[QUEST_DEOXYS] =
+	{
+		.name = sQuestName_Deoxys,
+		.startmap = sQuestStartMap_Deoxys,
+		.startdesc = sQuestStart_Deoxys,
+		.desc = {sQuestDesc_Deoxys},
+		.donedesc = sQuestDone_Deoxys,
+		.map = {sQuestMap_Deoxys},
+		.sprite = {SPECIES_DEOXYS},
+		.spritetype = {PKMN},
+		.availType = QUEST_AVAIL_POSTGAME,
+	},
+	[QUEST_BADGE_1] =
+	{
+		.name = sQuestName_Badge1,
+		.startmap = sQuestMap_Badge1,
+		.startdesc = sQuestDesc_Badge1,
+		.desc = {sQuestDesc_Badge1},
+		.donedesc = sQuestDone_Badge1,
+		.map = {sQuestMap_Badge1},
+		.sprite = {0},           // Stone Badge
+		.spritetype = {BADGE},
+		.availType = QUEST_AVAIL_FLAG_SET,
+		.availFlag = FLAG_NORMAN_MENTIONED_ROXANNE,
+		.rewardItem = ITEM_GREAT_BALL,
+		.rewardQty = 10,
+	},
+	[QUEST_BADGE_2] =
+	{
+		.name = sQuestName_Badge2,
+		.startmap = sQuestMap_Badge2,
+		.startdesc = sQuestDesc_Badge2,
+		.desc = {sQuestDesc_Badge2},
+		.donedesc = sQuestDone_Badge2,
+		.map = {sQuestMap_Badge2},
+		.sprite = {1},           // Knuckle Badge
+		.spritetype = {BADGE},
+		.availType = QUEST_AVAIL_FLAG_SET,
+		.availFlag = FLAG_BADGE01_GET,
+		.rewardItem = ITEM_HYPER_POTION,
+		.rewardQty = 5,
+	},
+	[QUEST_BADGE_3] =
+	{
+		.name = sQuestName_Badge3,
+		.startmap = sQuestMap_Badge3,
+		.startdesc = sQuestDesc_Badge3,
+		.desc = {sQuestDesc_Badge3},
+		.donedesc = sQuestDone_Badge3,
+		.map = {sQuestMap_Badge3},
+		.sprite = {2},           // Dynamo Badge
+		.spritetype = {BADGE},
+		.availType = QUEST_AVAIL_FLAG_SET,
+		.availFlag = FLAG_BADGE02_GET,
+		.rewardItem = ITEM_ULTRA_BALL,
+		.rewardQty = 10,
+	},
+	[QUEST_BADGE_4] =
+	{
+		.name = sQuestName_Badge4,
+		.startmap = sQuestMap_Badge4,
+		.startdesc = sQuestDesc_Badge4,
+		.desc = {sQuestDesc_Badge4},
+		.donedesc = sQuestDone_Badge4,
+		.map = {sQuestMap_Badge4},
+		.sprite = {3},           // Heat Badge
+		.spritetype = {BADGE},
+		.availType = QUEST_AVAIL_FLAG_SET,
+		.availFlag = FLAG_BADGE03_GET,
+		.rewardItem = ITEM_RARE_CANDY,
+		.rewardQty = 5,
+	},
+	[QUEST_BADGE_5] =
+	{
+		.name = sQuestName_Badge5,
+		.startmap = sQuestMap_Badge5,
+		.startdesc = sQuestDesc_Badge5,
+		.desc = {sQuestDesc_Badge5},
+		.donedesc = sQuestDone_Badge5,
+		.map = {sQuestMap_Badge5},
+		.sprite = {4},           // Balance Badge
+		.spritetype = {BADGE},
+		.availType = QUEST_AVAIL_FLAG_SET,
+		.availFlag = FLAG_BADGE04_GET,
+		.rewardItem = ITEM_PP_UP,
+		.rewardQty = 3,
+	},
+	[QUEST_BADGE_6] =
+	{
+		.name = sQuestName_Badge6,
+		.startmap = sQuestMap_Badge6,
+		.startdesc = sQuestDesc_Badge6,
+		.desc = {sQuestDesc_Badge6},
+		.donedesc = sQuestDone_Badge6,
+		.map = {sQuestMap_Badge6},
+		.sprite = {5},           // Feather Badge
+		.spritetype = {BADGE},
+		.availType = QUEST_AVAIL_FLAG_SET,
+		.availFlag = FLAG_BADGE05_GET,
+		.rewardItem = ITEM_MAX_REVIVE,
+		.rewardQty = 5,
+	},
+	[QUEST_BADGE_7] =
+	{
+		.name = sQuestName_Badge7,
+		.startmap = sQuestMap_Badge7,
+		.startdesc = sQuestDesc_Badge7,
+		.desc = {sQuestDesc_Badge7},
+		.donedesc = sQuestDone_Badge7,
+		.map = {sQuestMap_Badge7},
+		.sprite = {6},           // Mind Badge
+		.spritetype = {BADGE},
+		.availType = QUEST_AVAIL_FLAG_SET,
+		.availFlag = FLAG_BADGE06_GET,
+		.rewardItem = ITEM_ABILITY_CAPSULE,
+		.rewardQty = 1,
+	},
+	[QUEST_BADGE_8] =
+	{
+		.name = sQuestName_Badge8,
+		.startmap = sQuestMap_Badge8,
+		.startdesc = sQuestDesc_Badge8,
+		.desc = {sQuestDesc_Badge8},
+		.donedesc = sQuestDone_Badge8,
+		.map = {sQuestMap_Badge8},
+		.sprite = {7},           // Rain Badge
+		.spritetype = {BADGE},
+		.availType = QUEST_AVAIL_FLAG_SET,
+		.availFlag = FLAG_BADGE07_GET,
+		.rewardItem = ITEM_PP_MAX,
+		.rewardQty = 1,
+	},
+	[QUEST_CHAMPION] =
+	{
+		.name = sQuestName_Champion,
+		.startmap = sQuestMap_Champion,
+		.startdesc = sQuestDesc_Champion,
+		.desc = {sQuestDesc_Champion},
+		.donedesc = sQuestDone_Champion,
+		.map = {sQuestMap_Champion},
+		.sprite = {ITEM_MASTER_BALL},
+		.spritetype = {ITEM},
+		.availType = QUEST_AVAIL_FLAG_SET,
+		.availFlag = FLAG_BADGE01_GET,
+		.rewardItem = ITEM_MASTER_BALL,
+		.rewardQty = 1,
+		.rewardMoney = 200000,
+	},
+	[QUEST_DEXNAV] =
+	{
+		.name = sQuestName_DexNav,
+		.startmap = sQuestStartMap_DexNav,
+		.startdesc = sQuestStart_DexNav,
+		.desc = {sQuestDesc_DexNav},
+		.donedesc = sQuestDone_DexNav,
+		.map = {sQuestMap_DexNav},
+		.sprite = {ITEM_POKE_BALL},
+		.spritetype = {ITEM},
+		.availType = QUEST_AVAIL_FLAG_SET,
+		.availFlag = FLAG_SYS_POKEDEX_GET,
+	},
+	[QUEST_POKEDEX] =
+	{
+		.name = sQuestName_Pokedex,
+		.startmap = sQuestMap_Pokedex,
+		.startdesc = sQuestDesc_Pokedex,
+		.desc = {sQuestDesc_Pokedex},
+		.donedesc = sQuestDone_Pokedex,
+		.map = {sQuestMap_Pokedex},
+		.sprite = {ITEM_MASTER_BALL},
+		.spritetype = {ITEM},
+		.availType = QUEST_AVAIL_FLAG_SET,
+		.availFlag = FLAG_SYS_POKEDEX_GET,
+		.rewardItem = ITEM_MASTER_BALL,
+		.rewardQty = 1,
+	},
+	[QUEST_CATCH_50] =
+	{
+		.name = sQuestName_Catch50,
+		.startmap = sQuestMap_Catch,
+		.startdesc = sQuestDesc_Catch50,
+		.desc = {sQuestDesc_Catch50},
+		.donedesc = sQuestDone_Catch50,
+		.map = {sQuestMap_Catch},
+		.sprite = {ITEM_ULTRA_BALL},
+		.spritetype = {ITEM},
+		.availType = QUEST_AVAIL_FLAG_SET,
+		.availFlag = FLAG_SYS_POKEDEX_GET,
+		.rewardItem = ITEM_ULTRA_BALL,
+		.rewardQty = 10,
+	},
+	[QUEST_CATCH_100] =
+	{
+		.name = sQuestName_Catch100,
+		.startmap = sQuestMap_Catch,
+		.startdesc = sQuestDesc_Catch100,
+		.desc = {sQuestDesc_Catch100},
+		.donedesc = sQuestDone_Catch100,
+		.map = {sQuestMap_Catch},
+		.sprite = {ITEM_PP_MAX},
+		.spritetype = {ITEM},
+		.availType = QUEST_AVAIL_FLAG_SET,
+		.availFlag = FLAG_SYS_POKEDEX_GET,
+		.rewardItem = ITEM_PP_MAX,
+		.rewardQty = 1,
+	},
+	[QUEST_CATCH_300] =
+	{
+		.name = sQuestName_Catch300,
+		.startmap = sQuestMap_Catch,
+		.startdesc = sQuestDesc_Catch300,
+		.desc = {sQuestDesc_Catch300},
+		.donedesc = sQuestDone_Catch300,
+		.map = {sQuestMap_Catch},
+		.sprite = {ITEM_ABILITY_CAPSULE},
+		.spritetype = {ITEM},
+		.availType = QUEST_AVAIL_FLAG_SET,
+		.availFlag = FLAG_SYS_POKEDEX_GET,
+		.rewardItem = ITEM_ABILITY_CAPSULE,
+		.rewardQty = 1,
+	},
+	[QUEST_CATCH_500] =
+	{
+		.name = sQuestName_Catch500,
+		.startmap = sQuestMap_Catch,
+		.startdesc = sQuestDesc_Catch500,
+		.desc = {sQuestDesc_Catch500},
+		.donedesc = sQuestDone_Catch500,
+		.map = {sQuestMap_Catch},
+		.sprite = {ITEM_BOTTLE_CAP},
+		.spritetype = {ITEM},
+		.availType = QUEST_AVAIL_FLAG_SET,
+		.availFlag = FLAG_SYS_POKEDEX_GET,
+		.rewardItem = ITEM_BOTTLE_CAP,
+		.rewardQty = 3,
+	},
+	[QUEST_CATCH_800] =
+	{
+		.name = sQuestName_Catch800,
+		.startmap = sQuestMap_Catch,
+		.startdesc = sQuestDesc_Catch800,
+		.desc = {sQuestDesc_Catch800},
+		.donedesc = sQuestDone_Catch800,
+		.map = {sQuestMap_Catch},
+		.sprite = {ITEM_MASTER_BALL},
+		.spritetype = {ITEM},
+		.availType = QUEST_AVAIL_FLAG_SET,
+		.availFlag = FLAG_SYS_POKEDEX_GET,
+		.rewardItem = ITEM_MASTER_BALL,
+		.rewardQty = 1,
+	},
+	[QUEST_INTRO] =
+	{
+		.name = sQuestName_Intro,
+		.startmap = sQuestMap_Intro,
+		.startdesc = sQuestDesc_Intro,
+		.desc = {sQuestDesc_Intro},
+		.donedesc = sQuestDone_Intro,
+		.map = {sQuestMap_Intro},
+		.sprite = {ITEM_POKE_BALL},
+		.spritetype = {ITEM},
+		.availType = QUEST_AVAIL_ALWAYS,
+		.rewardItem = ITEM_POKE_BALL,
+		.rewardQty = 10,
 	},
 };
 ////////////////////////END QUEST CUSTOMIZATION////////////////////////////////
@@ -798,6 +1124,9 @@ void QuestMenu_Init(u8 a0, MainCallback callback)
 		SetMainCallback2(callback);
 		return;
 	}
+
+	// Refresh count/dex goals so any newly-met ones show "Reward Available".
+	QuestMenu_TryAdvanceConditionalQuests();
 
 	if ((sStateDataPtr = Alloc(sizeof(struct QuestMenuResources))) == NULL)
 	{
@@ -1344,7 +1673,7 @@ static u8 CountNumberListRows()
 	switch (mode)
 	{
 		case SORT_DEFAULT:
-			return QUEST_COUNT + 1;
+			return CountAvailableQuests() + 1;
 		case SORT_INACTIVE:
 			return CountInactiveQuests() + 1;
 		case SORT_ACTIVE:
@@ -1406,6 +1735,23 @@ u8 GenerateSubquestList()
 	return lastRow;
 }
 
+// Each quest decides for itself when it appears in the menu. FLAG_LEGENDARY_BTL
+// is set at new game and cleared on becoming Champion (the same flag that unhides
+// every legendary quest-giver NPC), so a cleared flag means "post-game is live."
+bool8 QuestMenu_IsQuestAvailable(u8 questId)
+{
+	switch (sSideQuests[questId].availType)
+	{
+		case QUEST_AVAIL_FLAG_SET:
+			return FlagGet(sSideQuests[questId].availFlag);
+		case QUEST_AVAIL_POSTGAME:
+			return !FlagGet(FLAG_LEGENDARY_BTL);
+		case QUEST_AVAIL_ALWAYS:
+		default:
+			return TRUE;
+	}
+}
+
 u8 GenerateList(bool8 isFiltered)
 {
 	u8 mode = sStateDataPtr-> filterMode % 10;
@@ -1418,6 +1764,11 @@ u8 GenerateList(bool8 isFiltered)
 	for (countQuest = 0; countQuest < QUEST_COUNT; countQuest++)
 	{
 		selectedQuestId = *(sortedQuestList + countQuest);
+
+		if (!QuestMenu_IsQuestAvailable(selectedQuestId))
+		{
+			continue;
+		}
 
 		if (isFiltered && !QuestMenu_GetSetQuestState(selectedQuestId, mode))
 		{
@@ -1449,6 +1800,12 @@ static void AssignCancelNameAndId(u8 numRow)
 	if (IsSubquestMode())
 	{
 		sListMenuItems[numRow].name = sText_Back;
+	}
+	else if (CountAvailableQuests() == 0)
+	{
+		// Nothing is available yet; label the sole row so the menu explains
+		// itself instead of just showing "Close".
+		sListMenuItems[numRow].name = sText_NoQuests;
 	}
 	else
 	{
@@ -1586,13 +1943,30 @@ u8 QuestMenu_GetSetQuestState(u8 quest, u8 caseId)
 	return -1;  //failure
 }
 
+// Counts quests currently visible in the menu (used for the "x/y" header total
+// and the default list length). Only available quests are ever shown or counted.
+u8 CountAvailableQuests(void)
+{
+	u8 q = 0, i = 0;
+
+	for (i = 0; i < QUEST_COUNT; i++)
+	{
+		if (QuestMenu_IsQuestAvailable(i))
+		{
+			q++;
+		}
+	}
+	return q;
+}
+
 u8 CountUnlockedQuests(void)
 {
 	u8 q = 0, i = 0;
 
 	for (i = 0; i < QUEST_COUNT; i++)
 	{
-		if (QuestMenu_GetSetQuestState(i, FLAG_GET_UNLOCKED))
+		if (QuestMenu_IsQuestAvailable(i)
+		    && QuestMenu_GetSetQuestState(i, FLAG_GET_UNLOCKED))
 		{
 			q++;
 		}
@@ -1604,9 +1978,12 @@ u8 CountInactiveQuests(void)
 {
 	u8 q = 0, i = 0;
 
+	// An untouched quest reads as "inactive" (all bits clear), so restrict the
+	// count to quests that are actually revealed in the menu.
 	for (i = 0; i < QUEST_COUNT; i++)
 	{
-		if (QuestMenu_GetSetQuestState(i, FLAG_GET_INACTIVE))
+		if (QuestMenu_IsQuestAvailable(i)
+		    && QuestMenu_GetSetQuestState(i, FLAG_GET_INACTIVE))
 		{
 			q++;
 		}
@@ -1620,7 +1997,8 @@ u8 CountActiveQuests(void)
 
 	for (i = 0; i < QUEST_COUNT; i++)
 	{
-		if (QuestMenu_GetSetQuestState(i, FLAG_GET_ACTIVE))
+		if (QuestMenu_IsQuestAvailable(i)
+		    && QuestMenu_GetSetQuestState(i, FLAG_GET_ACTIVE))
 		{
 			q++;
 		}
@@ -1634,7 +2012,8 @@ u8 CountRewardQuests(void)
 
 	for (i = 0; i < QUEST_COUNT; i++)
 	{
-		if (QuestMenu_GetSetQuestState(i, FLAG_GET_REWARD))
+		if (QuestMenu_IsQuestAvailable(i)
+		    && QuestMenu_GetSetQuestState(i, FLAG_GET_REWARD))
 		{
 			q++;
 		}
@@ -1662,7 +2041,8 @@ u8 CountCompletedQuests(void)
 	{
 		for (i = 0; i < QUEST_COUNT; i++)
 		{
-			if (QuestMenu_GetSetQuestState(i, FLAG_GET_COMPLETED))
+			if (QuestMenu_IsQuestAvailable(i)
+			    && QuestMenu_GetSetQuestState(i, FLAG_GET_COMPLETED))
 			{
 				q++;
 			}
@@ -1679,7 +2059,8 @@ u8 CountFavoriteQuests(void)
 
 	for (i = 0; i < QUEST_COUNT; i++)
 	{
-		if (QuestMenu_GetSetQuestState(i, FLAG_GET_FAVORITE))
+		if (QuestMenu_IsQuestAvailable(i)
+		    && QuestMenu_GetSetQuestState(i, FLAG_GET_FAVORITE))
 		{
 			if (QuestMenu_GetSetQuestState(i, mode))
 			{
@@ -1815,11 +2196,15 @@ static void PlayCursorSound(bool8 firstRun)
 
 static void PrintDetailsForCancel()
 {
+	// On the empty pre-Champion list, spell out when missions unlock.
+	const u8 *detail = (!IsSubquestMode() && CountAvailableQuests() == 0)
+	                   ? sText_NoQuestsHint : sText_Empty;
+
 	FillWindowPixelBuffer(1, 0);
 
 	QuestMenu_AddTextPrinterParameterized(1, 2, sText_Empty, 2, 3, 2, 0, 0,
 	                                      0);
-	QuestMenu_AddTextPrinterParameterized(1, 2, sText_Empty, 40, 19, 5, 0, 0,
+	QuestMenu_AddTextPrinterParameterized(1, 2, detail, 40, 19, 5, 0, 0,
 	                                      0);
 
 	QuestMenu_CreateSprite(-1, sStateDataPtr->spriteIconSlot, ITEM);
@@ -1832,11 +2217,27 @@ void GenerateAndPrintQuestDetails(s32 questId)
 	GenerateQuestFlavorText(questId);
 	PrintQuestFlavorText(questId);
 }
+// The Jirachi quest normally opens by sending the player to Lilycove for the Old
+// Sea Map -- but that map is shared with the Mew quest, so if the player already
+// holds it, skip Lilycove and show the real next step (the Mossdeep girl).
+static bool8 QuestMenu_JirachiHasMapShortcut(s32 questId)
+{
+	return questId == QUEST_JIRACHI
+	    && !QuestMenu_GetSetQuestState(questId, FLAG_GET_UNLOCKED)
+	    && CheckBagHasItem(ITEM_OLD_SEA_MAP, 1);
+}
+
 void GenerateQuestLocation(s32 questId)
 {
 	if (!IsSubquestMode())
 	{
-		StringCopy(gStringVar2, GetQuestLocation(questId));
+		// Before the quest is accepted, point at the giver's town; afterwards,
+		// point at wherever the current active stage sends the player next.
+		if (QuestMenu_GetSetQuestState(questId, FLAG_GET_UNLOCKED)
+		    || QuestMenu_JirachiHasMapShortcut(questId))
+			StringCopy(gStringVar2, GetQuestLocation(questId));
+		else
+			StringCopy(gStringVar2, sSideQuests[questId].startmap);
 	}
 	else
 	{
@@ -1858,7 +2259,10 @@ void GenerateQuestFlavorText(s32 questId)
 	{
 		if (IsQuestInactiveState(questId) == TRUE)
 		{
-			StringCopy(gStringVar1, sText_StartForMore);
+			if (QuestMenu_JirachiHasMapShortcut(questId))
+				StringCopy(gStringVar1, GetQuestDesc(questId));
+			else
+				StringCopy(gStringVar1, sSideQuests[questId].startdesc);
 		}
 		if (IsQuestActiveState(questId) == TRUE)
 		{
@@ -2022,6 +2426,53 @@ void DetermineSpriteType(s32 questId)
 	sStateDataPtr->spriteIconSlot ^= 1;
 }
 
+// Gym-badge icons are pulled from the trainer-card badge sheet (8 badges, each
+// 16x16, in Stone..Rain order). "-mwidth 2 -mheight 2" re-orders the tiles so
+// each badge's 4 tiles are contiguous, which is what a 16x16 sprite expects.
+static const u32 sQuestBadgeTiles[] = INCGFX_U32("graphics/trainer_card/badges.png", ".4bpp", "-mwidth 2 -mheight 2");
+// Use the same custom palette the trainer card uses, so the badges match.
+static const u16 sQuestBadgePal[]   = INCBIN_U16("graphics/trainer_card/palettes/badges.gbapal");
+
+static const struct OamData sQuestBadgeOam =
+{
+	.shape = SPRITE_SHAPE(16x16),
+	.size = SPRITE_SIZE(16x16),
+	.priority = 0,
+};
+
+static const struct SpriteTemplate sQuestBadgeSpriteTemplate =
+{
+	.tileTag = 0,
+	.paletteTag = 0,
+	.oam = &sQuestBadgeOam,
+	.anims = gDummySpriteAnimTable,
+	.images = NULL,
+	.affineAnims = gDummySpriteAffineAnimTable,
+	.callback = SpriteCallbackDummy,
+};
+
+// Loads just the selected badge's 4 tiles and spawns a sprite for it.
+static u8 AddBadgeIconSprite(u16 tilesTag, u16 paletteTag, u8 badge)
+{
+	struct SpriteSheet spriteSheet;
+	struct SpritePalette spritePalette;
+	struct SpriteTemplate spriteTemplate;
+
+	spriteSheet.data = &sQuestBadgeTiles[badge * (0x80 / sizeof(u32))]; // 4 tiles/badge
+	spriteSheet.size = 0x80;
+	spriteSheet.tag = tilesTag;
+	LoadSpriteSheet(&spriteSheet);
+
+	spritePalette.data = sQuestBadgePal;
+	spritePalette.tag = paletteTag;
+	LoadSpritePalette(&spritePalette);
+
+	spriteTemplate = sQuestBadgeSpriteTemplate;
+	spriteTemplate.tileTag = tilesTag;
+	spriteTemplate.paletteTag = paletteTag;
+	return CreateSprite(&spriteTemplate, 0, 0, 0);
+}
+
 static void QuestMenu_CreateSprite(u16 itemId, u8 idx, u8 spriteType)
 {
 	u8 *ptr = &sItemMenuIconSpriteIds[10];
@@ -2045,6 +2496,9 @@ static void QuestMenu_CreateSprite(u16 itemId, u8 idx, u8 spriteType)
 				LoadMonIconPalettes();
 				spriteId = CreateMonIcon(itemId, SpriteCallbackDummy, 20, 132, 0, 1);
 				break;
+			case BADGE:
+				spriteId = AddBadgeIconSprite(102 + idx, 102 + idx, itemId);
+				break;
 			default:
 				break;
 		}
@@ -2058,6 +2512,13 @@ static void QuestMenu_CreateSprite(u16 itemId, u8 idx, u8 spriteType)
 			{
 				gSprites[spriteId].x2 = 24;
 				gSprites[spriteId].y2 = 140;
+			}
+			else if (spriteType == BADGE)
+			{
+				// Centre the 16x16 badge on the same point the 32x32 mon icons use,
+				// nudged down a touch to sit true-centre in the icon box.
+				gSprites[spriteId].x2 = 20;
+				gSprites[spriteId].y2 = 135;
 			}
 		}
 	}
@@ -2348,7 +2809,12 @@ static void Task_Main(u8 taskId)
 			default:
 				if (!IsSubquestMode())
 				{
-					EnterSubquestModeAndCleanUp(taskId, data, input);
+					// A on a quest: claim its reward if one is waiting,
+					// otherwise open its subquests (if it has any).
+					if (QuestMenu_GetSetQuestState(input, FLAG_GET_REWARD))
+						TryClaimQuestReward(taskId, input);
+					else
+						EnterSubquestModeAndCleanUp(taskId, data, input);
 				}
 				break;
 		}
@@ -2415,6 +2881,33 @@ static void QuestMenu_RemoveScrollIndicatorArrowPair(void)
 	}
 }
 
+
+// Hands a "Reward Available" quest's item/money to the player and marks it Done.
+// Refuses (with a buzzer) if the reward item wouldn't fit in the bag.
+static void TryClaimQuestReward(u8 taskId, u8 questId)
+{
+	u16 item = sSideQuests[questId].rewardItem;
+	u8 qty = sSideQuests[questId].rewardQty;
+	u32 money = sSideQuests[questId].rewardMoney;
+
+	if (item != ITEM_NONE && qty != 0 && !CheckBagHasSpace(item, qty))
+	{
+		PlaySE(SE_BOO);
+		return;
+	}
+
+	if (item != ITEM_NONE && qty != 0)
+		AddBagItem(item, qty);
+	if (money != 0)
+		AddMoney(&gSaveBlock1Ptr->money, money);
+
+	QuestMenu_GetSetQuestState(questId, FLAG_REMOVE_REWARD);
+	QuestMenu_GetSetQuestState(questId, FLAG_SET_COMPLETED);
+
+	PlayFanfare(MUS_OBTAIN_ITEM);
+	sStateDataPtr->restoreCursor = FALSE;
+	Task_QuestMenuCleanUp(taskId);
+}
 
 void EnterSubquestModeAndCleanUp(u8 taskId, s16 *data,
                                  s32 input)
@@ -2690,19 +3183,86 @@ u32 QuestMenu_GetQuestVariable(u8 quest)
 {
     return VarGet(QuestMenu_GetQuestVariableId(quest));
 }
-// ==================== Overworld quest-giver icons (ported from Starbound) ====================
 
-static void RemoveQuestIconFieldEffect(struct ObjectEvent *objectEvent)
+// ==================== Rewards & condition-based completion ====================
+
+static bool8 QuestHasReward(u8 questId)
 {
-	objectEvent->hasQuestIcon = FALSE;
+	return sSideQuests[questId].rewardItem != ITEM_NONE
+	    || sSideQuests[questId].rewardMoney != 0;
+}
 
-	if (FieldEffectActiveListContains(FLDEFF_QUEST_ICON))
+// Finishes a quest triggered by a script (completequest) or by the condition
+// checker. A quest with a pending reward parks in the REWARD state until the
+// player claims it from the menu; a quest with no reward completes outright.
+void QuestMenu_MarkQuestFinished(u8 questId)
+{
+	if (QuestMenu_GetSetQuestState(questId, FLAG_GET_COMPLETED)
+	    || QuestMenu_GetSetQuestState(questId, FLAG_GET_REWARD))
+		return;
+
+	QuestMenu_GetSetQuestState(questId, FLAG_SET_UNLOCKED);
+	QuestMenu_GetSetQuestState(questId, FLAG_REMOVE_ACTIVE);
+
+	if (QuestHasReward(questId))
+		QuestMenu_GetSetQuestState(questId, FLAG_SET_REWARD);
+	else
+		QuestMenu_GetSetQuestState(questId, FLAG_SET_COMPLETED);
+}
+
+// Catch-count and Pokédex-completion quests have no scripted trigger, so we poll
+// their conditions whenever the menu is opened and flip finished ones to REWARD.
+static const struct { u8 quest; u16 count; } sCatchGoals[] =
+{
+	{QUEST_CATCH_50,   50},
+	{QUEST_CATCH_100, 100},
+	{QUEST_CATCH_300, 300},
+	{QUEST_CATCH_500, 500},
+	{QUEST_CATCH_800, 800},
+};
+
+static void QuestMenu_TryAdvanceConditionalQuests(void)
+{
+	u16 caught = GetNationalPokedexCount(FLAG_GET_CAUGHT);
+	u32 i;
+
+	for (i = 0; i < ARRAY_COUNT(sCatchGoals); i++)
 	{
-		u8 spriteId = objectEvent->spriteId;
-		struct Sprite *sprite = &gSprites[spriteId];
-		FieldEffectStop(sprite, FLDEFF_QUEST_ICON);
+		if (caught >= sCatchGoals[i].count)
+			QuestMenu_MarkQuestFinished(sCatchGoals[i].quest);
+	}
+
+	if (QuestMenu_IsQuestAvailable(QUEST_POKEDEX)
+	    && caught >= NATIONAL_DEX_COUNT)
+		QuestMenu_MarkQuestFinished(QUEST_POKEDEX);
+
+	// The intro quest wraps up the moment the player receives the Pokédex.
+	if (FlagGet(FLAG_SYS_POKEDEX_GET))
+		QuestMenu_MarkQuestFinished(QUEST_INTRO);
+}
+
+// Called from new_game.c: wipe quest save data and light up the goals that are
+// live from the very first step (badge 1, the catch-count goals, the intro).
+void QuestMenu_InitNewGameQuests(void)
+{
+	static const u8 sNewGameActiveQuests[] =
+	{
+		QUEST_INTRO,
+		QUEST_CATCH_50, QUEST_CATCH_100, QUEST_CATCH_300,
+		QUEST_CATCH_500, QUEST_CATCH_800,
+	};
+	u32 i;
+
+	QuestMenu_ResetMenuSaveData();
+
+	for (i = 0; i < ARRAY_COUNT(sNewGameActiveQuests); i++)
+	{
+		QuestMenu_GetSetQuestState(sNewGameActiveQuests[i], FLAG_SET_UNLOCKED);
+		QuestMenu_GetSetQuestState(sNewGameActiveQuests[i], FLAG_SET_ACTIVE);
 	}
 }
+
+// ==================== Overworld quest-giver icons (ported from Starbound) ====================
 
 static bool32 ObjectEventAlreadyHasQuest(bool32 hasQuestIcon)
 {
@@ -2751,12 +3311,16 @@ void HandleQuestIconForSingleObjectEvent(struct ObjectEvent *objectEvent, u32 ob
 	if (questId == QUEST_NONE)
 		return;
 
-	// Remove icon if the quest is completed
-	if (QuestMenu_GetSetQuestState(questId, FLAG_GET_COMPLETED))
-	{
-		RemoveQuestIconFieldEffect(objectEvent);
+	// No marker until the quest is actually available in the menu.
+	if (!QuestMenu_IsQuestAvailable(questId))
 		return;
-	}
+
+	// Only unaccepted quests get a marker. Once the quest is unlocked (accepted),
+	// simply don't spawn one on this map load; a marker that's already onscreen is
+	// cleared live by the icon's own callback (SpriteCB_QuestIcon), which stops the
+	// icon sprite -- never the NPC sprite.
+	if (QuestMenu_GetSetQuestState(questId, FLAG_GET_UNLOCKED))
+		return;
 
 	// Already has icon? Do nothing
 	if (ObjectEventAlreadyHasQuest(objectEvent->hasQuestIcon))

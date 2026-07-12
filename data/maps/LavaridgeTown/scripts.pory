@@ -418,6 +418,7 @@ script GiftMysticTicketScript {
                   "I've heard whispers of a sacred isle where guardians rest.\l"
                   "Take this Ticket, it's your key to Navel Rock!"))
     giveitem(ITEM_MYSTIC_TICKET)
+    startquest(QUEST_LUGIA)
     setflag(FLAG_RECEIVED_MYSTIC_TICKET)
     setflag(FLAG_ENABLE_SHIP_NAVEL_ROCK)
     msgbox(format("Take this ticket to Lilycove's ferry.\n"

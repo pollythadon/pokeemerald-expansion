@@ -1523,12 +1523,14 @@ GiftOldSeaMapScript::
 # 772 "data/maps/LilycoveCity/scripts.pory"
 	startquest QUEST_JIRACHI
 # 773 "data/maps/LilycoveCity/scripts.pory"
-	setflag FLAG_RECEIVED_OLD_SEA_MAP
+	startquest QUEST_MEW
 # 774 "data/maps/LilycoveCity/scripts.pory"
-	setflag FLAG_ENABLE_SHIP_FARAWAY_ISLAND
+	setflag FLAG_RECEIVED_OLD_SEA_MAP
 # 775 "data/maps/LilycoveCity/scripts.pory"
+	setflag FLAG_ENABLE_SHIP_FARAWAY_ISLAND
+# 776 "data/maps/LilycoveCity/scripts.pory"
 	msgbox GiftOldSeaMapScript_Text_2
-# 777 "data/maps/LilycoveCity/scripts.pory"
+# 778 "data/maps/LilycoveCity/scripts.pory"
 	release
 	end
 
@@ -1555,6 +1557,6 @@ GiftOldSeaMapScript_Text_1:
 	.string "island far, far away.$"
 
 GiftOldSeaMapScript_Text_2:
-# 775 "data/maps/LilycoveCity/scripts.pory"
+# 776 "data/maps/LilycoveCity/scripts.pory"
 	.string "Present this map at the ferry in town.\n"
 	.string "I wonder what you'll find.$"

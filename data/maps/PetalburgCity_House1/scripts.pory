@@ -90,6 +90,7 @@ script PetalburgCity_House1_EventScript_Scientist {
     msgbox(format("There! The DexNav is now installed.\p"
                   "You'll find it inside your ROTOM PHONE.\n"
                   "Go put it to good use!"))
+    completequest(QUEST_DEXNAV)
     release
     end
 }

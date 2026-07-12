@@ -1159,7 +1159,8 @@ void SpriteCB_QuestIcon(struct Sprite *sprite)
         return;
     }
 
-    // If the player just talked to this quest-giver and completed the quest, stop the icon.
+    // If the player just talked to this quest-giver and has now accepted the
+    // quest, stop the icon (only the marker vanishes; the NPC stays put).
     if (gObjectEvents[objEventId].localId == gSpecialVar_LastTalked)
     {
         u16 questId = GetObjectEventTemplateByLocalIdAndMap(
@@ -1167,7 +1168,7 @@ void SpriteCB_QuestIcon(struct Sprite *sprite)
             gObjectEvents[objEventId].mapNum,
             gObjectEvents[objEventId].mapGroup)->questId;
 
-        if (questId != QUEST_NONE && QuestMenu_GetSetQuestState(questId, FLAG_GET_COMPLETED))
+        if (questId != QUEST_NONE && QuestMenu_GetSetQuestState(questId, FLAG_GET_UNLOCKED))
         {
             StopQuestFieldEffect(sprite, objEventId);
             return;

@@ -1,6 +1,7 @@
 EverGrandeCity_HallOfFame_EventScript_SetGameClearFlags::
 	special SetChampionSaveWarp
 	setflag FLAG_IS_CHAMPION
+	questmenu QUEST_MENU_COMPLETE_QUEST, QUEST_CHAMPION
 	clearflag FLAG_CELEBI_LADY
 	clearflag FLAG_DARKRAI_MAN
 	clearflag FLAG_CRESSELIA_LADY

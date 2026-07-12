@@ -85,7 +85,7 @@
 #define FLAG_SHAYMIN_BATTLE  0x3E // Shaymin Sky Forme sprite hide flag; cleared to make it appear during the transform.
 #define FLAG_SHAYMIN_DFTD    0x3F // Set when Shaymin is caught/defeated, so it doesn't reappear.
 #define FLAG_GIRATINA_DFTD   0x40 // Giratina caught/defeated (quest completion tracking)
-#define FLAG_UNUSED_0x041    0x41 // Unused Flag
+#define FLAG_NORMAN_MENTIONED_ROXANNE 0x41 // Norman's "challenge Roxanne" speech seen; reveals the Stone Badge quest
 #define FLAG_UNUSED_0x042    0x42 // Unused Flag
 #define FLAG_UNUSED_0x043    0x43 // Unused Flag
 #define FLAG_UNUSED_0x044    0x44 // Unused Flag

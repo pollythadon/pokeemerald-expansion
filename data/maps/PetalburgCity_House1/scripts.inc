@@ -74,6 +74,8 @@ PetalburgCity_House1_EventScript_Scientist::
 # 90 "data/maps/PetalburgCity_House1/scripts.pory"
 	msgbox PetalburgCity_House1_EventScript_Scientist_Text_7
 # 93 "data/maps/PetalburgCity_House1/scripts.pory"
+	completequest QUEST_DEXNAV
+# 94 "data/maps/PetalburgCity_House1/scripts.pory"
 	release
 	end
 

@@ -4220,8 +4220,10 @@ static bool32 RotomPhone_StartMenu_UnlockedFunc_Clock(void)
 
 static bool32 RotomPhone_StartMenu_UnlockedFunc_Shortcut(void)
 {
+    // The overworld shortcut slot is the Pokédex (see GetShortcutOption), so keep
+    // it hidden until the player has actually received the Pokédex.
     if (RP_CONFIG_USE_ROTOM_PHONE && (!RotomPhone_StartMenu_IsRotomReality()) && !GetSafariZoneFlag())
-        return TRUE;
+        return FlagGet(FLAG_SYS_POKEDEX_GET);
     else
         return FALSE;
 }

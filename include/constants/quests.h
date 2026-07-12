@@ -48,7 +48,7 @@
 #define QUEST_29        28
 #define QUEST_30        29
 
-// Legendary quest aliases (post-game framework tie-in)
+// Post-game legendary quest aliases (custom framework tie-in)
 #define QUEST_MEWTWO     QUEST_1
 #define QUEST_DIALGA     QUEST_2
 #define QUEST_PALKIA     QUEST_3
@@ -59,8 +59,37 @@
 #define QUEST_DARKRAI    QUEST_8
 #define QUEST_CRESSELIA  QUEST_9
 #define QUEST_SHAYMIN    QUEST_10
+// Post-game event-island legendaries (vanilla encounters wrapped as quests)
+#define QUEST_MEW        QUEST_11
+#define QUEST_LUGIA      QUEST_12   // covers Lugia + Ho-Oh at Navel Rock
+#define QUEST_DEOXYS     QUEST_13
 
-#define QUEST_COUNT     10
+// Gym-badge quests (unlock sequentially, one per badge)
+#define QUEST_BADGE_1    QUEST_14
+#define QUEST_BADGE_2    QUEST_15
+#define QUEST_BADGE_3    QUEST_16
+#define QUEST_BADGE_4    QUEST_17
+#define QUEST_BADGE_5    QUEST_18
+#define QUEST_BADGE_6    QUEST_19
+#define QUEST_BADGE_7    QUEST_20
+#define QUEST_BADGE_8    QUEST_21
+
+// Milestone quests
+#define QUEST_CHAMPION   QUEST_22
+#define QUEST_DEXNAV     QUEST_23
+#define QUEST_POKEDEX    QUEST_24
+
+// Catch-count quests
+#define QUEST_CATCH_50   QUEST_25
+#define QUEST_CATCH_100  QUEST_26
+#define QUEST_CATCH_300  QUEST_27
+#define QUEST_CATCH_500  QUEST_28
+#define QUEST_CATCH_800  QUEST_29
+
+// Intro guide quest
+#define QUEST_INTRO      QUEST_30
+
+#define QUEST_COUNT     30
 
 #define SUB_QUEST_1          0
 #define SUB_QUEST_2          1

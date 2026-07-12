@@ -3820,10 +3820,9 @@ bool8 ScrCmd_questmenu(struct ScriptContext *ctx)
         QuestMenu_GetSetQuestState(questId, FLAG_REMOVE_ACTIVE);
         break;
     case QUEST_MENU_COMPLETE_QUEST:
-        QuestMenu_GetSetQuestState(questId, FLAG_SET_UNLOCKED);
-        QuestMenu_GetSetQuestState(questId, FLAG_SET_COMPLETED);
-        QuestMenu_GetSetQuestState(questId, FLAG_REMOVE_ACTIVE);
-        QuestMenu_GetSetQuestState(questId, FLAG_REMOVE_REWARD);
+        // Quests carrying a reward park in the REWARD state for the player to
+        // claim from the menu; rewardless quests complete outright.
+        QuestMenu_MarkQuestFinished(questId);
         break;
     case QUEST_MENU_CHECK_UNLOCKED:
         if (QuestMenu_GetSetQuestState(questId, FLAG_GET_UNLOCKED))

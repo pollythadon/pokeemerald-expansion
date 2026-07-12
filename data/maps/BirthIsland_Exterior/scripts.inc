@@ -84,6 +84,9 @@ BirthIsland_Exterior_EventScript_Deoxys::
 	setflag FLAG_SYS_CTRL_OBJ_DELETE
 	special BattleSetup_StartLegendaryBattle
 	clearflag FLAG_SYS_CTRL_OBJ_DELETE
+	goto_if_quest_complete QUEST_DEOXYS, BirthIsland_Exterior_EventScript_DeoxysQuestDone
+	completequest QUEST_DEOXYS
+BirthIsland_Exterior_EventScript_DeoxysQuestDone:
 	specialvar VAR_RESULT, GetBattleOutcome
 	goto_if_eq VAR_RESULT, B_OUTCOME_WON, BirthIsland_Exterior_EventScript_DefeatedDeoxys
 	goto_if_eq VAR_RESULT, B_OUTCOME_RAN, BirthIsland_Exterior_EventScript_RanFromDeoxys

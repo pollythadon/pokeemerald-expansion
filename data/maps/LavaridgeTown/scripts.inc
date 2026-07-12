@@ -821,12 +821,14 @@ GiftMysticTicketScript::
 # 420 "data/maps/LavaridgeTown/scripts.pory"
 	giveitem ITEM_MYSTIC_TICKET
 # 421 "data/maps/LavaridgeTown/scripts.pory"
-	setflag FLAG_RECEIVED_MYSTIC_TICKET
+	startquest QUEST_LUGIA
 # 422 "data/maps/LavaridgeTown/scripts.pory"
-	setflag FLAG_ENABLE_SHIP_NAVEL_ROCK
+	setflag FLAG_RECEIVED_MYSTIC_TICKET
 # 423 "data/maps/LavaridgeTown/scripts.pory"
+	setflag FLAG_ENABLE_SHIP_NAVEL_ROCK
+# 424 "data/maps/LavaridgeTown/scripts.pory"
 	msgbox GiftMysticTicketScript_Text_2
-# 426 "data/maps/LavaridgeTown/scripts.pory"
+# 427 "data/maps/LavaridgeTown/scripts.pory"
 	release
 	end
 
@@ -851,7 +853,7 @@ GiftMysticTicketScript_Text_1:
 	.string "Rock!$"
 
 GiftMysticTicketScript_Text_2:
-# 423 "data/maps/LavaridgeTown/scripts.pory"
+# 424 "data/maps/LavaridgeTown/scripts.pory"
 	.string "Take this ticket to Lilycove's ferry.\n"
 	.string "Seek the Guardians of Johto…\p"
 	.string "Go now, and may the tides guide you!$"

@@ -131,6 +131,9 @@ FarawayIsland_Interior_EventScript_Mew::
 	setflag FLAG_SYS_CTRL_OBJ_DELETE
 	special BattleSetup_StartLegendaryBattle
 	clearflag FLAG_SYS_CTRL_OBJ_DELETE
+	goto_if_quest_complete QUEST_MEW, FarawayIsland_Interior_EventScript_MewQuestDone
+	completequest QUEST_MEW
+FarawayIsland_Interior_EventScript_MewQuestDone:
 	specialvar VAR_RESULT, GetBattleOutcome
 	goto_if_eq VAR_RESULT, B_OUTCOME_WON, FarawayIsland_Interior_EventScript_MewDefeated
 	goto_if_eq VAR_RESULT, B_OUTCOME_RAN, FarawayIsland_Interior_EventScript_PlayerOrMewRan

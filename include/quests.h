@@ -24,6 +24,12 @@
 #define OBJECT 1
 #define ITEM 2
 #define PKMN 3
+#define BADGE 4  // gym badge icon (sprite value = badge index 0-7, Stone..Rain)
+
+// When a quest becomes visible in the menu (SideQuest.availType)
+#define QUEST_AVAIL_ALWAYS    0  // shown from the start
+#define QUEST_AVAIL_FLAG_SET  1  // shown once availFlag is set
+#define QUEST_AVAIL_POSTGAME  2  // shown once Champion (FLAG_LEGENDARY_BTL cleared)
 
 #define MAX_QUEST_STATES 50
 /* Defines how many states a complex quest can have */
@@ -42,6 +48,8 @@ struct SubQuest
 struct SideQuest
 {
 	const u8 *name;
+	const u8 *startmap;                 // location shown while the quest is unaccepted (where the giver is)
+	const u8 *startdesc;                // hint shown while the quest is unaccepted (how to start it)
 	const u8 *desc[MAX_QUEST_STATES];
 	const u8 *donedesc;
 	const u8 *map[MAX_QUEST_STATES];
@@ -50,7 +58,12 @@ struct SideQuest
 	const struct SubQuest *subquests;
 	const u8 numSubquests;
 	const u16 questVariable;
-}; 
+	const u8 availType;                 // QUEST_AVAIL_* — when the quest appears in the menu
+	const u16 availFlag;                // flag checked when availType == QUEST_AVAIL_FLAG_SET
+	const u16 rewardItem;               // item handed out on claim (ITEM_NONE = none)
+	const u8 rewardQty;                 // quantity of rewardItem
+	const u32 rewardMoney;              // money handed out on claim (0 = none)
+};
 
 enum QuestCases
 {
@@ -76,6 +89,8 @@ enum QuestCases
 void QuestMenu_Init(u8 a0, MainCallback callback);
 u8 QuestMenu_GetSetSubquestState(u8 quest, u8 caseId, u8 childQuest);
 u8 QuestMenu_GetSetQuestState(u8 quest, u8 caseId);
+void QuestMenu_MarkQuestFinished(u8 quest);
+void QuestMenu_InitNewGameQuests(void);
 u32 QuestMenu_GetQuestVariableId(u8 quest);
 u32 QuestMenu_GetQuestVariable(u8 quest);
 void Task_QuestMenu_OpenFromStartMenu(u8);

@@ -770,6 +770,7 @@ script GiftOldSeaMapScript {
                   "This map will surely guide you to an island far, far away."))
     giveitem(ITEM_OLD_SEA_MAP)
     startquest(QUEST_JIRACHI)
+    startquest(QUEST_MEW)
     setflag(FLAG_RECEIVED_OLD_SEA_MAP)
     setflag(FLAG_ENABLE_SHIP_FARAWAY_ISLAND)
     msgbox(format("Present this map at the ferry in town.\n"
