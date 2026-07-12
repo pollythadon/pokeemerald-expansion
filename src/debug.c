@@ -229,6 +229,15 @@ struct DebugMonData
     u8 teraType;
     u8 dynamaxLevel:7;
     u8 gmaxFactor:1;
+    // Extended editor fields
+    u16 heldItem;
+    u16 ballItem;
+    u16 otId;
+    u8 friendship;
+    u8 gender;      // 0 = default/random, 1 = male, 2 = female
+    bool8 playerIsOT;
+    bool8 hasNickname;
+    u8 nickname[POKEMON_NAME_LENGTH + 1];
 };
 
 struct DebugMenuListData
@@ -336,7 +345,7 @@ static void DebugAction_Give_Item(u8 taskId);
 static void DebugAction_Give_Item_SelectId(u8 taskId);
 static void DebugAction_Give_Item_SelectQuantity(u8 taskId);
 static void DebugAction_Give_PokemonSimple(u8 taskId);
-static void DebugAction_Give_PokemonComplex(u8 taskId);
+static void DebugAction_Give_PokemonEditor(u8 taskId);
 static void DebugAction_Give_NewEgg(u8 taskId);
 static void DebugAction_Give_Pokemon_SelectId(u8 taskId);
 static void DebugAction_Give_Pokemon_SelectLevel(u8 taskId);
@@ -646,7 +655,7 @@ static const struct DebugMenuOption sDebugMenu_Actions_Give[] =
 {
     { COMPOUND_STRING("Give item XYZ…"),    DebugAction_Give_Item },
     { COMPOUND_STRING("Pokémon (Basic)"),   DebugAction_Give_PokemonSimple },
-    { COMPOUND_STRING("Pokémon (Complex)"), DebugAction_Give_PokemonComplex },
+    { COMPOUND_STRING("Pokémon Creator…"),  DebugAction_Give_PokemonEditor },
     { COMPOUND_STRING("Give Egg"),          DebugAction_Give_NewEgg },
     { COMPOUND_STRING("Give Decoration…"),  DebugAction_Give_Decoration },
     { COMPOUND_STRING("Max Money"),         DebugAction_Give_MaxMoney },
@@ -2755,11 +2764,21 @@ static void ResetMonDataStruct(struct DebugMonData *sDebugMonData)
     sDebugMonData->teraType         = TYPE_NONE;
     sDebugMonData->dynamaxLevel     = 0;
     sDebugMonData->gmaxFactor       = FALSE;
+    sDebugMonData->heldItem         = ITEM_NONE;
+    sDebugMonData->ballItem         = ITEM_POKE_BALL;
+    sDebugMonData->otId             = 0;
+    sDebugMonData->friendship       = 70;
+    sDebugMonData->gender           = 0;
+    sDebugMonData->playerIsOT       = TRUE;
+    sDebugMonData->hasNickname      = FALSE;
+    sDebugMonData->nickname[0]      = EOS;
     for (u32 i = 0; i < NUM_STATS; i++)
     {
         sDebugMonData->monIVs[i] = 0;
         sDebugMonData->monEVs[i] = 0;
     }
+    for (u32 i = 0; i < MAX_MON_MOVES; i++)
+        sDebugMonData->monMoves[i] = MOVE_NONE;
 }
 
 #define tIsComplex  data[5]
@@ -2827,48 +2846,6 @@ static void DebugAction_Give_PokemonSimple(u8 taskId)
     LoadMonIconPalettePersonality(species, 0);
     gTasks[taskId].tSpriteId = CreateMonIcon(species, SpriteCB_MonIcon, DEBUG_NUMBER_ICON_X, DEBUG_NUMBER_ICON_Y, 4, 0);
     gSprites[gTasks[taskId].tSpriteId].oam.priority = 0;
-}
-
-static void DebugAction_Give_PokemonComplex(u8 taskId)
-{
-    u8 windowId;
-
-    //Mon data struct
-    sDebugMonData = AllocZeroed(sizeof(struct DebugMonData));
-    ResetMonDataStruct(sDebugMonData);
-
-    //Window initialization
-    ClearStdWindowAndFrame(gTasks[taskId].tWindowId, TRUE);
-    RemoveWindow(gTasks[taskId].tWindowId);
-
-    HideMapNamePopUpWindow();
-    LoadMessageBoxAndBorderGfx();
-    windowId = AddWindow(&sDebugMenuWindowTemplateExtra);
-    DrawStdWindowFrame(windowId, FALSE);
-
-    CopyWindowToVram(windowId, COPYWIN_FULL);
-
-    // Display initial Pokémon
-    u32 species;
-    if (!IsSpeciesEnabled(sDebugMonData->species))
-        species = SPECIES_NONE;
-    else
-        species = sDebugMonData->species;
-
-    Debug_Display_SpeciesInfo(species, sDebugMonData->species, 0, windowId);
-
-    gTasks[taskId].func = DebugAction_Give_Pokemon_SelectId;
-    gTasks[taskId].tSubWindowId = windowId;
-    gTasks[taskId].tInput = 1;
-    gTasks[taskId].tDigit = 0;
-    gTasks[taskId].tIsComplex = TRUE;
-    gTasks[taskId].tIsEgg = FALSE;
-
-    FreeMonIconPalettes();
-    LoadMonIconPalettePersonality(species, 0);
-    gTasks[taskId].tSpriteId = CreateMonIcon(species, SpriteCB_MonIcon, DEBUG_NUMBER_ICON_X, DEBUG_NUMBER_ICON_Y, 4, 0);
-    gSprites[gTasks[taskId].tSpriteId].oam.priority = 0;
-    gTasks[taskId].tIterator = 0;
 }
 
 static void DebugAction_Give_NewEgg(u8 taskId)
@@ -3574,6 +3551,535 @@ static void DebugAction_Give_Pokemon_ComplexCreateMon(u8 taskId) //https://githu
 #undef tSpriteId
 #undef tIterator
 #undef tIsEgg
+
+// ============================================================================
+// Pokémon Creator - single-screen list editor (revamped "Pokémon (Complex)")
+// ============================================================================
+enum PkmEditorField
+{
+    // Left column
+    PKF_SPECIES, PKF_NICKNAME, PKF_LEVEL, PKF_SHINY, PKF_GENDER, PKF_NATURE,
+    PKF_ABILITY, PKF_ITEM, PKF_BALL, PKF_FRIENDSHIP,
+    // Right column
+    PKF_PLAYER_OT, PKF_OTID, PKF_MOVE1, PKF_MOVE2, PKF_MOVE3, PKF_MOVE4,
+    PKF_TERA, PKF_DMAX, PKF_GMAX, PKF_GIVE,
+    PKF_COUNT,
+};
+
+#define PKE_ROW_HEIGHT   14
+#define PKE_LIST_TOP     18
+#define PKE_FONT         FONT_NORMAL
+
+// Editor screens: 0 = category menu, otherwise category index + 1.
+#define PKE_SCREEN_MENU  0
+
+#define tEdFromScript data[3]   // opened via the OpenPokemonCreator special, not the debug menu
+#define tEdCursor  data[5]
+#define tEdScreen  data[6]
+#define tEdIcon    data[7]
+
+// Live mon icon sits (frameless) in the bottom-right of the window.
+// PKE_ICON_X/Y are screen coords (for the sprite); the window itself starts at
+// screen (8,8), so window-relative text subtracts 8.
+#define PKE_ICON_X  172
+#define PKE_ICON_Y  104
+#define PKE_WIN_ORIGIN 8
+
+// Fields grouped into tidy sub-menus so no single screen is crowded.
+static const u8 sPkeCat_Basics[]  = { PKF_SPECIES, PKF_NICKNAME, PKF_LEVEL, PKF_GENDER, PKF_SHINY };
+static const u8 sPkeCat_Battle[]  = { PKF_NATURE, PKF_ABILITY, PKF_FRIENDSHIP };
+static const u8 sPkeCat_Moves[]   = { PKF_MOVE1, PKF_MOVE2, PKF_MOVE3, PKF_MOVE4 };
+static const u8 sPkeCat_Trainer[] = { PKF_PLAYER_OT, PKF_OTID, PKF_ITEM, PKF_BALL };
+
+struct PkeCategory { const u8 *name; const u8 *fields; u8 count; };
+static const struct PkeCategory sPkeCategories[] =
+{
+    { COMPOUND_STRING("Basics"),           sPkeCat_Basics,  ARRAY_COUNT(sPkeCat_Basics)  },
+    { COMPOUND_STRING("Nature & Ability"), sPkeCat_Battle,  ARRAY_COUNT(sPkeCat_Battle)  },
+    { COMPOUND_STRING("Moves"),            sPkeCat_Moves,   ARRAY_COUNT(sPkeCat_Moves)   },
+    { COMPOUND_STRING("Trainer & Item"),   sPkeCat_Trainer, ARRAY_COUNT(sPkeCat_Trainer) },
+};
+#define PKE_NUM_CATEGORIES  ARRAY_COUNT(sPkeCategories)
+#define PKE_MENU_ROWS       (PKE_NUM_CATEGORIES + 1)   // categories + CREATE row
+
+static const u8 *const sPkmEditorLabels[PKF_COUNT] =
+{
+    [PKF_SPECIES]    = COMPOUND_STRING("Species"),
+    [PKF_NICKNAME]   = COMPOUND_STRING("Nickname"),
+    [PKF_LEVEL]      = COMPOUND_STRING("Level"),
+    [PKF_SHINY]      = COMPOUND_STRING("Shiny"),
+    [PKF_GENDER]     = COMPOUND_STRING("Gender"),
+    [PKF_NATURE]     = COMPOUND_STRING("Nature"),
+    [PKF_ABILITY]    = COMPOUND_STRING("Ability"),
+    [PKF_ITEM]       = COMPOUND_STRING("Held Item"),
+    [PKF_BALL]       = COMPOUND_STRING("Poké Ball"),
+    [PKF_FRIENDSHIP] = COMPOUND_STRING("Friendship"),
+    [PKF_PLAYER_OT]  = COMPOUND_STRING("You're OT"),
+    [PKF_OTID]       = COMPOUND_STRING("OT ID"),
+    [PKF_MOVE1]      = COMPOUND_STRING("Move 1"),
+    [PKF_MOVE2]      = COMPOUND_STRING("Move 2"),
+    [PKF_MOVE3]      = COMPOUND_STRING("Move 3"),
+    [PKF_MOVE4]      = COMPOUND_STRING("Move 4"),
+    [PKF_TERA]       = COMPOUND_STRING("Tera Type"),
+    [PKF_DMAX]       = COMPOUND_STRING("Dmax Lvl"),
+    [PKF_GMAX]       = COMPOUND_STRING("Gmax"),
+    [PKF_GIVE]       = COMPOUND_STRING("CREATE"),
+};
+
+static const u16 sPkmEditorBalls[] =
+{
+    ITEM_POKE_BALL, ITEM_GREAT_BALL, ITEM_ULTRA_BALL, ITEM_MASTER_BALL, ITEM_PREMIER_BALL,
+    ITEM_HEAL_BALL, ITEM_NET_BALL, ITEM_NEST_BALL, ITEM_DIVE_BALL, ITEM_DUSK_BALL,
+    ITEM_TIMER_BALL, ITEM_QUICK_BALL, ITEM_REPEAT_BALL, ITEM_LUXURY_BALL, ITEM_CHERISH_BALL,
+    ITEM_SAFARI_BALL, ITEM_LEVEL_BALL, ITEM_LURE_BALL, ITEM_MOON_BALL, ITEM_FRIEND_BALL,
+    ITEM_LOVE_BALL, ITEM_FAST_BALL, ITEM_HEAVY_BALL, ITEM_DREAM_BALL, ITEM_SPORT_BALL,
+    ITEM_PARK_BALL, ITEM_BEAST_BALL,
+};
+
+static s32 PkeClamp(s32 v, s32 lo, s32 hi)
+{
+    if (v < lo)
+        return lo;
+    if (v > hi)
+        return hi;
+    return v;
+}
+
+// 0 = species has both genders (choosable), 1 = always male, 2 = always female, 3 = genderless.
+static u8 PkeGenderState(u16 species)
+{
+    u8 ratio = gSpeciesInfo[species].genderRatio;
+    if (ratio == MON_GENDERLESS)
+        return 3;
+    if (ratio == MON_MALE)
+        return 1;
+    if (ratio == MON_FEMALE)
+        return 2;
+    return 0;
+}
+
+static void PkmEditor_BuildValue(u8 field, u8 *dst)
+{
+    enum Ability ability;
+    switch (field)
+    {
+    case PKF_SPECIES:
+        if (IsSpeciesEnabled(sDebugMonData->species))
+            StringCopy(dst, GetSpeciesName(sDebugMonData->species));
+        else
+            StringCopy(dst, COMPOUND_STRING("DISABLED"));
+        break;
+    case PKF_NICKNAME:
+        if (sDebugMonData->hasNickname)
+            StringCopy(dst, sDebugMonData->nickname);
+        else
+            StringCopy(dst, COMPOUND_STRING("{COLOR LIGHT_GRAY}(auto)"));
+        break;
+    case PKF_LEVEL:      ConvertIntToDecimalStringN(dst, sDebugMonData->level, STR_CONV_MODE_LEFT_ALIGN, 3); break;
+    case PKF_SHINY:      StringCopy(dst, sDebugMonData->isShiny ? COMPOUND_STRING("{COLOR GREEN}Yes") : COMPOUND_STRING("No")); break;
+    case PKF_GENDER:
+        switch (PkeGenderState(sDebugMonData->species))
+        {
+        case 3:  StringCopy(dst, COMPOUND_STRING("{COLOR LIGHT_GRAY}Genderless")); break;
+        case 1:  StringCopy(dst, COMPOUND_STRING("{COLOR LIGHT_GRAY}Male (fixed)")); break;
+        case 2:  StringCopy(dst, COMPOUND_STRING("{COLOR LIGHT_GRAY}Female (fixed)")); break;
+        default: StringCopy(dst, sDebugMonData->gender == 1 ? COMPOUND_STRING("Male")
+                              : sDebugMonData->gender == 2 ? COMPOUND_STRING("Female")
+                              : COMPOUND_STRING("{COLOR LIGHT_GRAY}Random")); break;
+        }
+        break;
+    case PKF_NATURE:     StringCopy(dst, gNaturesInfo[sDebugMonData->nature].name); break;
+    case PKF_ABILITY:
+        ability = GetAbilityBySpecies(sDebugMonData->species, sDebugMonData->abilityNum);
+        StringCopy(dst, gAbilitiesInfo[ability].name);
+        break;
+    case PKF_ITEM:       StringCopy(dst, GetItemName(sDebugMonData->heldItem)); break;
+    case PKF_BALL:       StringCopy(dst, GetItemName(sDebugMonData->ballItem)); break;
+    case PKF_FRIENDSHIP: ConvertIntToDecimalStringN(dst, sDebugMonData->friendship, STR_CONV_MODE_LEFT_ALIGN, 3); break;
+    case PKF_PLAYER_OT:
+        StringCopy(dst, sDebugMonData->playerIsOT ? COMPOUND_STRING("{COLOR GREEN}Yes") : COMPOUND_STRING("No"));
+        break;
+    case PKF_OTID:
+        if (sDebugMonData->playerIsOT)
+            StringCopy(dst, COMPOUND_STRING("{COLOR LIGHT_GRAY}(yours)"));
+        else
+            ConvertIntToDecimalStringN(dst, sDebugMonData->otId, STR_CONV_MODE_LEADING_ZEROS, 5);
+        break;
+    case PKF_MOVE1 ... PKF_MOVE4:
+    {
+        u16 move = sDebugMonData->monMoves[field - PKF_MOVE1];
+        StringCopy(dst, move == MOVE_NONE ? COMPOUND_STRING("{COLOR LIGHT_GRAY}-") : GetMoveName(move));
+        break;
+    }
+    case PKF_TERA:       StringCopy(dst, gTypesInfo[sDebugMonData->teraType].name); break;
+    case PKF_DMAX:       ConvertIntToDecimalStringN(dst, sDebugMonData->dynamaxLevel, STR_CONV_MODE_LEFT_ALIGN, 2); break;
+    case PKF_GMAX:       StringCopy(dst, sDebugMonData->gmaxFactor ? COMPOUND_STRING("{COLOR GREEN}Yes") : COMPOUND_STRING("No")); break;
+    default:             dst[0] = EOS; break;
+    }
+}
+
+// Draws one "Label ....... Value" row; label turns red when selected.
+static void PkmEditor_DrawRow(u8 windowId, u32 y, const u8 *label, const u8 *value, bool32 selected)
+{
+    if (selected)
+        AddTextPrinterParameterized(windowId, PKE_FONT, COMPOUND_STRING("{COLOR RED}{RIGHT_ARROW}"), 2, y, 0, NULL);
+
+    StringCopy(gStringVar1, selected ? COMPOUND_STRING("{COLOR RED}") : COMPOUND_STRING("{COLOR DARK_GRAY}"));
+    StringAppend(gStringVar1, label);
+    AddTextPrinterParameterized(windowId, PKE_FONT, gStringVar1, 14, y, 0, NULL);
+
+    if (value != NULL)
+        AddTextPrinterParameterized(windowId, PKE_FONT, value, 100, y, 0, NULL);
+}
+
+static void PkmEditor_Redraw(u8 taskId)
+{
+    u8 windowId = gTasks[taskId].tSubWindowId;
+    u8 cursor = gTasks[taskId].tEdCursor;
+    u8 screen = gTasks[taskId].tEdScreen;
+    u32 i;
+    u8 value[40];
+
+    FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
+
+    if (screen == PKE_SCREEN_MENU)
+    {
+        AddTextPrinterParameterized(windowId, PKE_FONT, COMPOUND_STRING("{COLOR BLUE}POKéMON CREATOR"), 4, 2, 0, NULL);
+
+        for (i = 0; i < PKE_NUM_CATEGORIES; i++)
+            PkmEditor_DrawRow(windowId, PKE_LIST_TOP + i * PKE_ROW_HEIGHT, sPkeCategories[i].name, NULL, i == cursor);
+
+        // CREATE row
+        {
+            u32 y = PKE_LIST_TOP + PKE_NUM_CATEGORIES * PKE_ROW_HEIGHT + 4;
+            if (cursor == PKE_NUM_CATEGORIES)
+                AddTextPrinterParameterized(windowId, PKE_FONT, COMPOUND_STRING("{COLOR RED}{RIGHT_ARROW}"), 2, y, 0, NULL);
+            AddTextPrinterParameterized(windowId, PKE_FONT,
+                cursor == PKE_NUM_CATEGORIES ? COMPOUND_STRING("{COLOR RED}CREATE POKéMON!") : COMPOUND_STRING("{COLOR GREEN}CREATE POKéMON!"),
+                14, y, 0, NULL);
+        }
+
+        AddTextPrinterParameterized(windowId, PKE_FONT,
+            COMPOUND_STRING("{DPAD_UPDOWN}Pick  {A_BUTTON}Open  {B_BUTTON}Exit"),
+            4, PKE_LIST_TOP + (PKE_MENU_ROWS + 1) * PKE_ROW_HEIGHT + 2, 0, NULL);
+    }
+    else
+    {
+        const struct PkeCategory *cat = &sPkeCategories[screen - 1];
+
+        StringCopy(gStringVar1, COMPOUND_STRING("{COLOR BLUE}"));
+        StringAppend(gStringVar1, cat->name);
+        AddTextPrinterParameterized(windowId, PKE_FONT, gStringVar1, 4, 2, 0, NULL);
+
+        for (i = 0; i < cat->count; i++)
+        {
+            u8 field = cat->fields[i];
+            PkmEditor_BuildValue(field, value);
+            PkmEditor_DrawRow(windowId, PKE_LIST_TOP + i * PKE_ROW_HEIGHT, sPkmEditorLabels[field], value, i == cursor);
+        }
+
+        AddTextPrinterParameterized(windowId, PKE_FONT,
+            COMPOUND_STRING("{DPAD_UPDOWN}Pick  {DPAD_LEFTRIGHT}Change  {B_BUTTON}Back"),
+            4, PKE_LIST_TOP + 6 * PKE_ROW_HEIGHT + 2, 0, NULL);
+    }
+
+    // Little name caption under the live icon (so you always see what you're building).
+    if (IsSpeciesEnabled(sDebugMonData->species))
+    {
+        const u8 *name = GetSpeciesName(sDebugMonData->species);
+        u32 w = GetStringWidth(FONT_SMALL, name, 0);
+        s32 cx = (PKE_ICON_X - PKE_WIN_ORIGIN) - w / 2;   // window-relative, centred on icon
+        AddTextPrinterParameterized(windowId, FONT_SMALL, name, cx < 0 ? 0 : cx, (PKE_ICON_Y - PKE_WIN_ORIGIN) + 20, 0, NULL);
+    }
+
+    CopyWindowToVram(windowId, COPYWIN_GFX);
+}
+
+static void PkmEditor_RefreshIcon(u8 taskId)
+{
+    u32 species = IsSpeciesEnabled(sDebugMonData->species) ? sDebugMonData->species : SPECIES_NONE;
+
+    if (gTasks[taskId].tEdIcon < MAX_SPRITES)
+        FreeAndDestroyMonIconSprite(&gSprites[gTasks[taskId].tEdIcon]);
+
+    FreeMonIconPalettes();
+    LoadMonIconPalettePersonality(species, 0);
+    gTasks[taskId].tEdIcon = CreateMonIcon(species, SpriteCB_MonIcon, PKE_ICON_X, PKE_ICON_Y, 4, 0);
+    gSprites[gTasks[taskId].tEdIcon].oam.priority = 0;
+}
+
+static void PkmEditor_CloseAll(u8 taskId)
+{
+    if (gTasks[taskId].tEdIcon < MAX_SPRITES)
+        FreeAndDestroyMonIconSprite(&gSprites[gTasks[taskId].tEdIcon]);
+    Free(sDebugMonData);
+
+    if (gTasks[taskId].tEdFromScript)
+    {
+        // Opened from a field script: just tear down our window and hand control
+        // back to the script (its releaseall unfreezes the overworld).
+        ClearStdWindowAndFrame(gTasks[taskId].tSubWindowId, TRUE);
+        RemoveWindow(gTasks[taskId].tSubWindowId);
+        DestroyTask(taskId);
+        ScriptContext_Enable();
+    }
+    else
+    {
+        DebugAction_DestroyExtraWindow(taskId);
+    }
+}
+
+// Steps a field value by delta, clamping/wrapping to sensible bounds.
+static void PkmEditor_Adjust(u8 field, s32 delta)
+{
+    switch (field)
+    {
+    case PKF_SPECIES:
+        sDebugMonData->species = PkeClamp(sDebugMonData->species + delta, 1, NUM_SPECIES - 1);
+        sDebugMonData->abilityNum = 0;
+        break;
+    case PKF_NICKNAME:  break; // edited with A (naming screen not wired yet)
+    case PKF_LEVEL:      sDebugMonData->level = PkeClamp(sDebugMonData->level + delta, MIN_LEVEL, MAX_LEVEL); break;
+    case PKF_SHINY:      sDebugMonData->isShiny ^= 1; break;
+    case PKF_GENDER:
+        if (PkeGenderState(sDebugMonData->species) == 0) // only species with a real choice
+            sDebugMonData->gender = (sDebugMonData->gender + (delta > 0 ? 1 : 2)) % 3;
+        break;
+    case PKF_NATURE:     sDebugMonData->nature = (sDebugMonData->nature + delta + NUM_NATURES) % NUM_NATURES; break;
+    case PKF_ABILITY:
+        do {
+            sDebugMonData->abilityNum = (sDebugMonData->abilityNum + (delta > 0 ? 1 : NUM_ABILITY_SLOTS - 1)) % NUM_ABILITY_SLOTS;
+        } while (GetAbilityBySpecies(sDebugMonData->species, sDebugMonData->abilityNum) == ABILITY_NONE);
+        break;
+    case PKF_ITEM:       sDebugMonData->heldItem = (sDebugMonData->heldItem + delta + ITEMS_COUNT) % ITEMS_COUNT; break;
+    case PKF_BALL:
+    {
+        u32 n = ARRAY_COUNT(sPkmEditorBalls), idx = 0, k;
+        for (k = 0; k < n; k++)
+            if (sPkmEditorBalls[k] == sDebugMonData->ballItem)
+            { idx = k; break; }
+        idx = (idx + (delta > 0 ? 1 : n - 1)) % n;
+        sDebugMonData->ballItem = sPkmEditorBalls[idx];
+        break;
+    }
+    case PKF_FRIENDSHIP: sDebugMonData->friendship = PkeClamp(sDebugMonData->friendship + delta, 0, 255); break;
+    case PKF_PLAYER_OT:  sDebugMonData->playerIsOT ^= 1; break;
+    case PKF_OTID:       sDebugMonData->otId = sDebugMonData->otId + delta; break;
+    case PKF_MOVE1 ... PKF_MOVE4:
+    {
+        u16 *move = &sDebugMonData->monMoves[field - PKF_MOVE1];
+        *move = (*move + delta + MOVES_COUNT) % MOVES_COUNT;
+        break;
+    }
+    case PKF_TERA:       sDebugMonData->teraType = (sDebugMonData->teraType + delta + NUMBER_OF_MON_TYPES) % NUMBER_OF_MON_TYPES; break;
+    case PKF_DMAX:       sDebugMonData->dynamaxLevel = PkeClamp(sDebugMonData->dynamaxLevel + delta, 0, MAX_DYNAMAX_LEVEL); break;
+    case PKF_GMAX:       sDebugMonData->gmaxFactor ^= 1; break;
+    }
+}
+
+static void PkmEditor_Finalize(u8 taskId)
+{
+    struct Pokemon mon;
+    u32 i;
+    u8 genderArg = sDebugMonData->gender == 1 ? MON_MALE : sDebugMonData->gender == 2 ? MON_FEMALE : MON_GENDER_RANDOM;
+    u32 personality = GetMonPersonality(sDebugMonData->species, genderArg, sDebugMonData->nature, RANDOM_UNOWN_LETTER);
+    u32 teraType = sDebugMonData->teraType;
+    u32 otId = sDebugMonData->otId;
+    u8 ballId = ItemIdToBallId(sDebugMonData->ballItem);
+    u8 isShiny = sDebugMonData->isShiny;
+    u8 gmaxFactor = sDebugMonData->gmaxFactor;
+    u8 dynamaxLevel = sDebugMonData->dynamaxLevel;
+    u8 abilityNum = sDebugMonData->abilityNum;
+    u16 heldItem = sDebugMonData->heldItem;
+
+    // CreateMon with OTID_STRUCT_PLAYER_ID makes the player the OT (name + ID + gender),
+    // so the mon is fully "yours". Only override the OT ID when the player opts out.
+    CreateMon(&mon, sDebugMonData->species, sDebugMonData->level, personality, OTID_STRUCT_PLAYER_ID);
+    if (!sDebugMonData->playerIsOT)
+        SetMonData(&mon, MON_DATA_OT_ID, &otId);
+    SetMonData(&mon, MON_DATA_IS_SHINY, &isShiny);
+    SetMonData(&mon, MON_DATA_GIGANTAMAX_FACTOR, &gmaxFactor);
+    SetMonData(&mon, MON_DATA_DYNAMAX_LEVEL, &dynamaxLevel);
+    SetMonData(&mon, MON_DATA_HELD_ITEM, &heldItem);
+    SetMonData(&mon, MON_DATA_FRIENDSHIP, &sDebugMonData->friendship);
+    SetMonData(&mon, MON_DATA_POKEBALL, &ballId);
+    if (sDebugMonData->hasNickname)
+        SetMonData(&mon, MON_DATA_NICKNAME, sDebugMonData->nickname);
+
+    if (teraType == TYPE_NONE || teraType == TYPE_MYSTERY || teraType >= NUMBER_OF_MON_TYPES)
+        teraType = GetTeraTypeFromPersonality(&mon);
+    SetMonData(&mon, MON_DATA_TERA_TYPE, &teraType);
+
+    // IVs are left random (from CreateMon) and EVs at 0 -- fine-tune with the stat editor.
+
+    GiveMonInitialMoveset(&mon);
+    for (i = 0; i < MAX_MON_MOVES; i++)
+    {
+        if (sDebugMonData->monMoves[0] != MOVE_NONE)
+            SetMonMoveSlot(&mon, MOVE_NONE, i);
+        if (sDebugMonData->monMoves[i] != MOVE_NONE)
+            SetMonMoveSlot(&mon, sDebugMonData->monMoves[i], i);
+    }
+
+    SetMonData(&mon, MON_DATA_ABILITY_NUM, &abilityNum);
+    CalculateMonStats(&mon);
+    GiveScriptedMonToPlayer(&mon, PARTY_SIZE);
+    FlagSet(FLAG_SYS_POKEMON_GET);
+
+    PkmEditor_CloseAll(taskId);
+}
+
+// -------- Category menu screen (pick a group of options, or CREATE) --------
+static void PkmEditor_Input_Menu(u8 taskId)
+{
+    if (JOY_NEW(B_BUTTON))
+    {
+        PlaySE(SE_SELECT);
+        PkmEditor_CloseAll(taskId);
+        return;
+    }
+
+    if (JOY_NEW(A_BUTTON))
+    {
+        if (gTasks[taskId].tEdCursor == PKE_NUM_CATEGORIES)
+        {
+            PlaySE(SE_M_HEAL_BELL);
+            PkmEditor_Finalize(taskId);
+        }
+        else
+        {
+            PlaySE(SE_SELECT);
+            gTasks[taskId].tEdScreen = gTasks[taskId].tEdCursor + 1;
+            gTasks[taskId].tEdCursor = 0;
+            PkmEditor_Redraw(taskId);
+        }
+        return;
+    }
+
+    if (JOY_REPEAT(DPAD_UP) || JOY_REPEAT(DPAD_DOWN))
+    {
+        PlaySE(SE_SELECT);
+        if (JOY_REPEAT(DPAD_UP))
+            gTasks[taskId].tEdCursor = (gTasks[taskId].tEdCursor + PKE_MENU_ROWS - 1) % PKE_MENU_ROWS;
+        else
+            gTasks[taskId].tEdCursor = (gTasks[taskId].tEdCursor + 1) % PKE_MENU_ROWS;
+        PkmEditor_Redraw(taskId);
+    }
+}
+
+// -------- Category detail screen (edit the fields in one group) --------
+static void PkmEditor_Input_Category(u8 taskId)
+{
+    const struct PkeCategory *cat = &sPkeCategories[gTasks[taskId].tEdScreen - 1];
+    u8 field = cat->fields[gTasks[taskId].tEdCursor];
+
+    if (JOY_NEW(B_BUTTON))
+    {
+        // Return to the category menu, cursor back on the group we came from.
+        PlaySE(SE_SELECT);
+        gTasks[taskId].tEdCursor = gTasks[taskId].tEdScreen - 1;
+        gTasks[taskId].tEdScreen = PKE_SCREEN_MENU;
+        PkmEditor_Redraw(taskId);
+        return;
+    }
+
+    if (JOY_REPEAT(DPAD_UP) || JOY_REPEAT(DPAD_DOWN))
+    {
+        PlaySE(SE_SELECT);
+        if (JOY_REPEAT(DPAD_UP))
+            gTasks[taskId].tEdCursor = (gTasks[taskId].tEdCursor + cat->count - 1) % cat->count;
+        else
+            gTasks[taskId].tEdCursor = (gTasks[taskId].tEdCursor + 1) % cat->count;
+        PkmEditor_Redraw(taskId);
+        return;
+    }
+
+    if (JOY_REPEAT(DPAD_LEFT) || JOY_REPEAT(DPAD_RIGHT)
+        || JOY_NEW(L_BUTTON) || JOY_NEW(R_BUTTON))
+    {
+        s32 step = (JOY_NEW(L_BUTTON) || JOY_NEW(R_BUTTON)) ? 10 : 1;
+        if (JOY_REPEAT(DPAD_LEFT) || JOY_NEW(L_BUTTON))
+            step = -step;
+
+        PlaySE(SE_SELECT);
+        PkmEditor_Adjust(field, step);
+        if (field == PKF_SPECIES || field == PKF_SHINY)
+            PkmEditor_RefreshIcon(taskId);
+        PkmEditor_Redraw(taskId);
+    }
+}
+
+static void DebugAction_PkmEditor_Input(u8 taskId)
+{
+    if (gTasks[taskId].tEdScreen == PKE_SCREEN_MENU)
+        PkmEditor_Input_Menu(taskId);
+    else
+        PkmEditor_Input_Category(taskId);
+}
+
+static const struct WindowTemplate sDebugMenuWindowTemplatePkmEditor =
+{
+    .bg = 0,
+    .tilemapLeft = 1,
+    .tilemapTop = 1,
+    .width = 24,
+    .height = 17,
+    .paletteNum = 15,
+    .baseBlock = 1,
+};
+
+// Builds the creator's window, state and live icon on the given task. Shared by
+// the debug-menu entry and the script-callable entry.
+static void PkmEditor_Setup(u8 taskId)
+{
+    u8 windowId;
+
+    sDebugMonData = AllocZeroed(sizeof(struct DebugMonData));
+    ResetMonDataStruct(sDebugMonData);
+    sDebugMonData->otId = (u16)(gSaveBlock2Ptr->playerTrainerId[0] | (gSaveBlock2Ptr->playerTrainerId[1] << 8));
+
+    HideMapNamePopUpWindow();
+    LoadMessageBoxAndBorderGfx();
+    windowId = AddWindow(&sDebugMenuWindowTemplatePkmEditor);
+    DrawStdWindowFrame(windowId, FALSE);
+    CopyWindowToVram(windowId, COPYWIN_FULL);
+
+    gTasks[taskId].tSubWindowId = windowId;
+    gTasks[taskId].tEdCursor = 0;
+    gTasks[taskId].tEdScreen = PKE_SCREEN_MENU;
+    gTasks[taskId].tEdIcon = MAX_SPRITES;
+    gTasks[taskId].func = DebugAction_PkmEditor_Input;
+
+    PkmEditor_RefreshIcon(taskId);
+    PkmEditor_Redraw(taskId);
+}
+
+static void DebugAction_Give_PokemonEditor(u8 taskId)
+{
+    ClearStdWindowAndFrame(gTasks[taskId].tWindowId, TRUE);
+    RemoveWindow(gTasks[taskId].tWindowId);
+    gTasks[taskId].tEdFromScript = FALSE;
+    PkmEditor_Setup(taskId);
+}
+
+// Script-callable entry point. Use it from a field script (e.g. a "creation
+// machine" the player interacts with):
+//     lockall
+//     special OpenPokemonCreator
+//     waitstate
+//     releaseall
+// The created Pokémon is added straight to the player's party.
+void OpenPokemonCreator(void)
+{
+    u8 taskId = CreateTask(TaskDummy, 80);
+    gTasks[taskId].tEdFromScript = TRUE;
+    PkmEditor_Setup(taskId);
+}
+
+#undef tEdFromScript
+#undef tEdCursor
+#undef tEdScreen
+#undef tEdIcon
 
 //Decoration
 #define tSpriteId  data[6]
