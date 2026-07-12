@@ -234,6 +234,7 @@ struct DebugMonData
     u16 ballItem;
     u16 otId;
     u8 friendship;
+    u8 editorStep;
     u8 gender;      // 0 = default/random, 1 = male, 2 = female
     bool8 playerIsOT;
     bool8 hasNickname;
@@ -2768,6 +2769,7 @@ static void ResetMonDataStruct(struct DebugMonData *sDebugMonData)
     sDebugMonData->ballItem         = ITEM_POKE_BALL;
     sDebugMonData->otId             = 0;
     sDebugMonData->friendship       = 70;
+    sDebugMonData->editorStep       = 0;
     sDebugMonData->gender           = 0;
     sDebugMonData->playerIsOT       = TRUE;
     sDebugMonData->hasNickname      = FALSE;
@@ -3578,7 +3580,6 @@ enum PkmEditorField
 #define PKE_SCREEN_MENU  0
 
 #define tEdFromScript data[3]   // opened via the OpenPokemonCreator special, not the debug menu
-#define tEdStep    data[4]
 #define tEdCursor  data[5]
 #define tEdScreen  data[6]
 #define tEdIcon    data[7]
@@ -3811,6 +3812,9 @@ static void PkmEditor_Redraw(u8 taskId)
     u32 i;
     u8 value[40];
 
+    if (sDebugMonData->editorStep >= ARRAY_COUNT(sPkeAdjustSteps))
+        sDebugMonData->editorStep = 0;
+
     FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
 
     if (screen == PKE_SCREEN_MENU)
@@ -3847,7 +3851,7 @@ static void PkmEditor_Redraw(u8 taskId)
         StringAppend(gStringVar1, cat->name);
         AddTextPrinterParameterized(windowId, PKE_FONT, gStringVar1, 4, 2, TEXT_SKIP_DRAW, NULL);
 
-        ConvertIntToDecimalStringN(gStringVar2, sPkeAdjustSteps[gTasks[taskId].tEdStep], STR_CONV_MODE_LEFT_ALIGN, 3);
+        ConvertIntToDecimalStringN(gStringVar2, sPkeAdjustSteps[sDebugMonData->editorStep], STR_CONV_MODE_LEFT_ALIGN, 3);
         StringExpandPlaceholders(gStringVar3, COMPOUND_STRING("{COLOR GREEN}Step:{STR_VAR_2}"));
         AddTextPrinterParameterized(windowId, PKE_FONT, gStringVar3, 142, 2, TEXT_SKIP_DRAW, NULL);
 
@@ -4153,16 +4157,20 @@ static void PkmEditor_Input_Category(u8 taskId)
     {
         PlaySE(SE_SELECT);
         if (JOY_NEW(L_BUTTON))
-            gTasks[taskId].tEdStep = (gTasks[taskId].tEdStep + ARRAY_COUNT(sPkeAdjustSteps) - 1) % ARRAY_COUNT(sPkeAdjustSteps);
+            sDebugMonData->editorStep = (sDebugMonData->editorStep + ARRAY_COUNT(sPkeAdjustSteps) - 1) % ARRAY_COUNT(sPkeAdjustSteps);
         else
-            gTasks[taskId].tEdStep = (gTasks[taskId].tEdStep + 1) % ARRAY_COUNT(sPkeAdjustSteps);
+            sDebugMonData->editorStep = (sDebugMonData->editorStep + 1) % ARRAY_COUNT(sPkeAdjustSteps);
         PkmEditor_Redraw(taskId);
         return;
     }
 
     if (JOY_REPEAT(DPAD_LEFT) || JOY_REPEAT(DPAD_RIGHT))
     {
-        s32 step = sPkeAdjustSteps[gTasks[taskId].tEdStep];
+        s32 step;
+
+        if (sDebugMonData->editorStep >= ARRAY_COUNT(sPkeAdjustSteps))
+            sDebugMonData->editorStep = 0;
+        step = sPkeAdjustSteps[sDebugMonData->editorStep];
         if (JOY_REPEAT(DPAD_LEFT))
             step = -step;
 
@@ -4223,7 +4231,6 @@ static bool32 PkmEditor_Setup(u8 taskId)
     CopyWindowToVram(windowId, COPYWIN_FULL);
 
     gTasks[taskId].tSubWindowId = windowId;
-    gTasks[taskId].tEdStep = 0;
     gTasks[taskId].tEdCursor = 0;
     gTasks[taskId].tEdScreen = PKE_SCREEN_MENU;
     gTasks[taskId].tEdIcon = MAX_SPRITES;
@@ -4292,7 +4299,6 @@ void OpenPokemonCreator(void)
 }
 
 #undef tEdFromScript
-#undef tEdStep
 #undef tEdCursor
 #undef tEdScreen
 #undef tEdIcon
