@@ -3563,21 +3563,29 @@ enum PkmEditorField
     // Right column
     PKF_PLAYER_OT, PKF_OTID, PKF_MOVE1, PKF_MOVE2, PKF_MOVE3, PKF_MOVE4,
     PKF_TERA, PKF_DMAX, PKF_GMAX, PKF_GIVE,
+    PKF_HP_IV, PKF_ATK_IV, PKF_DEF_IV, PKF_SPEED_IV, PKF_SPATK_IV, PKF_SPDEF_IV,
+    PKF_HP_EV, PKF_ATK_EV, PKF_DEF_EV, PKF_SPEED_EV, PKF_SPATK_EV, PKF_SPDEF_EV,
     PKF_COUNT,
 };
 
 #define PKE_ROW_HEIGHT   14
+#define PKE_MENU_ROW_HEIGHT 12
 #define PKE_LIST_TOP     18
 #define PKE_FONT         FONT_NORMAL
-#define PKE_FAST_STEP    100
+#define PKE_VISIBLE_ROWS 6
 
 // Editor screens: 0 = category menu, otherwise category index + 1.
 #define PKE_SCREEN_MENU  0
 
 #define tEdFromScript data[3]   // opened via the OpenPokemonCreator special, not the debug menu
+#define tEdStep    data[4]
 #define tEdCursor  data[5]
 #define tEdScreen  data[6]
 #define tEdIcon    data[7]
+#define tEdScroll  data[8]
+#define tEdError   data[9]
+
+static const u16 sPkeAdjustSteps[] = { 1, 10, 100 };
 
 // Live mon icon sits (frameless) in the bottom-right of the window.
 // PKE_ICON_X/Y are screen coords (for the sprite); the window itself starts at
@@ -3592,6 +3600,11 @@ static const u8 sPkeCat_Battle[]  = { PKF_NATURE, PKF_ABILITY, PKF_FRIENDSHIP };
 static const u8 sPkeCat_Moves[]   = { PKF_MOVE1, PKF_MOVE2, PKF_MOVE3, PKF_MOVE4 };
 static const u8 sPkeCat_Trainer[] = { PKF_PLAYER_OT, PKF_OTID, PKF_ITEM, PKF_BALL };
 static const u8 sPkeCat_Gimmicks[] = { PKF_TERA, PKF_DMAX, PKF_GMAX };
+static const u8 sPkeCat_Stats[] =
+{
+    PKF_HP_IV, PKF_ATK_IV, PKF_DEF_IV, PKF_SPEED_IV, PKF_SPATK_IV, PKF_SPDEF_IV,
+    PKF_HP_EV, PKF_ATK_EV, PKF_DEF_EV, PKF_SPEED_EV, PKF_SPATK_EV, PKF_SPDEF_EV,
+};
 
 struct PkeCategory { const u8 *name; const u8 *fields; u8 count; };
 static const struct PkeCategory sPkeCategories[] =
@@ -3601,6 +3614,7 @@ static const struct PkeCategory sPkeCategories[] =
     { COMPOUND_STRING("Moves"),            sPkeCat_Moves,   ARRAY_COUNT(sPkeCat_Moves)   },
     { COMPOUND_STRING("Trainer & Item"),   sPkeCat_Trainer, ARRAY_COUNT(sPkeCat_Trainer) },
     { COMPOUND_STRING("Gimmicks"),         sPkeCat_Gimmicks, ARRAY_COUNT(sPkeCat_Gimmicks) },
+    { COMPOUND_STRING("IVs & EVs"),        sPkeCat_Stats,   ARRAY_COUNT(sPkeCat_Stats)   },
 };
 #define PKE_NUM_CATEGORIES  ARRAY_COUNT(sPkeCategories)
 #define PKE_MENU_ROWS       (PKE_NUM_CATEGORIES + 1)   // categories + CREATE row
@@ -3627,6 +3641,18 @@ static const u8 *const sPkmEditorLabels[PKF_COUNT] =
     [PKF_DMAX]       = COMPOUND_STRING("Dmax Lvl"),
     [PKF_GMAX]       = COMPOUND_STRING("Gmax"),
     [PKF_GIVE]       = COMPOUND_STRING("CREATE"),
+    [PKF_HP_IV]      = COMPOUND_STRING("HP IV"),
+    [PKF_ATK_IV]     = COMPOUND_STRING("Attack IV"),
+    [PKF_DEF_IV]     = COMPOUND_STRING("Defense IV"),
+    [PKF_SPEED_IV]   = COMPOUND_STRING("Speed IV"),
+    [PKF_SPATK_IV]   = COMPOUND_STRING("Sp. Atk IV"),
+    [PKF_SPDEF_IV]   = COMPOUND_STRING("Sp. Def IV"),
+    [PKF_HP_EV]      = COMPOUND_STRING("HP EV"),
+    [PKF_ATK_EV]     = COMPOUND_STRING("Attack EV"),
+    [PKF_DEF_EV]     = COMPOUND_STRING("Defense EV"),
+    [PKF_SPEED_EV]   = COMPOUND_STRING("Speed EV"),
+    [PKF_SPATK_EV]   = COMPOUND_STRING("Sp. Atk EV"),
+    [PKF_SPDEF_EV]   = COMPOUND_STRING("Sp. Def EV"),
 };
 
 static const u16 sPkmEditorBalls[] =
@@ -3648,6 +3674,26 @@ static s32 PkeClamp(s32 v, s32 lo, s32 hi)
     return v;
 }
 
+// Wraps signed adjustments safely even when the step is larger than the range.
+static u32 PkeWrap(s32 value, u32 count)
+{
+    s32 wrapped = value % (s32)count;
+
+    if (wrapped < 0)
+        wrapped += count;
+    return wrapped;
+}
+
+static u16 PkmEditor_GetTotalEVs(void)
+{
+    u32 i;
+    u16 total = 0;
+
+    for (i = 0; i < NUM_STATS; i++)
+        total += sDebugMonData->monEVs[i];
+    return total;
+}
+
 // 0 = species has both genders (choosable), 1 = always male, 2 = always female, 3 = genderless.
 static u8 PkeGenderState(u16 species)
 {
@@ -3661,6 +3707,13 @@ static u8 PkeGenderState(u16 species)
     return 0;
 }
 
+static void PkmEditor_BuildNumberedName(u8 *dst, u32 number, u32 digits, const u8 *name)
+{
+    ConvertIntToDecimalStringN(dst, number, STR_CONV_MODE_LEADING_ZEROS, digits);
+    StringAppend(dst, COMPOUND_STRING(": "));
+    StringAppend(dst, name);
+}
+
 static void PkmEditor_BuildValue(u8 field, u8 *dst)
 {
     enum Ability ability;
@@ -3668,9 +3721,9 @@ static void PkmEditor_BuildValue(u8 field, u8 *dst)
     {
     case PKF_SPECIES:
         if (IsSpeciesEnabled(sDebugMonData->species))
-            StringCopy(dst, GetSpeciesName(sDebugMonData->species));
+            PkmEditor_BuildNumberedName(dst, sDebugMonData->species, 4, GetSpeciesName(sDebugMonData->species));
         else
-            StringCopy(dst, COMPOUND_STRING("DISABLED"));
+            PkmEditor_BuildNumberedName(dst, sDebugMonData->species, 4, COMPOUND_STRING("DISABLED"));
         break;
     case PKF_NICKNAME:
         if (sDebugMonData->hasNickname)
@@ -3691,13 +3744,19 @@ static void PkmEditor_BuildValue(u8 field, u8 *dst)
                               : COMPOUND_STRING("{COLOR LIGHT_GRAY}Random")); break;
         }
         break;
-    case PKF_NATURE:     StringCopy(dst, gNaturesInfo[sDebugMonData->nature].name); break;
+    case PKF_NATURE:
+        PkmEditor_BuildNumberedName(dst, sDebugMonData->nature, 2, gNaturesInfo[sDebugMonData->nature].name);
+        break;
     case PKF_ABILITY:
         ability = GetAbilityBySpecies(sDebugMonData->species, sDebugMonData->abilityNum);
-        StringCopy(dst, gAbilitiesInfo[ability].name);
+        PkmEditor_BuildNumberedName(dst, ability, 3, gAbilitiesInfo[ability].name);
         break;
-    case PKF_ITEM:       StringCopy(dst, GetItemName(sDebugMonData->heldItem)); break;
-    case PKF_BALL:       StringCopy(dst, GetItemName(sDebugMonData->ballItem)); break;
+    case PKF_ITEM:
+        PkmEditor_BuildNumberedName(dst, sDebugMonData->heldItem, 4, GetItemName(sDebugMonData->heldItem));
+        break;
+    case PKF_BALL:
+        PkmEditor_BuildNumberedName(dst, sDebugMonData->ballItem, 4, GetItemName(sDebugMonData->ballItem));
+        break;
     case PKF_FRIENDSHIP: ConvertIntToDecimalStringN(dst, sDebugMonData->friendship, STR_CONV_MODE_LEFT_ALIGN, 3); break;
     case PKF_PLAYER_OT:
         StringCopy(dst, sDebugMonData->playerIsOT ? COMPOUND_STRING("{COLOR GREEN}Yes") : COMPOUND_STRING("No"));
@@ -3711,12 +3770,21 @@ static void PkmEditor_BuildValue(u8 field, u8 *dst)
     case PKF_MOVE1 ... PKF_MOVE4:
     {
         u16 move = sDebugMonData->monMoves[field - PKF_MOVE1];
-        StringCopy(dst, move == MOVE_NONE ? COMPOUND_STRING("{COLOR LIGHT_GRAY}-") : GetMoveName(move));
+        PkmEditor_BuildNumberedName(dst, move, 4,
+            move == MOVE_NONE ? COMPOUND_STRING("{COLOR LIGHT_GRAY}-") : GetMoveName(move));
         break;
     }
-    case PKF_TERA:       StringCopy(dst, gTypesInfo[sDebugMonData->teraType].name); break;
+    case PKF_TERA:
+        PkmEditor_BuildNumberedName(dst, sDebugMonData->teraType, 2, gTypesInfo[sDebugMonData->teraType].name);
+        break;
     case PKF_DMAX:       ConvertIntToDecimalStringN(dst, sDebugMonData->dynamaxLevel, STR_CONV_MODE_LEFT_ALIGN, 2); break;
     case PKF_GMAX:       StringCopy(dst, sDebugMonData->gmaxFactor ? COMPOUND_STRING("{COLOR GREEN}Yes") : COMPOUND_STRING("No")); break;
+    case PKF_HP_IV ... PKF_SPDEF_IV:
+        ConvertIntToDecimalStringN(dst, sDebugMonData->monIVs[field - PKF_HP_IV], STR_CONV_MODE_LEFT_ALIGN, 2);
+        break;
+    case PKF_HP_EV ... PKF_SPDEF_EV:
+        ConvertIntToDecimalStringN(dst, sDebugMonData->monEVs[field - PKF_HP_EV], STR_CONV_MODE_LEFT_ALIGN, 3);
+        break;
     default:             dst[0] = EOS; break;
     }
 }
@@ -3750,11 +3818,11 @@ static void PkmEditor_Redraw(u8 taskId)
         AddTextPrinterParameterized(windowId, PKE_FONT, COMPOUND_STRING("{COLOR BLUE}POKéMON CREATOR"), 4, 2, TEXT_SKIP_DRAW, NULL);
 
         for (i = 0; i < PKE_NUM_CATEGORIES; i++)
-            PkmEditor_DrawRow(windowId, PKE_LIST_TOP + i * PKE_ROW_HEIGHT, sPkeCategories[i].name, NULL, i == cursor);
+            PkmEditor_DrawRow(windowId, PKE_LIST_TOP + i * PKE_MENU_ROW_HEIGHT, sPkeCategories[i].name, NULL, i == cursor);
 
         // CREATE row
         {
-            u32 y = PKE_LIST_TOP + PKE_NUM_CATEGORIES * PKE_ROW_HEIGHT + 4;
+            u32 y = PKE_LIST_TOP + PKE_NUM_CATEGORIES * PKE_MENU_ROW_HEIGHT + 2;
             if (cursor == PKE_NUM_CATEGORIES)
                 AddTextPrinterParameterized(windowId, PKE_FONT, COMPOUND_STRING("{COLOR RED}{RIGHT_ARROW}"), 2, y, TEXT_SKIP_DRAW, NULL);
             AddTextPrinterParameterized(windowId, PKE_FONT,
@@ -3762,9 +3830,14 @@ static void PkmEditor_Redraw(u8 taskId)
                 14, y, TEXT_SKIP_DRAW, NULL);
         }
 
-        AddTextPrinterParameterized(windowId, PKE_FONT,
-            COMPOUND_STRING("{DPAD_UPDOWN}Pick  {A_BUTTON}Open  {B_BUTTON}Exit"),
-            4, PKE_LIST_TOP + (PKE_MENU_ROWS + 1) * PKE_ROW_HEIGHT + 2, TEXT_SKIP_DRAW, NULL);
+        if (gTasks[taskId].tEdError)
+            AddTextPrinterParameterized(windowId, PKE_FONT,
+                COMPOUND_STRING("{COLOR RED}Party and PC are full!"),
+                4, PKE_LIST_TOP + (PKE_MENU_ROWS + 1) * PKE_MENU_ROW_HEIGHT + 2, TEXT_SKIP_DRAW, NULL);
+        else
+            AddTextPrinterParameterized(windowId, PKE_FONT,
+                COMPOUND_STRING("{DPAD_UPDOWN}Pick  {A_BUTTON}Open  {B_BUTTON}Exit"),
+                4, PKE_LIST_TOP + (PKE_MENU_ROWS + 1) * PKE_MENU_ROW_HEIGHT + 2, TEXT_SKIP_DRAW, NULL);
     }
     else
     {
@@ -3774,15 +3847,27 @@ static void PkmEditor_Redraw(u8 taskId)
         StringAppend(gStringVar1, cat->name);
         AddTextPrinterParameterized(windowId, PKE_FONT, gStringVar1, 4, 2, TEXT_SKIP_DRAW, NULL);
 
-        for (i = 0; i < cat->count; i++)
+        ConvertIntToDecimalStringN(gStringVar2, sPkeAdjustSteps[gTasks[taskId].tEdStep], STR_CONV_MODE_LEFT_ALIGN, 3);
+        StringExpandPlaceholders(gStringVar3, COMPOUND_STRING("{COLOR GREEN}Step:{STR_VAR_2}"));
+        AddTextPrinterParameterized(windowId, PKE_FONT, gStringVar3, 142, 2, TEXT_SKIP_DRAW, NULL);
+
+        if (cat->fields == sPkeCat_Stats)
         {
-            u8 field = cat->fields[i];
+            ConvertIntToDecimalStringN(gStringVar2, PkmEditor_GetTotalEVs(), STR_CONV_MODE_LEFT_ALIGN, 3);
+            StringExpandPlaceholders(gStringVar3, COMPOUND_STRING("{COLOR BLUE}EV:{STR_VAR_2}/510"));
+            AddTextPrinterParameterized(windowId, PKE_FONT, gStringVar3, 78, 2, TEXT_SKIP_DRAW, NULL);
+        }
+
+        for (i = 0; i < PKE_VISIBLE_ROWS && i + gTasks[taskId].tEdScroll < cat->count; i++)
+        {
+            u8 row = i + gTasks[taskId].tEdScroll;
+            u8 field = cat->fields[row];
             PkmEditor_BuildValue(field, value);
-            PkmEditor_DrawRow(windowId, PKE_LIST_TOP + i * PKE_ROW_HEIGHT, sPkmEditorLabels[field], value, i == cursor);
+            PkmEditor_DrawRow(windowId, PKE_LIST_TOP + i * PKE_ROW_HEIGHT, sPkmEditorLabels[field], value, row == cursor);
         }
 
         AddTextPrinterParameterized(windowId, PKE_FONT,
-            COMPOUND_STRING("{DPAD_LEFTRIGHT}Change  {L_BUTTON}/{R_BUTTON}Fast  {B_BUTTON}Back"),
+            COMPOUND_STRING("{DPAD_LEFTRIGHT}Change  {L_BUTTON}/{R_BUTTON}Step\n{B_BUTTON}Back"),
             4, PKE_LIST_TOP + 6 * PKE_ROW_HEIGHT + 2, TEXT_SKIP_DRAW, NULL);
     }
 
@@ -3808,14 +3893,17 @@ static void PkmEditor_RefreshIcon(u8 taskId)
     FreeMonIconPalettes();
     LoadMonIconPalettePersonality(species, 0);
     gTasks[taskId].tEdIcon = CreateMonIcon(species, SpriteCB_MonIcon, PKE_ICON_X, PKE_ICON_Y, 4, 0);
-    gSprites[gTasks[taskId].tEdIcon].oam.priority = 0;
+    if (gTasks[taskId].tEdIcon < MAX_SPRITES)
+        gSprites[gTasks[taskId].tEdIcon].oam.priority = 0;
 }
 
 static void PkmEditor_CloseAll(u8 taskId)
 {
     if (gTasks[taskId].tEdIcon < MAX_SPRITES)
         FreeAndDestroyMonIconSprite(&gSprites[gTasks[taskId].tEdIcon]);
+    FreeMonIconPalettes();
     Free(sDebugMonData);
+    sDebugMonData = NULL;
 
     if (gTasks[taskId].tEdFromScript)
     {
@@ -3838,9 +3926,19 @@ static void PkmEditor_Adjust(u8 field, s32 delta)
     switch (field)
     {
     case PKF_SPECIES:
-        sDebugMonData->species = PkeClamp(sDebugMonData->species + delta, 1, NUM_SPECIES - 1);
-        sDebugMonData->abilityNum = 0;
+    {
+        s32 species = PkeClamp(sDebugMonData->species + delta, 1, NUM_SPECIES - 1);
+        s32 direction = delta < 0 ? -1 : 1;
+
+        while (!IsSpeciesEnabled(species) && species + direction > 0 && species + direction < NUM_SPECIES)
+            species += direction;
+        if (IsSpeciesEnabled(species))
+        {
+            sDebugMonData->species = species;
+            sDebugMonData->abilityNum = 0;
+        }
         break;
+    }
     case PKF_NICKNAME:  break; // edited with A (naming screen not wired yet)
     case PKF_LEVEL:      sDebugMonData->level = PkeClamp(sDebugMonData->level + delta, MIN_LEVEL, MAX_LEVEL); break;
     case PKF_SHINY:      sDebugMonData->isShiny ^= 1; break;
@@ -3848,13 +3946,24 @@ static void PkmEditor_Adjust(u8 field, s32 delta)
         if (PkeGenderState(sDebugMonData->species) == 0) // only species with a real choice
             sDebugMonData->gender = (sDebugMonData->gender + (delta > 0 ? 1 : 2)) % 3;
         break;
-    case PKF_NATURE:     sDebugMonData->nature = (sDebugMonData->nature + delta + NUM_NATURES) % NUM_NATURES; break;
+    case PKF_NATURE:     sDebugMonData->nature = PkeWrap(sDebugMonData->nature + delta, NUM_NATURES); break;
     case PKF_ABILITY:
-        do {
-            sDebugMonData->abilityNum = (sDebugMonData->abilityNum + (delta > 0 ? 1 : NUM_ABILITY_SLOTS - 1)) % NUM_ABILITY_SLOTS;
-        } while (GetAbilityBySpecies(sDebugMonData->species, sDebugMonData->abilityNum) == ABILITY_NONE);
+    {
+        u32 i;
+        u8 abilityNum = sDebugMonData->abilityNum;
+
+        for (i = 0; i < NUM_ABILITY_SLOTS; i++)
+        {
+            abilityNum = PkeWrap(abilityNum + (delta > 0 ? 1 : -1), NUM_ABILITY_SLOTS);
+            if (GetAbilityBySpecies(sDebugMonData->species, abilityNum) != ABILITY_NONE)
+            {
+                sDebugMonData->abilityNum = abilityNum;
+                break;
+            }
+        }
         break;
-    case PKF_ITEM:       sDebugMonData->heldItem = (sDebugMonData->heldItem + delta + ITEMS_COUNT) % ITEMS_COUNT; break;
+    }
+    case PKF_ITEM:       sDebugMonData->heldItem = PkeWrap(sDebugMonData->heldItem + delta, ITEMS_COUNT); break;
     case PKF_BALL:
     {
         u32 n = ARRAY_COUNT(sPkmEditorBalls), idx = 0, k;
@@ -3871,12 +3980,26 @@ static void PkmEditor_Adjust(u8 field, s32 delta)
     case PKF_MOVE1 ... PKF_MOVE4:
     {
         u16 *move = &sDebugMonData->monMoves[field - PKF_MOVE1];
-        *move = (*move + delta + MOVES_COUNT) % MOVES_COUNT;
+        *move = PkeWrap(*move + delta, MOVES_COUNT);
         break;
     }
-    case PKF_TERA:       sDebugMonData->teraType = (sDebugMonData->teraType + delta + NUMBER_OF_MON_TYPES) % NUMBER_OF_MON_TYPES; break;
+    case PKF_TERA:       sDebugMonData->teraType = PkeWrap(sDebugMonData->teraType + delta, NUMBER_OF_MON_TYPES); break;
     case PKF_DMAX:       sDebugMonData->dynamaxLevel = PkeClamp(sDebugMonData->dynamaxLevel + delta, 0, MAX_DYNAMAX_LEVEL); break;
     case PKF_GMAX:       sDebugMonData->gmaxFactor ^= 1; break;
+    case PKF_HP_IV ... PKF_SPDEF_IV:
+    {
+        u8 *iv = &sDebugMonData->monIVs[field - PKF_HP_IV];
+        *iv = PkeClamp(*iv + delta, 0, MAX_IV_MASK);
+        break;
+    }
+    case PKF_HP_EV ... PKF_SPDEF_EV:
+    {
+        u8 *ev = &sDebugMonData->monEVs[field - PKF_HP_EV];
+        u16 otherEVs = PkmEditor_GetTotalEVs() - *ev;
+        u16 maxEV = PkeClamp(MAX_TOTAL_EVS - otherEVs, 0, MAX_PER_STAT_EVS);
+        *ev = PkeClamp(*ev + delta, 0, maxEV);
+        break;
+    }
     }
 }
 
@@ -3884,6 +4007,7 @@ static void PkmEditor_Finalize(u8 taskId)
 {
     struct Pokemon mon;
     u32 i;
+    bool32 hasCustomMoves = FALSE;
     u8 genderArg = sDebugMonData->gender == 1 ? MON_MALE : sDebugMonData->gender == 2 ? MON_FEMALE : MON_GENDER_RANDOM;
     u32 personality = GetMonPersonality(sDebugMonData->species, genderArg, sDebugMonData->nature, RANDOM_UNOWN_LETTER);
     u32 teraType = sDebugMonData->teraType;
@@ -3913,12 +4037,25 @@ static void PkmEditor_Finalize(u8 taskId)
         teraType = GetTeraTypeFromPersonality(&mon);
     SetMonData(&mon, MON_DATA_TERA_TYPE, &teraType);
 
-    // IVs are left random (from CreateMon) and EVs at 0 -- fine-tune with the stat editor.
+    for (i = 0; i < NUM_STATS; i++)
+    {
+        SetMonData(&mon, MON_DATA_HP_IV + i, &sDebugMonData->monIVs[i]);
+        SetMonData(&mon, MON_DATA_HP_EV + i, &sDebugMonData->monEVs[i]);
+    }
 
     GiveMonInitialMoveset(&mon);
     for (i = 0; i < MAX_MON_MOVES; i++)
     {
-        if (sDebugMonData->monMoves[0] != MOVE_NONE)
+        if (sDebugMonData->monMoves[i] != MOVE_NONE)
+        {
+            hasCustomMoves = TRUE;
+            break;
+        }
+    }
+
+    for (i = 0; i < MAX_MON_MOVES; i++)
+    {
+        if (hasCustomMoves)
             SetMonMoveSlot(&mon, MOVE_NONE, i);
         if (sDebugMonData->monMoves[i] != MOVE_NONE)
             SetMonMoveSlot(&mon, sDebugMonData->monMoves[i], i);
@@ -3926,7 +4063,13 @@ static void PkmEditor_Finalize(u8 taskId)
 
     SetMonData(&mon, MON_DATA_ABILITY_NUM, &abilityNum);
     CalculateMonStats(&mon);
-    GiveScriptedMonToPlayer(&mon, PARTY_SIZE);
+    if (GiveScriptedMonToPlayer(&mon, PARTY_SIZE) == MON_CANT_GIVE)
+    {
+        PlaySE(SE_FAILURE);
+        gTasks[taskId].tEdError = TRUE;
+        PkmEditor_Redraw(taskId);
+        return;
+    }
     FlagSet(FLAG_SYS_POKEMON_GET);
 
     PkmEditor_CloseAll(taskId);
@@ -3952,8 +4095,10 @@ static void PkmEditor_Input_Menu(u8 taskId)
         else
         {
             PlaySE(SE_SELECT);
+            gTasks[taskId].tEdError = FALSE;
             gTasks[taskId].tEdScreen = gTasks[taskId].tEdCursor + 1;
             gTasks[taskId].tEdCursor = 0;
+            gTasks[taskId].tEdScroll = 0;
             PkmEditor_Redraw(taskId);
         }
         return;
@@ -3962,6 +4107,7 @@ static void PkmEditor_Input_Menu(u8 taskId)
     if (JOY_REPEAT(DPAD_UP) || JOY_REPEAT(DPAD_DOWN))
     {
         PlaySE(SE_SELECT);
+        gTasks[taskId].tEdError = FALSE;
         if (JOY_REPEAT(DPAD_UP))
             gTasks[taskId].tEdCursor = (gTasks[taskId].tEdCursor + PKE_MENU_ROWS - 1) % PKE_MENU_ROWS;
         else
@@ -3982,6 +4128,7 @@ static void PkmEditor_Input_Category(u8 taskId)
         PlaySE(SE_SELECT);
         gTasks[taskId].tEdCursor = gTasks[taskId].tEdScreen - 1;
         gTasks[taskId].tEdScreen = PKE_SCREEN_MENU;
+        gTasks[taskId].tEdScroll = 0;
         PkmEditor_Redraw(taskId);
         return;
     }
@@ -3993,20 +4140,35 @@ static void PkmEditor_Input_Category(u8 taskId)
             gTasks[taskId].tEdCursor = (gTasks[taskId].tEdCursor + cat->count - 1) % cat->count;
         else
             gTasks[taskId].tEdCursor = (gTasks[taskId].tEdCursor + 1) % cat->count;
+
+        if (gTasks[taskId].tEdCursor < gTasks[taskId].tEdScroll)
+            gTasks[taskId].tEdScroll = gTasks[taskId].tEdCursor;
+        else if (gTasks[taskId].tEdCursor >= gTasks[taskId].tEdScroll + PKE_VISIBLE_ROWS)
+            gTasks[taskId].tEdScroll = gTasks[taskId].tEdCursor - PKE_VISIBLE_ROWS + 1;
         PkmEditor_Redraw(taskId);
         return;
     }
 
-    if (JOY_REPEAT(DPAD_LEFT) || JOY_REPEAT(DPAD_RIGHT)
-        || JOY_REPEAT(L_BUTTON) || JOY_REPEAT(R_BUTTON))
+    if (JOY_NEW(L_BUTTON) || JOY_NEW(R_BUTTON))
     {
-        s32 step = (JOY_REPEAT(L_BUTTON) || JOY_REPEAT(R_BUTTON)) ? PKE_FAST_STEP : 1;
-        if (JOY_REPEAT(DPAD_LEFT) || JOY_REPEAT(L_BUTTON))
+        PlaySE(SE_SELECT);
+        if (JOY_NEW(L_BUTTON))
+            gTasks[taskId].tEdStep = (gTasks[taskId].tEdStep + ARRAY_COUNT(sPkeAdjustSteps) - 1) % ARRAY_COUNT(sPkeAdjustSteps);
+        else
+            gTasks[taskId].tEdStep = (gTasks[taskId].tEdStep + 1) % ARRAY_COUNT(sPkeAdjustSteps);
+        PkmEditor_Redraw(taskId);
+        return;
+    }
+
+    if (JOY_REPEAT(DPAD_LEFT) || JOY_REPEAT(DPAD_RIGHT))
+    {
+        s32 step = sPkeAdjustSteps[gTasks[taskId].tEdStep];
+        if (JOY_REPEAT(DPAD_LEFT))
             step = -step;
 
         PlaySE(SE_SELECT);
         PkmEditor_Adjust(field, step);
-        if (field == PKF_SPECIES || field == PKF_SHINY)
+        if (field == PKF_SPECIES)
             PkmEditor_RefreshIcon(taskId);
         PkmEditor_Redraw(taskId);
     }
@@ -4033,28 +4195,45 @@ static const struct WindowTemplate sDebugMenuWindowTemplatePkmEditor =
 
 // Builds the creator's window, state and live icon on the given task. Shared by
 // the debug-menu entry and the script-callable entry.
-static void PkmEditor_Setup(u8 taskId)
+static bool32 PkmEditor_Setup(u8 taskId)
 {
-    u8 windowId;
+    u32 windowId;
+
+    if (sDebugMonData != NULL)
+        return FALSE;
 
     sDebugMonData = AllocZeroed(sizeof(struct DebugMonData));
+    if (sDebugMonData == NULL)
+        return FALSE;
+
     ResetMonDataStruct(sDebugMonData);
     sDebugMonData->otId = (u16)(gSaveBlock2Ptr->playerTrainerId[0] | (gSaveBlock2Ptr->playerTrainerId[1] << 8));
 
     HideMapNamePopUpWindow();
     LoadMessageBoxAndBorderGfx();
     windowId = AddWindow(&sDebugMenuWindowTemplatePkmEditor);
+    if (windowId == WINDOW_NONE)
+    {
+        Free(sDebugMonData);
+        sDebugMonData = NULL;
+        return FALSE;
+    }
+
     DrawStdWindowFrame(windowId, FALSE);
     CopyWindowToVram(windowId, COPYWIN_FULL);
 
     gTasks[taskId].tSubWindowId = windowId;
+    gTasks[taskId].tEdStep = 0;
     gTasks[taskId].tEdCursor = 0;
     gTasks[taskId].tEdScreen = PKE_SCREEN_MENU;
     gTasks[taskId].tEdIcon = MAX_SPRITES;
+    gTasks[taskId].tEdScroll = 0;
+    gTasks[taskId].tEdError = FALSE;
     gTasks[taskId].func = DebugAction_PkmEditor_Input;
 
     PkmEditor_RefreshIcon(taskId);
     PkmEditor_Redraw(taskId);
+    return TRUE;
 }
 
 static void DebugAction_Give_PokemonEditor(u8 taskId)
@@ -4062,7 +4241,25 @@ static void DebugAction_Give_PokemonEditor(u8 taskId)
     ClearStdWindowAndFrame(gTasks[taskId].tWindowId, TRUE);
     RemoveWindow(gTasks[taskId].tWindowId);
     gTasks[taskId].tEdFromScript = FALSE;
-    PkmEditor_Setup(taskId);
+    if (!PkmEditor_Setup(taskId))
+    {
+        DestroyListMenuTask(gTasks[taskId].tMenuTaskId, NULL, NULL);
+        DestroyTask(taskId);
+        ScriptContext_Enable();
+        UnfreezeObjectEvents();
+    }
+}
+
+static u8 PkmEditor_CreateTask(void)
+{
+    u32 i;
+
+    for (i = 0; i < NUM_TASKS; i++)
+    {
+        if (!gTasks[i].isActive)
+            return CreateTask(TaskDummy, 80);
+    }
+    return TASK_NONE;
 }
 
 // Script-callable entry point. Use it from a field script (e.g. a "creation
@@ -4074,15 +4271,33 @@ static void DebugAction_Give_PokemonEditor(u8 taskId)
 // The created Pokémon is added straight to the player's party.
 void OpenPokemonCreator(void)
 {
-    u8 taskId = CreateTask(TaskDummy, 80);
+    u8 taskId = PkmEditor_CreateTask();
+
+    if (taskId == TASK_NONE)
+    {
+        gSpecialVar_Result = FALSE;
+        ScriptContext_Enable();
+        return;
+    }
+
     gTasks[taskId].tEdFromScript = TRUE;
-    PkmEditor_Setup(taskId);
+    if (!PkmEditor_Setup(taskId))
+    {
+        DestroyTask(taskId);
+        gSpecialVar_Result = FALSE;
+        ScriptContext_Enable();
+        return;
+    }
+    gSpecialVar_Result = TRUE;
 }
 
 #undef tEdFromScript
+#undef tEdStep
 #undef tEdCursor
 #undef tEdScreen
 #undef tEdIcon
+#undef tEdScroll
+#undef tEdError
 
 //Decoration
 #define tSpriteId  data[6]
