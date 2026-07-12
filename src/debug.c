@@ -3569,6 +3569,7 @@ enum PkmEditorField
 #define PKE_ROW_HEIGHT   14
 #define PKE_LIST_TOP     18
 #define PKE_FONT         FONT_NORMAL
+#define PKE_FAST_STEP    100
 
 // Editor screens: 0 = category menu, otherwise category index + 1.
 #define PKE_SCREEN_MENU  0
@@ -3590,6 +3591,7 @@ static const u8 sPkeCat_Basics[]  = { PKF_SPECIES, PKF_NICKNAME, PKF_LEVEL, PKF_
 static const u8 sPkeCat_Battle[]  = { PKF_NATURE, PKF_ABILITY, PKF_FRIENDSHIP };
 static const u8 sPkeCat_Moves[]   = { PKF_MOVE1, PKF_MOVE2, PKF_MOVE3, PKF_MOVE4 };
 static const u8 sPkeCat_Trainer[] = { PKF_PLAYER_OT, PKF_OTID, PKF_ITEM, PKF_BALL };
+static const u8 sPkeCat_Gimmicks[] = { PKF_TERA, PKF_DMAX, PKF_GMAX };
 
 struct PkeCategory { const u8 *name; const u8 *fields; u8 count; };
 static const struct PkeCategory sPkeCategories[] =
@@ -3598,6 +3600,7 @@ static const struct PkeCategory sPkeCategories[] =
     { COMPOUND_STRING("Nature & Ability"), sPkeCat_Battle,  ARRAY_COUNT(sPkeCat_Battle)  },
     { COMPOUND_STRING("Moves"),            sPkeCat_Moves,   ARRAY_COUNT(sPkeCat_Moves)   },
     { COMPOUND_STRING("Trainer & Item"),   sPkeCat_Trainer, ARRAY_COUNT(sPkeCat_Trainer) },
+    { COMPOUND_STRING("Gimmicks"),         sPkeCat_Gimmicks, ARRAY_COUNT(sPkeCat_Gimmicks) },
 };
 #define PKE_NUM_CATEGORIES  ARRAY_COUNT(sPkeCategories)
 #define PKE_MENU_ROWS       (PKE_NUM_CATEGORIES + 1)   // categories + CREATE row
@@ -3722,14 +3725,14 @@ static void PkmEditor_BuildValue(u8 field, u8 *dst)
 static void PkmEditor_DrawRow(u8 windowId, u32 y, const u8 *label, const u8 *value, bool32 selected)
 {
     if (selected)
-        AddTextPrinterParameterized(windowId, PKE_FONT, COMPOUND_STRING("{COLOR RED}{RIGHT_ARROW}"), 2, y, 0, NULL);
+        AddTextPrinterParameterized(windowId, PKE_FONT, COMPOUND_STRING("{COLOR RED}{RIGHT_ARROW}"), 2, y, TEXT_SKIP_DRAW, NULL);
 
     StringCopy(gStringVar1, selected ? COMPOUND_STRING("{COLOR RED}") : COMPOUND_STRING("{COLOR DARK_GRAY}"));
     StringAppend(gStringVar1, label);
-    AddTextPrinterParameterized(windowId, PKE_FONT, gStringVar1, 14, y, 0, NULL);
+    AddTextPrinterParameterized(windowId, PKE_FONT, gStringVar1, 14, y, TEXT_SKIP_DRAW, NULL);
 
     if (value != NULL)
-        AddTextPrinterParameterized(windowId, PKE_FONT, value, 100, y, 0, NULL);
+        AddTextPrinterParameterized(windowId, PKE_FONT, value, 100, y, TEXT_SKIP_DRAW, NULL);
 }
 
 static void PkmEditor_Redraw(u8 taskId)
@@ -3744,7 +3747,7 @@ static void PkmEditor_Redraw(u8 taskId)
 
     if (screen == PKE_SCREEN_MENU)
     {
-        AddTextPrinterParameterized(windowId, PKE_FONT, COMPOUND_STRING("{COLOR BLUE}POKéMON CREATOR"), 4, 2, 0, NULL);
+        AddTextPrinterParameterized(windowId, PKE_FONT, COMPOUND_STRING("{COLOR BLUE}POKéMON CREATOR"), 4, 2, TEXT_SKIP_DRAW, NULL);
 
         for (i = 0; i < PKE_NUM_CATEGORIES; i++)
             PkmEditor_DrawRow(windowId, PKE_LIST_TOP + i * PKE_ROW_HEIGHT, sPkeCategories[i].name, NULL, i == cursor);
@@ -3753,15 +3756,15 @@ static void PkmEditor_Redraw(u8 taskId)
         {
             u32 y = PKE_LIST_TOP + PKE_NUM_CATEGORIES * PKE_ROW_HEIGHT + 4;
             if (cursor == PKE_NUM_CATEGORIES)
-                AddTextPrinterParameterized(windowId, PKE_FONT, COMPOUND_STRING("{COLOR RED}{RIGHT_ARROW}"), 2, y, 0, NULL);
+                AddTextPrinterParameterized(windowId, PKE_FONT, COMPOUND_STRING("{COLOR RED}{RIGHT_ARROW}"), 2, y, TEXT_SKIP_DRAW, NULL);
             AddTextPrinterParameterized(windowId, PKE_FONT,
                 cursor == PKE_NUM_CATEGORIES ? COMPOUND_STRING("{COLOR RED}CREATE POKéMON!") : COMPOUND_STRING("{COLOR GREEN}CREATE POKéMON!"),
-                14, y, 0, NULL);
+                14, y, TEXT_SKIP_DRAW, NULL);
         }
 
         AddTextPrinterParameterized(windowId, PKE_FONT,
             COMPOUND_STRING("{DPAD_UPDOWN}Pick  {A_BUTTON}Open  {B_BUTTON}Exit"),
-            4, PKE_LIST_TOP + (PKE_MENU_ROWS + 1) * PKE_ROW_HEIGHT + 2, 0, NULL);
+            4, PKE_LIST_TOP + (PKE_MENU_ROWS + 1) * PKE_ROW_HEIGHT + 2, TEXT_SKIP_DRAW, NULL);
     }
     else
     {
@@ -3769,7 +3772,7 @@ static void PkmEditor_Redraw(u8 taskId)
 
         StringCopy(gStringVar1, COMPOUND_STRING("{COLOR BLUE}"));
         StringAppend(gStringVar1, cat->name);
-        AddTextPrinterParameterized(windowId, PKE_FONT, gStringVar1, 4, 2, 0, NULL);
+        AddTextPrinterParameterized(windowId, PKE_FONT, gStringVar1, 4, 2, TEXT_SKIP_DRAW, NULL);
 
         for (i = 0; i < cat->count; i++)
         {
@@ -3779,8 +3782,8 @@ static void PkmEditor_Redraw(u8 taskId)
         }
 
         AddTextPrinterParameterized(windowId, PKE_FONT,
-            COMPOUND_STRING("{DPAD_UPDOWN}Pick  {DPAD_LEFTRIGHT}Change  {B_BUTTON}Back"),
-            4, PKE_LIST_TOP + 6 * PKE_ROW_HEIGHT + 2, 0, NULL);
+            COMPOUND_STRING("{DPAD_LEFTRIGHT}Change  {L_BUTTON}/{R_BUTTON}Fast  {B_BUTTON}Back"),
+            4, PKE_LIST_TOP + 6 * PKE_ROW_HEIGHT + 2, TEXT_SKIP_DRAW, NULL);
     }
 
     // Little name caption under the live icon (so you always see what you're building).
@@ -3789,7 +3792,7 @@ static void PkmEditor_Redraw(u8 taskId)
         const u8 *name = GetSpeciesName(sDebugMonData->species);
         u32 w = GetStringWidth(FONT_SMALL, name, 0);
         s32 cx = (PKE_ICON_X - PKE_WIN_ORIGIN) - w / 2;   // window-relative, centred on icon
-        AddTextPrinterParameterized(windowId, FONT_SMALL, name, cx < 0 ? 0 : cx, (PKE_ICON_Y - PKE_WIN_ORIGIN) + 20, 0, NULL);
+        AddTextPrinterParameterized(windowId, FONT_SMALL, name, cx < 0 ? 0 : cx, (PKE_ICON_Y - PKE_WIN_ORIGIN) + 20, TEXT_SKIP_DRAW, NULL);
     }
 
     CopyWindowToVram(windowId, COPYWIN_GFX);
@@ -3995,10 +3998,10 @@ static void PkmEditor_Input_Category(u8 taskId)
     }
 
     if (JOY_REPEAT(DPAD_LEFT) || JOY_REPEAT(DPAD_RIGHT)
-        || JOY_NEW(L_BUTTON) || JOY_NEW(R_BUTTON))
+        || JOY_REPEAT(L_BUTTON) || JOY_REPEAT(R_BUTTON))
     {
-        s32 step = (JOY_NEW(L_BUTTON) || JOY_NEW(R_BUTTON)) ? 10 : 1;
-        if (JOY_REPEAT(DPAD_LEFT) || JOY_NEW(L_BUTTON))
+        s32 step = (JOY_REPEAT(L_BUTTON) || JOY_REPEAT(R_BUTTON)) ? PKE_FAST_STEP : 1;
+        if (JOY_REPEAT(DPAD_LEFT) || JOY_REPEAT(L_BUTTON))
             step = -step;
 
         PlaySE(SE_SELECT);
