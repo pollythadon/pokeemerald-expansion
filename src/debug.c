@@ -26,6 +26,7 @@
 #include "m4a.h"
 #include "main.h"
 #include "main_menu.h"
+#include "mail.h"
 #include "match_call.h"
 #include "malloc.h"
 #include "map_name_popup.h"
@@ -3708,6 +3709,35 @@ static u8 PkeGenderState(u16 species)
     return 0;
 }
 
+static void PkmEditor_ValidateAbility(void)
+{
+    u32 i;
+
+    if (GetAbilityBySpecies(sDebugMonData->species, sDebugMonData->abilityNum) != ABILITY_NONE)
+        return;
+
+    for (i = 0; i < NUM_ABILITY_SLOTS; i++)
+    {
+        if (GetAbilityBySpecies(sDebugMonData->species, i) != ABILITY_NONE)
+        {
+            sDebugMonData->abilityNum = i;
+            return;
+        }
+    }
+    sDebugMonData->abilityNum = 0;
+}
+
+static bool32 PkmEditor_IsValidHeldItem(u16 item)
+{
+    return item == ITEM_NONE
+        || (item < ITEMS_COUNT && gItemsInfo[item].name != NULL && !ItemIsMail(item));
+}
+
+static bool32 PkmEditor_IsValidMove(u16 move)
+{
+    return move == MOVE_NONE || (move < MOVES_COUNT && gMovesInfo[move].name != NULL);
+}
+
 static void PkmEditor_BuildNumberedName(u8 *dst, u32 number, u32 digits, const u8 *name)
 {
     ConvertIntToDecimalStringN(dst, number, STR_CONV_MODE_LEADING_ZEROS, digits);
@@ -3753,7 +3783,8 @@ static void PkmEditor_BuildValue(u8 field, u8 *dst)
         PkmEditor_BuildNumberedName(dst, ability, 3, gAbilitiesInfo[ability].name);
         break;
     case PKF_ITEM:
-        PkmEditor_BuildNumberedName(dst, sDebugMonData->heldItem, 4, GetItemName(sDebugMonData->heldItem));
+        PkmEditor_BuildNumberedName(dst, sDebugMonData->heldItem, 4,
+            sDebugMonData->heldItem == ITEM_NONE ? COMPOUND_STRING("None") : GetItemName(sDebugMonData->heldItem));
         break;
     case PKF_BALL:
         PkmEditor_BuildNumberedName(dst, sDebugMonData->ballItem, 4, GetItemName(sDebugMonData->ballItem));
@@ -3776,7 +3807,9 @@ static void PkmEditor_BuildValue(u8 field, u8 *dst)
         break;
     }
     case PKF_TERA:
-        PkmEditor_BuildNumberedName(dst, sDebugMonData->teraType, 2, gTypesInfo[sDebugMonData->teraType].name);
+        PkmEditor_BuildNumberedName(dst, sDebugMonData->teraType, 2,
+            sDebugMonData->teraType == TYPE_NONE || sDebugMonData->teraType == TYPE_MYSTERY
+                ? COMPOUND_STRING("Random") : gTypesInfo[sDebugMonData->teraType].name);
         break;
     case PKF_DMAX:       ConvertIntToDecimalStringN(dst, sDebugMonData->dynamaxLevel, STR_CONV_MODE_LEFT_ALIGN, 2); break;
     case PKF_GMAX:       StringCopy(dst, sDebugMonData->gmaxFactor ? COMPOUND_STRING("{COLOR GREEN}Yes") : COMPOUND_STRING("No")); break;
@@ -3811,9 +3844,13 @@ static void PkmEditor_Redraw(u8 taskId)
     u8 screen = gTasks[taskId].tEdScreen;
     u32 i;
     u8 value[40];
+    bool32 showPreview = screen != PKE_SCREEN_MENU || cursor == PKE_NUM_CATEGORIES;
 
     if (sDebugMonData->editorStep >= ARRAY_COUNT(sPkeAdjustSteps))
         sDebugMonData->editorStep = 0;
+
+    if (gTasks[taskId].tEdIcon < MAX_SPRITES)
+        gSprites[gTasks[taskId].tEdIcon].invisible = !showPreview;
 
     FillWindowPixelBuffer(windowId, PIXEL_FILL(1));
 
@@ -3876,7 +3913,7 @@ static void PkmEditor_Redraw(u8 taskId)
     }
 
     // Little name caption under the live icon (so you always see what you're building).
-    if (IsSpeciesEnabled(sDebugMonData->species))
+    if (showPreview && IsSpeciesEnabled(sDebugMonData->species))
     {
         const u8 *name = GetSpeciesName(sDebugMonData->species);
         u32 w = GetStringWidth(FONT_SMALL, name, 0);
@@ -3940,6 +3977,7 @@ static void PkmEditor_Adjust(u8 field, s32 delta)
         {
             sDebugMonData->species = species;
             sDebugMonData->abilityNum = 0;
+            PkmEditor_ValidateAbility();
         }
         break;
     }
@@ -3967,7 +4005,23 @@ static void PkmEditor_Adjust(u8 field, s32 delta)
         }
         break;
     }
-    case PKF_ITEM:       sDebugMonData->heldItem = PkeWrap(sDebugMonData->heldItem + delta, ITEMS_COUNT); break;
+    case PKF_ITEM:
+    {
+        u32 i;
+        s32 direction = delta < 0 ? -1 : 1;
+        u16 item = PkeWrap(sDebugMonData->heldItem + delta, ITEMS_COUNT);
+
+        for (i = 0; i < ITEMS_COUNT; i++)
+        {
+            if (PkmEditor_IsValidHeldItem(item))
+            {
+                sDebugMonData->heldItem = item;
+                break;
+            }
+            item = PkeWrap(item + direction, ITEMS_COUNT);
+        }
+        break;
+    }
     case PKF_BALL:
     {
         u32 n = ARRAY_COUNT(sPkmEditorBalls), idx = 0, k;
@@ -3983,8 +4037,20 @@ static void PkmEditor_Adjust(u8 field, s32 delta)
     case PKF_OTID:       sDebugMonData->otId = sDebugMonData->otId + delta; break;
     case PKF_MOVE1 ... PKF_MOVE4:
     {
+        u32 i;
+        s32 direction = delta < 0 ? -1 : 1;
         u16 *move = &sDebugMonData->monMoves[field - PKF_MOVE1];
-        *move = PkeWrap(*move + delta, MOVES_COUNT);
+        u16 candidate = PkeWrap(*move + delta, MOVES_COUNT);
+
+        for (i = 0; i < MOVES_COUNT; i++)
+        {
+            if (PkmEditor_IsValidMove(candidate))
+            {
+                *move = candidate;
+                break;
+            }
+            candidate = PkeWrap(candidate + direction, MOVES_COUNT);
+        }
         break;
     }
     case PKF_TERA:       sDebugMonData->teraType = PkeWrap(sDebugMonData->teraType + delta, NUMBER_OF_MON_TYPES); break;
@@ -4020,8 +4086,11 @@ static void PkmEditor_Finalize(u8 taskId)
     u8 isShiny = sDebugMonData->isShiny;
     u8 gmaxFactor = sDebugMonData->gmaxFactor;
     u8 dynamaxLevel = sDebugMonData->dynamaxLevel;
-    u8 abilityNum = sDebugMonData->abilityNum;
+    u8 abilityNum;
     u16 heldItem = sDebugMonData->heldItem;
+
+    PkmEditor_ValidateAbility();
+    abilityNum = sDebugMonData->abilityNum;
 
     // CreateMon with OTID_STRUCT_PLAYER_ID makes the player the OT (name + ID + gender),
     // so the mon is fully "yours". Only override the OT ID when the player opts out.
@@ -4074,6 +4143,7 @@ static void PkmEditor_Finalize(u8 taskId)
         PkmEditor_Redraw(taskId);
         return;
     }
+    PlaySE(SE_M_HEAL_BELL);
     FlagSet(FLAG_SYS_POKEMON_GET);
 
     PkmEditor_CloseAll(taskId);
@@ -4093,7 +4163,6 @@ static void PkmEditor_Input_Menu(u8 taskId)
     {
         if (gTasks[taskId].tEdCursor == PKE_NUM_CATEGORIES)
         {
-            PlaySE(SE_M_HEAL_BELL);
             PkmEditor_Finalize(taskId);
         }
         else
@@ -4215,6 +4284,7 @@ static bool32 PkmEditor_Setup(u8 taskId)
         return FALSE;
 
     ResetMonDataStruct(sDebugMonData);
+    PkmEditor_ValidateAbility();
     sDebugMonData->otId = (u16)(gSaveBlock2Ptr->playerTrainerId[0] | (gSaveBlock2Ptr->playerTrainerId[1] << 8));
 
     HideMapNamePopUpWindow();
