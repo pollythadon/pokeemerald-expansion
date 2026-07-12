@@ -203,6 +203,7 @@ enum DebugMenuTypes
 #define DEBUG_MAX_SUB_MENU_LEVELS 4
 
 #define DEBUG_OPTION_CANT_BE_TOGGLED 0xFF
+#define PKE_MON_DATA_CAPACITY 16
 
 // *******************************
 struct DebugMenuOption;
@@ -234,8 +235,8 @@ struct DebugMonData
     u16 heldItem;
     u16 ballItem;
     u16 otId;
-    u8 friendship;
     u8 editorStep;
+    u32 editorMonData[PKE_MON_DATA_CAPACITY];
     u8 gender;      // 0 = default/random, 1 = male, 2 = female
     bool8 playerIsOT;
     bool8 hasNickname;
@@ -2769,7 +2770,6 @@ static void ResetMonDataStruct(struct DebugMonData *sDebugMonData)
     sDebugMonData->heldItem         = ITEM_NONE;
     sDebugMonData->ballItem         = ITEM_POKE_BALL;
     sDebugMonData->otId             = 0;
-    sDebugMonData->friendship       = 70;
     sDebugMonData->editorStep       = 0;
     sDebugMonData->gender           = 0;
     sDebugMonData->playerIsOT       = TRUE;
@@ -3561,12 +3561,11 @@ static void DebugAction_Give_Pokemon_ComplexCreateMon(u8 taskId) //https://githu
 enum PkmEditorField
 {
     // Left column
-    PKF_SPECIES, PKF_NICKNAME, PKF_LEVEL, PKF_SHINY, PKF_GENDER, PKF_NATURE,
-    PKF_ABILITY, PKF_ITEM, PKF_BALL, PKF_FRIENDSHIP,
+    PKF_SPECIES, PKF_NICKNAME, PKF_LEVEL, PKF_GENDER, PKF_NATURE,
+    PKF_ABILITY, PKF_ITEM, PKF_BALL,
     // Right column
     PKF_PLAYER_OT, PKF_OTID, PKF_MOVE1, PKF_MOVE2, PKF_MOVE3, PKF_MOVE4,
-    PKF_TERA, PKF_DMAX, PKF_GMAX, PKF_GIVE,
-    PKF_HP_IV, PKF_ATK_IV, PKF_DEF_IV, PKF_SPEED_IV, PKF_SPATK_IV, PKF_SPDEF_IV,
+    PKF_TERA, PKF_GIVE,
     PKF_HP_EV, PKF_ATK_EV, PKF_DEF_EV, PKF_SPEED_EV, PKF_SPATK_EV, PKF_SPDEF_EV,
     PKF_COUNT,
 };
@@ -3589,6 +3588,64 @@ enum PkmEditorField
 
 static const u16 sPkeAdjustSteps[] = { 1, 10, 100 };
 
+// Generic scalar MonData extension point.
+//
+// To expose another enum MonData value in the creator:
+//   1. Add one X(...) row here.
+//   2. Add PKF_MON_DATA(NAME) to whichever category should display it.
+//
+// Example for a project-defined flag:
+//   X(SHADOW, "Shadow", MON_DATA_IS_SHADOW, 0, 1, 0, 1, PKE_MD_BOOL)
+//
+// Custom code is only needed for non-scalar data or coupled constraints.
+enum PkeMonDataDisplay
+{
+    PKE_MD_NUMBER,
+    PKE_MD_BOOL,
+};
+
+#define PKE_MON_DATA_OPTIONS(X) \
+    X(SHINY,      "Shiny",      MON_DATA_IS_SHINY,          0, 1,                 0, 1, PKE_MD_BOOL)   \
+    X(FRIENDSHIP, "Friendship", MON_DATA_FRIENDSHIP,        0, 255,              70, 3, PKE_MD_NUMBER) \
+    X(DMAX,       "Dmax Lvl",   MON_DATA_DYNAMAX_LEVEL,     0, MAX_DYNAMAX_LEVEL, 0, 2, PKE_MD_NUMBER) \
+    X(GMAX,       "Gmax",       MON_DATA_GIGANTAMAX_FACTOR, 0, 1,                 0, 1, PKE_MD_BOOL)   \
+    X(HP_IV,      "HP IV",      MON_DATA_HP_IV,             0, MAX_PER_STAT_IVS,  0, 2, PKE_MD_NUMBER) \
+    X(ATK_IV,     "Attack IV",  MON_DATA_ATK_IV,            0, MAX_PER_STAT_IVS,  0, 2, PKE_MD_NUMBER) \
+    X(DEF_IV,     "Defense IV", MON_DATA_DEF_IV,            0, MAX_PER_STAT_IVS,  0, 2, PKE_MD_NUMBER) \
+    X(SPEED_IV,   "Speed IV",   MON_DATA_SPEED_IV,          0, MAX_PER_STAT_IVS,  0, 2, PKE_MD_NUMBER) \
+    X(SPATK_IV,   "Sp. Atk IV", MON_DATA_SPATK_IV,          0, MAX_PER_STAT_IVS,  0, 2, PKE_MD_NUMBER) \
+    X(SPDEF_IV,   "Sp. Def IV", MON_DATA_SPDEF_IV,          0, MAX_PER_STAT_IVS,  0, 2, PKE_MD_NUMBER)
+
+enum PkeMonDataOptionId
+{
+#define PKE_MD_ENUM(_name, _label, _monData, _min, _max, _default, _digits, _display) PKMD_##_name,
+    PKE_MON_DATA_OPTIONS(PKE_MD_ENUM)
+#undef PKE_MD_ENUM
+    PKMD_COUNT,
+};
+
+struct PkeMonDataOption
+{
+    const u8 *label;
+    enum MonData monData;
+    u32 min;
+    u32 max;
+    u32 defaultValue;
+    u8 digits;
+    enum PkeMonDataDisplay display;
+};
+
+static const struct PkeMonDataOption sPkeMonDataOptions[PKMD_COUNT] =
+{
+#define PKE_MD_CONFIG(_name, _label, _monData, _min, _max, _default, _digits, _display) \
+    [PKMD_##_name] = { COMPOUND_STRING(_label), _monData, _min, _max, _default, _digits, _display },
+    PKE_MON_DATA_OPTIONS(PKE_MD_CONFIG)
+#undef PKE_MD_CONFIG
+};
+
+#define PKF_MON_DATA(name) (PKF_COUNT + PKMD_##name)
+STATIC_ASSERT(PKMD_COUNT <= PKE_MON_DATA_CAPACITY, PokemonCreatorMonDataCapacityExceeded)
+
 // Live mon icon sits (frameless) in the bottom-right of the window.
 // PKE_ICON_X/Y are screen coords (for the sprite); the window itself starts at
 // screen (8,8), so window-relative text subtracts 8.
@@ -3597,14 +3654,15 @@ static const u16 sPkeAdjustSteps[] = { 1, 10, 100 };
 #define PKE_WIN_ORIGIN 8
 
 // Fields grouped into tidy sub-menus so no single screen is crowded.
-static const u8 sPkeCat_Basics[]  = { PKF_SPECIES, PKF_NICKNAME, PKF_LEVEL, PKF_GENDER, PKF_SHINY };
-static const u8 sPkeCat_Battle[]  = { PKF_NATURE, PKF_ABILITY, PKF_FRIENDSHIP };
+static const u8 sPkeCat_Basics[]  = { PKF_SPECIES, PKF_NICKNAME, PKF_LEVEL, PKF_GENDER, PKF_MON_DATA(SHINY) };
+static const u8 sPkeCat_Battle[]  = { PKF_NATURE, PKF_ABILITY, PKF_MON_DATA(FRIENDSHIP) };
 static const u8 sPkeCat_Moves[]   = { PKF_MOVE1, PKF_MOVE2, PKF_MOVE3, PKF_MOVE4 };
 static const u8 sPkeCat_Trainer[] = { PKF_PLAYER_OT, PKF_OTID, PKF_ITEM, PKF_BALL };
-static const u8 sPkeCat_Gimmicks[] = { PKF_TERA, PKF_DMAX, PKF_GMAX };
+static const u8 sPkeCat_Gimmicks[] = { PKF_TERA, PKF_MON_DATA(DMAX), PKF_MON_DATA(GMAX) };
 static const u8 sPkeCat_Stats[] =
 {
-    PKF_HP_IV, PKF_ATK_IV, PKF_DEF_IV, PKF_SPEED_IV, PKF_SPATK_IV, PKF_SPDEF_IV,
+    PKF_MON_DATA(HP_IV), PKF_MON_DATA(ATK_IV), PKF_MON_DATA(DEF_IV),
+    PKF_MON_DATA(SPEED_IV), PKF_MON_DATA(SPATK_IV), PKF_MON_DATA(SPDEF_IV),
     PKF_HP_EV, PKF_ATK_EV, PKF_DEF_EV, PKF_SPEED_EV, PKF_SPATK_EV, PKF_SPDEF_EV,
 };
 
@@ -3626,13 +3684,11 @@ static const u8 *const sPkmEditorLabels[PKF_COUNT] =
     [PKF_SPECIES]    = COMPOUND_STRING("Species"),
     [PKF_NICKNAME]   = COMPOUND_STRING("Nickname"),
     [PKF_LEVEL]      = COMPOUND_STRING("Level"),
-    [PKF_SHINY]      = COMPOUND_STRING("Shiny"),
     [PKF_GENDER]     = COMPOUND_STRING("Gender"),
     [PKF_NATURE]     = COMPOUND_STRING("Nature"),
     [PKF_ABILITY]    = COMPOUND_STRING("Ability"),
     [PKF_ITEM]       = COMPOUND_STRING("Held Item"),
     [PKF_BALL]       = COMPOUND_STRING("Poké Ball"),
-    [PKF_FRIENDSHIP] = COMPOUND_STRING("Friendship"),
     [PKF_PLAYER_OT]  = COMPOUND_STRING("You're OT"),
     [PKF_OTID]       = COMPOUND_STRING("OT ID"),
     [PKF_MOVE1]      = COMPOUND_STRING("Move 1"),
@@ -3640,15 +3696,7 @@ static const u8 *const sPkmEditorLabels[PKF_COUNT] =
     [PKF_MOVE3]      = COMPOUND_STRING("Move 3"),
     [PKF_MOVE4]      = COMPOUND_STRING("Move 4"),
     [PKF_TERA]       = COMPOUND_STRING("Tera Type"),
-    [PKF_DMAX]       = COMPOUND_STRING("Dmax Lvl"),
-    [PKF_GMAX]       = COMPOUND_STRING("Gmax"),
     [PKF_GIVE]       = COMPOUND_STRING("CREATE"),
-    [PKF_HP_IV]      = COMPOUND_STRING("HP IV"),
-    [PKF_ATK_IV]     = COMPOUND_STRING("Attack IV"),
-    [PKF_DEF_IV]     = COMPOUND_STRING("Defense IV"),
-    [PKF_SPEED_IV]   = COMPOUND_STRING("Speed IV"),
-    [PKF_SPATK_IV]   = COMPOUND_STRING("Sp. Atk IV"),
-    [PKF_SPDEF_IV]   = COMPOUND_STRING("Sp. Def IV"),
     [PKF_HP_EV]      = COMPOUND_STRING("HP EV"),
     [PKF_ATK_EV]     = COMPOUND_STRING("Attack EV"),
     [PKF_DEF_EV]     = COMPOUND_STRING("Defense EV"),
@@ -3738,6 +3786,31 @@ static bool32 PkmEditor_IsValidMove(u16 move)
     return move == MOVE_NONE || (move < MOVES_COUNT && gMovesInfo[move].name != NULL);
 }
 
+static bool32 PkmEditor_IsMonDataField(u8 field)
+{
+    return field >= PKF_COUNT && field - PKF_COUNT < PKMD_COUNT;
+}
+
+static const struct PkeMonDataOption *PkmEditor_GetMonDataOption(u8 field)
+{
+    return &sPkeMonDataOptions[field - PKF_COUNT];
+}
+
+static void PkmEditor_ResetMonDataOptions(void)
+{
+    u32 i;
+
+    for (i = 0; i < PKMD_COUNT; i++)
+        sDebugMonData->editorMonData[i] = sPkeMonDataOptions[i].defaultValue;
+}
+
+static const u8 *PkmEditor_GetLabel(u8 field)
+{
+    if (PkmEditor_IsMonDataField(field))
+        return PkmEditor_GetMonDataOption(field)->label;
+    return sPkmEditorLabels[field];
+}
+
 static void PkmEditor_BuildNumberedName(u8 *dst, u32 number, u32 digits, const u8 *name)
 {
     ConvertIntToDecimalStringN(dst, number, STR_CONV_MODE_LEADING_ZEROS, digits);
@@ -3748,6 +3821,20 @@ static void PkmEditor_BuildNumberedName(u8 *dst, u32 number, u32 digits, const u
 static void PkmEditor_BuildValue(u8 field, u8 *dst)
 {
     enum Ability ability;
+
+    if (PkmEditor_IsMonDataField(field))
+    {
+        u32 optionId = field - PKF_COUNT;
+        const struct PkeMonDataOption *option = PkmEditor_GetMonDataOption(field);
+        u32 value = sDebugMonData->editorMonData[optionId];
+
+        if (option->display == PKE_MD_BOOL)
+            StringCopy(dst, value ? COMPOUND_STRING("{COLOR GREEN}Yes") : COMPOUND_STRING("No"));
+        else
+            ConvertIntToDecimalStringN(dst, value, STR_CONV_MODE_LEFT_ALIGN, option->digits);
+        return;
+    }
+
     switch (field)
     {
     case PKF_SPECIES:
@@ -3763,7 +3850,6 @@ static void PkmEditor_BuildValue(u8 field, u8 *dst)
             StringCopy(dst, COMPOUND_STRING("{COLOR LIGHT_GRAY}(auto)"));
         break;
     case PKF_LEVEL:      ConvertIntToDecimalStringN(dst, sDebugMonData->level, STR_CONV_MODE_LEFT_ALIGN, 3); break;
-    case PKF_SHINY:      StringCopy(dst, sDebugMonData->isShiny ? COMPOUND_STRING("{COLOR GREEN}Yes") : COMPOUND_STRING("No")); break;
     case PKF_GENDER:
         switch (PkeGenderState(sDebugMonData->species))
         {
@@ -3789,7 +3875,6 @@ static void PkmEditor_BuildValue(u8 field, u8 *dst)
     case PKF_BALL:
         PkmEditor_BuildNumberedName(dst, sDebugMonData->ballItem, 4, GetItemName(sDebugMonData->ballItem));
         break;
-    case PKF_FRIENDSHIP: ConvertIntToDecimalStringN(dst, sDebugMonData->friendship, STR_CONV_MODE_LEFT_ALIGN, 3); break;
     case PKF_PLAYER_OT:
         StringCopy(dst, sDebugMonData->playerIsOT ? COMPOUND_STRING("{COLOR GREEN}Yes") : COMPOUND_STRING("No"));
         break;
@@ -3810,11 +3895,6 @@ static void PkmEditor_BuildValue(u8 field, u8 *dst)
         PkmEditor_BuildNumberedName(dst, sDebugMonData->teraType, 2,
             sDebugMonData->teraType == TYPE_NONE || sDebugMonData->teraType == TYPE_MYSTERY
                 ? COMPOUND_STRING("Random") : gTypesInfo[sDebugMonData->teraType].name);
-        break;
-    case PKF_DMAX:       ConvertIntToDecimalStringN(dst, sDebugMonData->dynamaxLevel, STR_CONV_MODE_LEFT_ALIGN, 2); break;
-    case PKF_GMAX:       StringCopy(dst, sDebugMonData->gmaxFactor ? COMPOUND_STRING("{COLOR GREEN}Yes") : COMPOUND_STRING("No")); break;
-    case PKF_HP_IV ... PKF_SPDEF_IV:
-        ConvertIntToDecimalStringN(dst, sDebugMonData->monIVs[field - PKF_HP_IV], STR_CONV_MODE_LEFT_ALIGN, 2);
         break;
     case PKF_HP_EV ... PKF_SPDEF_EV:
         ConvertIntToDecimalStringN(dst, sDebugMonData->monEVs[field - PKF_HP_EV], STR_CONV_MODE_LEFT_ALIGN, 3);
@@ -3904,7 +3984,7 @@ static void PkmEditor_Redraw(u8 taskId)
             u8 row = i + gTasks[taskId].tEdScroll;
             u8 field = cat->fields[row];
             PkmEditor_BuildValue(field, value);
-            PkmEditor_DrawRow(windowId, PKE_LIST_TOP + i * PKE_ROW_HEIGHT, sPkmEditorLabels[field], value, row == cursor);
+            PkmEditor_DrawRow(windowId, PKE_LIST_TOP + i * PKE_ROW_HEIGHT, PkmEditor_GetLabel(field), value, row == cursor);
         }
 
         AddTextPrinterParameterized(windowId, PKE_FONT,
@@ -3964,6 +4044,28 @@ static void PkmEditor_CloseAll(u8 taskId)
 // Steps a field value by delta, clamping/wrapping to sensible bounds.
 static void PkmEditor_Adjust(u8 field, s32 delta)
 {
+    if (PkmEditor_IsMonDataField(field))
+    {
+        u32 optionId = field - PKF_COUNT;
+        const struct PkeMonDataOption *option = PkmEditor_GetMonDataOption(field);
+
+        if (option->display == PKE_MD_BOOL)
+        {
+            sDebugMonData->editorMonData[optionId] ^= 1;
+        }
+        else
+        {
+            s64 value = (s64)sDebugMonData->editorMonData[optionId] + delta;
+
+            if (value < option->min)
+                value = option->min;
+            if (value > option->max)
+                value = option->max;
+            sDebugMonData->editorMonData[optionId] = value;
+        }
+        return;
+    }
+
     switch (field)
     {
     case PKF_SPECIES:
@@ -3983,7 +4085,6 @@ static void PkmEditor_Adjust(u8 field, s32 delta)
     }
     case PKF_NICKNAME:  break; // edited with A (naming screen not wired yet)
     case PKF_LEVEL:      sDebugMonData->level = PkeClamp(sDebugMonData->level + delta, MIN_LEVEL, MAX_LEVEL); break;
-    case PKF_SHINY:      sDebugMonData->isShiny ^= 1; break;
     case PKF_GENDER:
         if (PkeGenderState(sDebugMonData->species) == 0) // only species with a real choice
             sDebugMonData->gender = (sDebugMonData->gender + (delta > 0 ? 1 : 2)) % 3;
@@ -4032,7 +4133,6 @@ static void PkmEditor_Adjust(u8 field, s32 delta)
         sDebugMonData->ballItem = sPkmEditorBalls[idx];
         break;
     }
-    case PKF_FRIENDSHIP: sDebugMonData->friendship = PkeClamp(sDebugMonData->friendship + delta, 0, 255); break;
     case PKF_PLAYER_OT:  sDebugMonData->playerIsOT ^= 1; break;
     case PKF_OTID:       sDebugMonData->otId = sDebugMonData->otId + delta; break;
     case PKF_MOVE1 ... PKF_MOVE4:
@@ -4054,14 +4154,6 @@ static void PkmEditor_Adjust(u8 field, s32 delta)
         break;
     }
     case PKF_TERA:       sDebugMonData->teraType = PkeWrap(sDebugMonData->teraType + delta, NUMBER_OF_MON_TYPES); break;
-    case PKF_DMAX:       sDebugMonData->dynamaxLevel = PkeClamp(sDebugMonData->dynamaxLevel + delta, 0, MAX_DYNAMAX_LEVEL); break;
-    case PKF_GMAX:       sDebugMonData->gmaxFactor ^= 1; break;
-    case PKF_HP_IV ... PKF_SPDEF_IV:
-    {
-        u8 *iv = &sDebugMonData->monIVs[field - PKF_HP_IV];
-        *iv = PkeClamp(*iv + delta, 0, MAX_IV_MASK);
-        break;
-    }
     case PKF_HP_EV ... PKF_SPDEF_EV:
     {
         u8 *ev = &sDebugMonData->monEVs[field - PKF_HP_EV];
@@ -4083,9 +4175,6 @@ static void PkmEditor_Finalize(u8 taskId)
     u32 teraType = sDebugMonData->teraType;
     u32 otId = sDebugMonData->otId;
     u8 ballId = ItemIdToBallId(sDebugMonData->ballItem);
-    u8 isShiny = sDebugMonData->isShiny;
-    u8 gmaxFactor = sDebugMonData->gmaxFactor;
-    u8 dynamaxLevel = sDebugMonData->dynamaxLevel;
     u8 abilityNum;
     u16 heldItem = sDebugMonData->heldItem;
 
@@ -4097,24 +4186,23 @@ static void PkmEditor_Finalize(u8 taskId)
     CreateMon(&mon, sDebugMonData->species, sDebugMonData->level, personality, OTID_STRUCT_PLAYER_ID);
     if (!sDebugMonData->playerIsOT)
         SetMonData(&mon, MON_DATA_OT_ID, &otId);
-    SetMonData(&mon, MON_DATA_IS_SHINY, &isShiny);
-    SetMonData(&mon, MON_DATA_GIGANTAMAX_FACTOR, &gmaxFactor);
-    SetMonData(&mon, MON_DATA_DYNAMAX_LEVEL, &dynamaxLevel);
     SetMonData(&mon, MON_DATA_HELD_ITEM, &heldItem);
-    SetMonData(&mon, MON_DATA_FRIENDSHIP, &sDebugMonData->friendship);
     SetMonData(&mon, MON_DATA_POKEBALL, &ballId);
     if (sDebugMonData->hasNickname)
         SetMonData(&mon, MON_DATA_NICKNAME, sDebugMonData->nickname);
+
+    for (i = 0; i < PKMD_COUNT; i++)
+    {
+        u32 value = sDebugMonData->editorMonData[i];
+        SetMonData(&mon, sPkeMonDataOptions[i].monData, &value);
+    }
 
     if (teraType == TYPE_NONE || teraType == TYPE_MYSTERY || teraType >= NUMBER_OF_MON_TYPES)
         teraType = GetTeraTypeFromPersonality(&mon);
     SetMonData(&mon, MON_DATA_TERA_TYPE, &teraType);
 
     for (i = 0; i < NUM_STATS; i++)
-    {
-        SetMonData(&mon, MON_DATA_HP_IV + i, &sDebugMonData->monIVs[i]);
         SetMonData(&mon, MON_DATA_HP_EV + i, &sDebugMonData->monEVs[i]);
-    }
 
     GiveMonInitialMoveset(&mon);
     for (i = 0; i < MAX_MON_MOVES; i++)
@@ -4284,6 +4372,7 @@ static bool32 PkmEditor_Setup(u8 taskId)
         return FALSE;
 
     ResetMonDataStruct(sDebugMonData);
+    PkmEditor_ResetMonDataOptions();
     PkmEditor_ValidateAbility();
     sDebugMonData->otId = (u16)(gSaveBlock2Ptr->playerTrainerId[0] | (gSaveBlock2Ptr->playerTrainerId[1] << 8));
 
