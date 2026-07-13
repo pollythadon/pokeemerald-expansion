@@ -239,8 +239,6 @@ struct DebugMonData
     u32 editorMonData[PKE_MON_DATA_CAPACITY];
     u8 gender;      // 0 = default/random, 1 = male, 2 = female
     bool8 playerIsOT;
-    bool8 hasNickname;
-    u8 nickname[POKEMON_NAME_LENGTH + 1];
 };
 
 struct DebugMenuListData
@@ -2773,8 +2771,6 @@ static void ResetMonDataStruct(struct DebugMonData *sDebugMonData)
     sDebugMonData->editorStep       = 0;
     sDebugMonData->gender           = 0;
     sDebugMonData->playerIsOT       = TRUE;
-    sDebugMonData->hasNickname      = FALSE;
-    sDebugMonData->nickname[0]      = EOS;
     for (u32 i = 0; i < NUM_STATS; i++)
     {
         sDebugMonData->monIVs[i] = 0;
@@ -3561,7 +3557,7 @@ static void DebugAction_Give_Pokemon_ComplexCreateMon(u8 taskId) //https://githu
 enum PkmEditorField
 {
     // Left column
-    PKF_SPECIES, PKF_NICKNAME, PKF_LEVEL, PKF_GENDER, PKF_NATURE,
+    PKF_SPECIES, PKF_LEVEL, PKF_GENDER, PKF_NATURE,
     PKF_ABILITY, PKF_ITEM, PKF_BALL,
     // Right column
     PKF_PLAYER_OT, PKF_OTID, PKF_MOVE1, PKF_MOVE2, PKF_MOVE3, PKF_MOVE4,
@@ -3654,7 +3650,7 @@ STATIC_ASSERT(PKMD_COUNT <= PKE_MON_DATA_CAPACITY, PokemonCreatorMonDataCapacity
 #define PKE_WIN_ORIGIN 8
 
 // Fields grouped into tidy sub-menus so no single screen is crowded.
-static const u8 sPkeCat_Basics[]  = { PKF_SPECIES, PKF_NICKNAME, PKF_LEVEL, PKF_GENDER, PKF_MON_DATA(SHINY) };
+static const u8 sPkeCat_Basics[]  = { PKF_SPECIES, PKF_LEVEL, PKF_GENDER, PKF_MON_DATA(SHINY) };
 static const u8 sPkeCat_Battle[]  = { PKF_NATURE, PKF_ABILITY, PKF_MON_DATA(FRIENDSHIP) };
 static const u8 sPkeCat_Moves[]   = { PKF_MOVE1, PKF_MOVE2, PKF_MOVE3, PKF_MOVE4 };
 static const u8 sPkeCat_Trainer[] = { PKF_PLAYER_OT, PKF_OTID, PKF_ITEM, PKF_BALL };
@@ -3682,7 +3678,6 @@ static const struct PkeCategory sPkeCategories[] =
 static const u8 *const sPkmEditorLabels[PKF_COUNT] =
 {
     [PKF_SPECIES]    = COMPOUND_STRING("Species"),
-    [PKF_NICKNAME]   = COMPOUND_STRING("Nickname"),
     [PKF_LEVEL]      = COMPOUND_STRING("Level"),
     [PKF_GENDER]     = COMPOUND_STRING("Gender"),
     [PKF_NATURE]     = COMPOUND_STRING("Nature"),
@@ -3842,12 +3837,6 @@ static void PkmEditor_BuildValue(u8 field, u8 *dst)
             PkmEditor_BuildNumberedName(dst, sDebugMonData->species, 4, GetSpeciesName(sDebugMonData->species));
         else
             PkmEditor_BuildNumberedName(dst, sDebugMonData->species, 4, COMPOUND_STRING("DISABLED"));
-        break;
-    case PKF_NICKNAME:
-        if (sDebugMonData->hasNickname)
-            StringCopy(dst, sDebugMonData->nickname);
-        else
-            StringCopy(dst, COMPOUND_STRING("{COLOR LIGHT_GRAY}(auto)"));
         break;
     case PKF_LEVEL:      ConvertIntToDecimalStringN(dst, sDebugMonData->level, STR_CONV_MODE_LEFT_ALIGN, 3); break;
     case PKF_GENDER:
@@ -4083,7 +4072,6 @@ static void PkmEditor_Adjust(u8 field, s32 delta)
         }
         break;
     }
-    case PKF_NICKNAME:  break; // edited with A (naming screen not wired yet)
     case PKF_LEVEL:      sDebugMonData->level = PkeClamp(sDebugMonData->level + delta, MIN_LEVEL, MAX_LEVEL); break;
     case PKF_GENDER:
         if (PkeGenderState(sDebugMonData->species) == 0) // only species with a real choice
@@ -4188,8 +4176,6 @@ static void PkmEditor_Finalize(u8 taskId)
         SetMonData(&mon, MON_DATA_OT_ID, &otId);
     SetMonData(&mon, MON_DATA_HELD_ITEM, &heldItem);
     SetMonData(&mon, MON_DATA_POKEBALL, &ballId);
-    if (sDebugMonData->hasNickname)
-        SetMonData(&mon, MON_DATA_NICKNAME, sDebugMonData->nickname);
 
     for (i = 0; i < PKMD_COUNT; i++)
     {
@@ -4411,6 +4397,8 @@ static void DebugAction_Give_PokemonEditor(u8 taskId)
     {
         DestroyListMenuTask(gTasks[taskId].tMenuTaskId, NULL, NULL);
         DestroyTask(taskId);
+        Free(sDebugMenuListData);
+        sDebugMenuListData = NULL;
         ScriptContext_Enable();
         UnfreezeObjectEvents();
     }
@@ -4432,7 +4420,6 @@ static u8 PkmEditor_CreateTask(void)
 // machine" the player interacts with):
 //     lockall
 //     special OpenPokemonCreator
-//     waitstate
 //     releaseall
 // The created Pokémon is added straight to the player's party.
 void OpenPokemonCreator(void)
