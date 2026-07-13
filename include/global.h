@@ -285,6 +285,9 @@ struct SaveBlock3
     u16 rotomRealityMenuOrderMagic;
     u8 rotomRealityMenuOrderCount;
     u8 rotomRealityMenuOrder[ROTOM_REALITY_SAVED_APP_CAPACITY];
+    u32 questDataMagic;
+    u8 questData[QUEST_COUNT * 5 / 8 + 1]; // Quest menu: 5 state bits per quest
+    u8 subQuests[SUB_QUEST_COUNT / 8 + 1]; // Quest menu: 1 bit per subquest
 }; /* max size 1624 bytes */
 
 extern struct SaveBlock3 *gSaveBlock3Ptr;
@@ -636,9 +639,7 @@ struct SaveBlock2
 #endif //FREE_RECORD_MIXING_HALL_RECORDS
     /*0x624*/ u16 contestLinkResults[CONTEST_CATEGORIES_COUNT][CONTESTANT_COUNT];
     /*0x64C*/ struct BattleFrontier frontier;
-    /*0xF2C*/ u8 questData[QUEST_COUNT * 5 / 8 + 1]; // Quest menu: 5 state bits per quest
-    /*0xF3F*/ u8 subQuests[SUB_QUEST_COUNT / 8 + 1]; // Quest menu: 1 bit per subquest
-}; // sizeof=0xF43
+}; // sizeof=0xF2C
 
 extern struct SaveBlock2 *gSaveBlock2Ptr;
 

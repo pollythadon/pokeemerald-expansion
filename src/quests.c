@@ -48,6 +48,8 @@
 
 #define tPageItems      data[4]
 #define tItemPcParam    data[6]
+#define QUEST_SAVE_DATA_MAGIC 0x51554553
+#define QUEST_NAME_BUFFER_SIZE 64
 
 struct QuestMenuResources
 {
@@ -95,7 +97,12 @@ static void QuestMenu_InitWindows(void);
 static bool8 InitBackgrounds(void);
 static void InitItems(void);
 static bool8 AllocateResourcesForListMenu(void);
-static void AllocateMemoryForArray();
+static bool8 AllocateMemoryForArray(void);
+static void QuestMenu_ValidateSaveData(void);
+static bool8 QuestMenu_IsQuestIdValid(u8 quest);
+static bool8 QuestMenu_IsSubquestIdValid(u8 quest, u8 childQuest);
+static u8 *QuestNameBufferCopy(u8 bufferId, const u8 *src);
+static u8 *QuestNameBufferAppend(u8 bufferId, const u8 *src);
 static void PlaceTopMenuScrollIndicatorArrows(void);
 static void SetInitializedFlag(u8 a0);
 
@@ -1254,9 +1261,16 @@ static bool8 SetupGraphics(void)
 			}
 			break;
 		case 12:
-			AllocateMemoryForArray();
-			BuildMenuTemplate();
-			gMain.state++;
+			if (AllocateMemoryForArray())
+			{
+				BuildMenuTemplate();
+				gMain.state++;
+			}
+			else
+			{
+				FadeAndBail();
+				return TRUE;
+			}
 			break;
 		case 13:
 			GenerateAndPrintHeader();
@@ -1383,35 +1397,30 @@ static void InitItems(void)
 	                           sStateDataPtr->nItems + 1 : 4;
 }
 
-#define try_alloc(ptr__, size) ({ \
-		void ** ptr = (void **)&(ptr__);             \
-		*ptr = Alloc(size);                 \
-		if (*ptr == NULL)                   \
-		{                                   \
-			FreeResources();                  \
-			FadeAndBail();                  \
-			return FALSE;                   \
-		}                                   \
-	})
-
 static bool8 AllocateResourcesForListMenu(void)
 {
-	try_alloc(sListMenuItems,
-	          sizeof(struct ListMenuItem) * CountNumberListRows() + 1);
-	return TRUE;
+	sListMenuItems = Alloc(sizeof(*sListMenuItems) * CountNumberListRows());
+	return sListMenuItems != NULL;
 }
 
-void AllocateMemoryForArray(void)
+static bool8 AllocateMemoryForArray(void)
 {
 	u8 i;
 	u8 allocateRows = QUEST_ARRAY_COUNT + 1;
 
-	questNameArray = Alloc(sizeof(void *) * allocateRows);
+	questNameArray = AllocZeroed(sizeof(*questNameArray) * allocateRows);
+	if (questNameArray == NULL)
+		return FALSE;
 
 	for (i = 0; i < allocateRows; i++)
 	{
-		questNameArray[i] = Alloc(sizeof(u8) * 32);
+		questNameArray[i] = Alloc(QUEST_NAME_BUFFER_SIZE);
+		if (questNameArray[i] == NULL)
+			return FALSE;
+		questNameArray[i][0] = EOS;
 	}
+
+	return TRUE;
 }
 
 static void PlaceTopMenuScrollIndicatorArrows(void)
@@ -1815,8 +1824,32 @@ static void AssignCancelNameAndId(u8 numRow)
 	sListMenuItems[numRow].id = LIST_CANCEL;
 }
 
+static bool8 QuestMenu_IsQuestIdValid(u8 quest)
+{
+	return quest < QUEST_COUNT;
+}
+
+static bool8 QuestMenu_IsSubquestIdValid(u8 quest, u8 childQuest)
+{
+	if (!QuestMenu_IsQuestIdValid(quest)
+	 || sSideQuests[quest].subquests == NULL
+	 || childQuest >= sSideQuests[quest].numSubquests)
+		return FALSE;
+
+	return sSideQuests[quest].subquests[childQuest].id < SUB_QUEST_COUNT;
+}
+
+static void QuestMenu_ValidateSaveData(void)
+{
+	if (gSaveBlock3Ptr->questDataMagic != QUEST_SAVE_DATA_MAGIC)
+		QuestMenu_ResetMenuSaveData();
+}
+
 u8 QuestMenu_GetSetSubquestState(u8 quest, u8 caseId, u8 childQuest)
 {
+	QuestMenu_ValidateSaveData();
+	if (!QuestMenu_IsSubquestIdValid(quest, childQuest))
+		return FALSE;
 
 	u8 uniqueId = sSideQuests[quest].subquests[childQuest].id;
 	u8  index = uniqueId / 8; //8 bits per byte
@@ -1826,17 +1859,21 @@ u8 QuestMenu_GetSetSubquestState(u8 quest, u8 caseId, u8 childQuest)
 	switch (caseId)
 	{
 		case FLAG_GET_COMPLETED:
-			return gSaveBlock2Ptr->subQuests[index] & mask;
+			return gSaveBlock3Ptr->subQuests[index] & mask;
 		case FLAG_SET_COMPLETED:
-			gSaveBlock2Ptr->subQuests[index] |= mask;
+			gSaveBlock3Ptr->subQuests[index] |= mask;
 			return 1;
 	}
 
-	return -1;
+	return FALSE;
 }
 
 u8 QuestMenu_GetSetQuestState(u8 quest, u8 caseId)
 {
+	QuestMenu_ValidateSaveData();
+	if (!QuestMenu_IsQuestIdValid(quest))
+		return FALSE;
+
 	u8 index = quest * 5 / 8;
 	u8 bit = quest * 5 % 8;
 	u8 mask = 0, index2 = 0, bit2 = 0, index3 = 0, bit3 = 0, mask2 = 0,
@@ -1884,9 +1921,9 @@ u8 QuestMenu_GetSetQuestState(u8 quest, u8 caseId)
 	switch (caseId)
 	{
 		case FLAG_GET_UNLOCKED:
-			return gSaveBlock2Ptr->questData[index] & mask;
+			return gSaveBlock3Ptr->questData[index] & mask;
 		case FLAG_SET_UNLOCKED:
-			gSaveBlock2Ptr->questData[index] |= mask;
+			gSaveBlock3Ptr->questData[index] |= mask;
 			return 1;
 		case FLAG_GET_INACTIVE:
 			bit2 = bit + 1;
@@ -1907,40 +1944,41 @@ u8 QuestMenu_GetSetQuestState(u8 quest, u8 caseId)
 
 			mask2 = 1 << bit2;
 			mask3 = 1 << bit3;
-			return !(gSaveBlock2Ptr->questData[index] & mask) && \
-			       !(gSaveBlock2Ptr->questData[index2] & mask2) && \
-			       !(gSaveBlock2Ptr->questData[index3] & mask3);
+			return QuestMenu_GetSetQuestState(quest, FLAG_GET_UNLOCKED) && \
+			       !(gSaveBlock3Ptr->questData[index] & mask) && \
+			       !(gSaveBlock3Ptr->questData[index2] & mask2) && \
+			       !(gSaveBlock3Ptr->questData[index3] & mask3);
 		case FLAG_GET_ACTIVE:
-			return gSaveBlock2Ptr->questData[index] & mask;
+			return gSaveBlock3Ptr->questData[index] & mask;
 		case FLAG_SET_ACTIVE:
-			gSaveBlock2Ptr->questData[index] |= mask;
+			gSaveBlock3Ptr->questData[index] |= mask;
 			return 1;
 		case FLAG_REMOVE_ACTIVE:
-			gSaveBlock2Ptr->questData[index] &= ~mask;
+			gSaveBlock3Ptr->questData[index] &= ~mask;
 			return 1;
 		case FLAG_GET_REWARD:
-			return gSaveBlock2Ptr->questData[index] & mask;
+			return gSaveBlock3Ptr->questData[index] & mask;
 		case FLAG_SET_REWARD:
-			gSaveBlock2Ptr->questData[index] |= mask;
+			gSaveBlock3Ptr->questData[index] |= mask;
 			return 1;
 		case FLAG_REMOVE_REWARD:
-			gSaveBlock2Ptr->questData[index] &= ~mask;
+			gSaveBlock3Ptr->questData[index] &= ~mask;
 			return 1;
 		case FLAG_GET_COMPLETED:
-			return gSaveBlock2Ptr->questData[index] & mask;
+			return gSaveBlock3Ptr->questData[index] & mask;
 		case FLAG_SET_COMPLETED:
-			gSaveBlock2Ptr->questData[index] |= mask;
+			gSaveBlock3Ptr->questData[index] |= mask;
 			return 1;
 		case FLAG_GET_FAVORITE:
-			return gSaveBlock2Ptr->questData[index] & mask;
+			return gSaveBlock3Ptr->questData[index] & mask;
 		case FLAG_SET_FAVORITE:
-			gSaveBlock2Ptr->questData[index] |= mask;
+			gSaveBlock3Ptr->questData[index] |= mask;
 			return 1;
 		case FLAG_REMOVE_FAVORITE:
-			gSaveBlock2Ptr->questData[index] &= ~mask;
+			gSaveBlock3Ptr->questData[index] &= ~mask;
 			return 1;
 	}
-	return -1;  //failure
+	return FALSE;
 }
 
 // Counts quests currently visible in the menu (used for the "x/y" header total
@@ -2083,33 +2121,53 @@ u8 CountFavoriteQuests(void)
 
 void PopulateEmptyRow(u8 countQuest)
 {
-	questNamePointer = StringCopy(questNameArray[countQuest], sText_Empty);
+	questNamePointer = QuestNameBufferCopy(countQuest, sText_Empty);
 }
+
+static u8 *QuestNameBufferCopy(u8 bufferId, const u8 *src)
+{
+	u8 *dst = questNameArray[bufferId];
+	u32 length = min(StringLength(src), QUEST_NAME_BUFFER_SIZE - 1);
+
+	memcpy(dst, src, length);
+	dst[length] = EOS;
+	return &dst[length];
+}
+
+static u8 *QuestNameBufferAppend(u8 bufferId, const u8 *src)
+{
+	u8 *dst = questNameArray[bufferId];
+	u32 used = min(StringLength(dst), QUEST_NAME_BUFFER_SIZE - 1);
+	u32 length = min(StringLength(src), QUEST_NAME_BUFFER_SIZE - 1 - used);
+
+	memcpy(&dst[used], src, length);
+	dst[used + length] = EOS;
+	return &dst[used + length];
+}
+
 void PrependQuestNumber(u8 countQuest)
 {
 	questNamePointer = ConvertIntToDecimalStringN(questNameArray[countQuest],
 	                   countQuest + 1, STR_CONV_MODE_LEFT_ALIGN, 2);
-	questNamePointer = StringAppend(questNamePointer,
-	                                sText_DotSpace);
+	questNamePointer = QuestNameBufferAppend(countQuest, sText_DotSpace);
 }
 
 void SetFavoriteQuest(u8 countQuest)
 {
-	questNamePointer = StringAppend(questNameArray[countQuest],
-	                                sText_ColorGreen);
+	questNamePointer = QuestNameBufferAppend(countQuest, sText_ColorGreen);
 }
 
 void PopulateQuestName(u8 countQuest)
 {
 	if (QuestMenu_GetSetQuestState(countQuest, FLAG_GET_UNLOCKED))
 	{
-		questNamePointer = StringAppend(questNameArray[countQuest],
+		questNamePointer = QuestNameBufferAppend(countQuest,
 		                                sSideQuests[countQuest].name);
 		AddSubQuestButton(countQuest);
 	}
 	else
 	{
-		StringAppend(questNameArray[countQuest], sText_Unk);
+		QuestNameBufferAppend(countQuest, sText_Unk);
 	}
 }
 
@@ -2117,12 +2175,12 @@ void PopulateSubquestName(u8 parentQuest, u8 countQuest)
 {
 	if (IsSubquestCompletedState(countQuest))
 	{
-		questNamePointer = StringAppend(questNamePointer,
+		questNamePointer = QuestNameBufferAppend(countQuest,
 		                                sSideQuests[parentQuest].subquests[countQuest].name);
 	}
 	else
 	{
-		questNamePointer = StringAppend(questNamePointer, sText_Unk);
+		questNamePointer = QuestNameBufferAppend(countQuest, sText_Unk);
 	}
 }
 
@@ -2150,8 +2208,7 @@ void AddSubQuestButton(u8 countQuest)
 {
 	if (DoesQuestHaveChildrenAndNotInactive(countQuest))
 	{
-		questNamePointer = StringAppend(questNameArray[countQuest],
-		                                sText_SubQuestButton);
+		questNamePointer = QuestNameBufferAppend(countQuest, sText_SubQuestButton);
 	}
 
 }
@@ -2714,35 +2771,35 @@ static void GenerateMenuContext(void)
 	switch (mode)
 	{
 		case SORT_DEFAULT:
-			questNamePointer = StringCopy(questNameArray[QUEST_ARRAY_COUNT],
+			questNamePointer = QuestNameBufferCopy(QUEST_ARRAY_COUNT,
 			                              sText_AllHeader);
 			break;
 		case SORT_INACTIVE:
-			questNamePointer = StringCopy(questNameArray[QUEST_ARRAY_COUNT],
+			questNamePointer = QuestNameBufferCopy(QUEST_ARRAY_COUNT,
 			                              sText_InactiveHeader);
 			break;
 		case SORT_ACTIVE:
-			questNamePointer = StringCopy(questNameArray[QUEST_ARRAY_COUNT],
+			questNamePointer = QuestNameBufferCopy(QUEST_ARRAY_COUNT,
 			                              sText_ActiveHeader);
 			break;
 		case SORT_REWARD:
-			questNamePointer = StringCopy(questNameArray[QUEST_ARRAY_COUNT],
+			questNamePointer = QuestNameBufferCopy(QUEST_ARRAY_COUNT,
 			                              sText_RewardHeader);
 			break;
 		case SORT_DONE:
-			questNamePointer = StringCopy(questNameArray[QUEST_ARRAY_COUNT],
+			questNamePointer = QuestNameBufferCopy(QUEST_ARRAY_COUNT,
 			                              sText_CompletedHeader);
 			break;
 	}
 
 	if (IsAlphaMode())
 	{
-		questNamePointer = StringAppend(questNameArray[QUEST_ARRAY_COUNT],
+		questNamePointer = QuestNameBufferAppend(QUEST_ARRAY_COUNT,
 		                                sText_AZ);
 	}
 	if (IsSubquestMode())
 	{
-		questNamePointer = StringCopy(questNameArray[QUEST_ARRAY_COUNT],
+		questNamePointer = QuestNameBufferCopy(QUEST_ARRAY_COUNT,
 		                              sSideQuests[parentQuest].name);
 
 	}
@@ -3099,16 +3156,24 @@ static void FreeResources(void)
 {
 	int i;
 
-	try_free(sStateDataPtr);
-	try_free(sBg1TilemapBuffer);
-	try_free(sListMenuItems);
-
-	for (i = QUEST_ARRAY_COUNT; i > -1; i--)
+	if (questNameArray != NULL)
 	{
-		try_free(questNameArray[i]);
+		for (i = QUEST_ARRAY_COUNT; i > -1; i--)
+		{
+			try_free(questNameArray[i]);
+			questNameArray[i] = NULL;
+		}
 	}
 
 	try_free(questNameArray);
+	questNameArray = NULL;
+	try_free(sStateDataPtr);
+	sStateDataPtr = NULL;
+	try_free(sBg1TilemapBuffer);
+	sBg1TilemapBuffer = NULL;
+	try_free(sListMenuItems);
+	sListMenuItems = NULL;
+	questNamePointer = NULL;
 	FreeAllWindowBuffers();
 }
 
@@ -3158,30 +3223,53 @@ void Task_QuestMenu_OpenFromStartMenu(u8 taskId)
 
 void QuestMenu_CopyQuestName(u8 *dst, u8 questId)
 {
+	if (!QuestMenu_IsQuestIdValid(questId))
+	{
+		dst[0] = EOS;
+		return;
+	}
+
 	StringCopy(dst, sSideQuests[questId].name);
 }
 
 void QuestMenu_CopySubquestName(u8 *dst, u8 parentId, u8 childId)
 {
+	if (!QuestMenu_IsSubquestIdValid(parentId, childId))
+	{
+		dst[0] = EOS;
+		return;
+	}
+
 	StringCopy(dst, sSideQuests[parentId].subquests[childId].name);
 }
 
 void QuestMenu_ResetMenuSaveData(void)
 {
-	memset(&gSaveBlock2Ptr->questData, 0,
-	       sizeof(gSaveBlock2Ptr->questData));
-	memset(&gSaveBlock2Ptr->subQuests, 0,
-	       sizeof(gSaveBlock2Ptr->subQuests));
+	memset(gSaveBlock3Ptr->questData, 0, sizeof(gSaveBlock3Ptr->questData));
+	memset(gSaveBlock3Ptr->subQuests, 0, sizeof(gSaveBlock3Ptr->subQuests));
+	gSaveBlock3Ptr->questDataMagic = QUEST_SAVE_DATA_MAGIC;
 }
 
 u32 QuestMenu_GetQuestVariableId(u8 quest)
 {
+	if (!QuestMenu_IsQuestIdValid(quest))
+		return 0;
+
     return sSideQuests[quest].questVariable;
 }
 
 u32 QuestMenu_GetQuestVariable(u8 quest)
 {
-    return VarGet(QuestMenu_GetQuestVariableId(quest));
+	u32 variableId;
+
+	if (!QuestMenu_IsQuestIdValid(quest))
+		return 0;
+
+	variableId = QuestMenu_GetQuestVariableId(quest);
+	if (variableId == 0)
+		return 0;
+
+	return VarGet(variableId);
 }
 
 // ==================== Rewards & condition-based completion ====================
