@@ -44,6 +44,7 @@
 #include "scanline_effect.h"
 #include "sound.h"
 #include "sprite.h"
+#include "stat_editor.h"
 #include "string_util.h"
 #include "strings.h"
 #include "task.h"
@@ -437,10 +438,12 @@ static void SetFriendshipSprite(void);
 static void TrySetInfoPageIcons(void);
 static void RunMonAnimTimer(void);
 static bool32 ShouldShowMoveRelearner(void);
+static bool32 ShouldShowStatEditor(void);
 static bool32 ShouldShowRename(void);
 static void ShowCancelOrRenamePrompt(void);
 static void CB2_ReturnToSummaryScreenFromNamingScreen(void);
 static void CB2_PssChangePokemonNickname(void);
+static void CB2_StatEditorReturnToSummaryScreen(void);
 static void UpdateMoveRelearnerState(bool32 goingDown);
 static void PrintRightAlignedPrompt(u8, u8, const u8*, int, u8);
 
@@ -1895,6 +1898,7 @@ void ShowPokemonSummaryScreen_SwSh(u8 mode, void *mons, u8 monIndex, u8 maxMonIn
     case SUMMARY_MODE_BOX_CURSOR:
     case SUMMARY_MODE_RELEARNER_BATTLE:
     case SUMMARY_MODE_RELEARNER_CONTEST:
+    case SUMMARY_MODE_STAT_EDITOR:
         sMonSummaryScreen->minPageIndex = 0;
         sMonSummaryScreen->maxPageIndex = pageCount - 1;
         break;
@@ -1914,6 +1918,8 @@ void ShowPokemonSummaryScreen_SwSh(u8 mode, void *mons, u8 monIndex, u8 maxMonIn
         sMonSummaryScreen->currPageIndex = PSS_PAGE_BATTLE_MOVES;
     else if (mode == SUMMARY_MODE_RELEARNER_CONTEST)
         sMonSummaryScreen->currPageIndex = PSS_PAGE_CONTEST_MOVES;
+    else if (mode == SUMMARY_MODE_STAT_EDITOR)
+        sMonSummaryScreen->currPageIndex = PSS_PAGE_SKILLS;
     else if (mode == SUMMARY_MODE_SELECT_MOVE
             && gRelearnMode == RELEARN_MODE_PSS_PAGE_CONTEST_MOVES)
         sMonSummaryScreen->currPageIndex = PSS_PAGE_CONTEST_MOVES;
@@ -2080,6 +2086,8 @@ static bool8 LoadGraphics(void)
             SetBgTilemapBuffer(2, sMonSummaryScreen->bg2TilemapBuffers[PSS_PAGE_BATTLE_MOVES]);
         else if (sMonSummaryScreen->mode == SUMMARY_MODE_RELEARNER_CONTEST)
             SetBgTilemapBuffer(2, sMonSummaryScreen->bg2TilemapBuffers[PSS_PAGE_CONTEST_MOVES]);
+        else if (sMonSummaryScreen->mode == SUMMARY_MODE_STAT_EDITOR)
+            SetBgTilemapBuffer(2, sMonSummaryScreen->bg2TilemapBuffers[PSS_PAGE_SKILLS]);
         gMain.state++;
         break;
     case 14:
@@ -2696,7 +2704,24 @@ static void Task_HandleInput(u8 taskId)
         }
         else if (JOY_NEW(START_BUTTON))
         {
-            if (sMonSummaryScreen->currPageIndex == PSS_PAGE_INFO && ShouldShowRename())
+            if (sMonSummaryScreen->currPageIndex == PSS_PAGE_SKILLS && ShouldShowStatEditor())
+            {
+                if (sMonSummaryScreen->isBoxMon)
+                {
+                    gSpecialVar_0x8004 = PC_MON_CHOSEN;
+                    gSpecialVar_MonBoxPos = sMonSummaryScreen->curMonIndex;
+                    gSpecialVar_MonBoxId = StorageGetCurrentBox();
+                }
+                else
+                {
+                    gSpecialVar_0x8004 = sMonSummaryScreen->curMonIndex;
+                }
+                sMonSummaryScreen->callback = CB2_StatEditorReturnToSummaryScreen;
+                StopPokemonAnimations();
+                PlaySE(SE_SELECT);
+                BeginCloseSummaryScreen(taskId);
+            }
+            else if (sMonSummaryScreen->currPageIndex == PSS_PAGE_INFO && ShouldShowRename())
             {
                 if (sMonSummaryScreen->isBoxMon)
                 {
@@ -6713,6 +6738,25 @@ static inline bool32 ShouldShowMoveRelearner(void)
          && sMonSummaryScreen->hasRelearnableMoves
          && !InBattleFactory()
          && !InSlateportBattleTent());
+}
+
+static inline bool32 ShouldShowStatEditor(void)
+{
+    return ((P_STAT_EDITOR_ALWAYS || FlagGet(P_FLAG_STAT_EDITOR_GET)) && P_SUMMARY_SCREEN_STAT_EDITOR
+         && !sMonSummaryScreen->lockMovesFlag
+         && sMonSummaryScreen->mode != SUMMARY_MODE_BOX_CURSOR
+         && !InBattleFactory()
+         && !InSlateportBattleTent());
+}
+
+static void CB2_StatEditorCallback(void)
+{
+    ShowPokemonSummaryScreen(SUMMARY_MODE_STAT_EDITOR, gParties[B_TRAINER_PLAYER], gSpecialVar_0x8004, gPartiesCount[B_TRAINER_PLAYER] - 1, gInitialSummaryScreenCallback);
+}
+
+static void CB2_StatEditorReturnToSummaryScreen(void)
+{
+    StatEditor_Init(CB2_StatEditorCallback);
 }
 
 static void RefreshRelearnModePrompt(void)
