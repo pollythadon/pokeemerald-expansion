@@ -70,7 +70,7 @@
 #include "text.h"
 #include "text_window.h"
 #include "trade.h"
-#include "ui_stat_editor.h"
+#include "stat_editor.h"
 #include "union_room.h"
 #include "window.h"
 #include "constants/battle.h"
@@ -3714,7 +3714,8 @@ static void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 
     sPartyMenuInternal->numActions = 0;
     AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_SUMMARY);
-    AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_STAT_EDIT);
+    if ((P_STAT_EDITOR_ALWAYS || FlagGet(P_FLAG_STAT_EDITOR_GET)) && P_PARTY_MENU_STAT_EDITOR)
+        AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_STAT_EDIT);
 
     // Add field moves to action list
     if (!GetMonData(&mons[slotId], MON_DATA_IS_EGG))

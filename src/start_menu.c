@@ -50,9 +50,8 @@
 #include "constants/battle_frontier.h"
 #include "constants/rgb.h"
 #include "constants/songs.h"
-#include "ui_stat_editor.h"
-
 #include "rotom_start_menu.h"
+#include "stat_editor.h"
 
 // Menu actions
 enum
@@ -350,6 +349,9 @@ static void BuildNormalStartMenu(void)
 
     if (FlagGet(FLAG_SYS_POKENAV_GET) == TRUE)
         AddStartMenuAction(MENU_ACTION_POKENAV);
+
+    if ((P_STAT_EDITOR_ALWAYS || FlagGet(P_FLAG_STAT_EDITOR_GET)) && P_START_MENU_STAT_EDITOR)
+        AddStartMenuAction(MENU_ACTION_STAT_EDITOR);
 
     AddStartMenuAction(MENU_ACTION_PLAYER);
     AddStartMenuAction(MENU_ACTION_SAVE);
@@ -1519,11 +1521,6 @@ static bool8 StartMenuDexNavCallback(void)
     return TRUE;
 }
 
-static bool8 StartMenuStatEditorCallback(void)
-{
-    CreateTask(Task_OpenStatEditorFromStartMenu, 0);
-    return TRUE;
-}
 
 void Script_ForceSaveGame(struct ScriptContext *ctx)
 {
@@ -1531,4 +1528,10 @@ void Script_ForceSaveGame(struct ScriptContext *ctx)
     ShowSaveInfoWindow();
     gMenuCallback = SaveCallback;
     sSaveDialogCallback = SaveSavingMessageCallback;
+}
+
+static bool8 StartMenuStatEditorCallback(void)
+{
+    CreateTask(Task_OpenStatEditorFromStartMenu, 0);
+    return TRUE;
 }

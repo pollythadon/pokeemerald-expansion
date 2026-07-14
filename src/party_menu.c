@@ -61,6 +61,7 @@
 #include "sound.h"
 #include "sprite.h"
 #include "start_menu.h"
+#include "stat_editor.h"
 #include "string_util.h"
 #include "strings.h"
 #include "task.h"
@@ -80,13 +81,13 @@
 #include "constants/party_menu.h"
 #include "constants/rgb.h"
 #include "constants/songs.h"
-#include "ui_stat_editor.h"
+#include "stat_editor.h"
 
 #if !SWSH_PARTY_MENU
 
 enum {
     MENU_SUMMARY,
-    MENU_STAT_EDIT,
+    MENU_STAT_EDITOR,
     MENU_SWITCH,
     MENU_FOLLOWER,
     MENU_FOLLOWER_SET,
@@ -467,7 +468,7 @@ static void ShiftMoveSlot(struct BoxPokemon *, u8, u8);
 static void BlitBitmapToPartyWindow_LeftColumn(u8, u8, u8, u8, u8, bool8);
 static void BlitBitmapToPartyWindow_RightColumn(u8, u8, u8, u8, u8, bool8);
 static void CursorCb_Summary(u8);
-static void CursorCb_StatEdit(u8);
+static void CursorCb_StatEditor(u8);
 static void CursorCb_Switch(u8);
 static void CursorCb_Cancel1(u8);
 static void CursorCb_Item(u8);
@@ -3004,7 +3005,8 @@ static void SetPartyMonFieldSelectionActions(struct Pokemon *mons, u8 slotId)
 
     sPartyMenuInternal->numActions = 0;
     AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_SUMMARY);
-    AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_STAT_EDIT);
+    if ((P_STAT_EDITOR_ALWAYS || FlagGet(P_FLAG_STAT_EDITOR_GET)) && P_PARTY_MENU_STAT_EDITOR)
+        AppendToList(sPartyMenuInternal->actions, &sPartyMenuInternal->numActions, MENU_STAT_EDITOR);
 
     u16 species = GetMonData(&mons[slotId], MON_DATA_SPECIES);
 
@@ -4877,24 +4879,6 @@ void LoadPartyMenuAilmentGfx(void)
 {
     LoadCompressedSpriteSheet(&sSpriteSheet_StatusIcons);
     LoadSpritePalette(&sSpritePalette_StatusIcons);
-}
-
-static void ChangePokemonStatsPartyScreen_CB(void)
-{
-    CB2_ReturnToPartyMenuFromSummaryScreen();
-}
-
-static void ChangePokemonStatsPartyScreen(void)
-{
-    StatEditor_Init(ChangePokemonStatsPartyScreen_CB);
-}
-
-static void CursorCb_StatEdit(u8 taskId)
-{
-    PlaySE(SE_SELECT);
-    gSpecialVar_0x8004 = gPartyMenu.slotId;
-    sPartyMenuInternal->exitCallback = ChangePokemonStatsPartyScreen;
-    Task_ClosePartyMenu(taskId);
 }
 
 void CB2_ShowPartyMenuForItemUse(void)
@@ -8820,6 +8804,19 @@ static u8 IndividualToCombinedPartyId(u8 index, enum BattlerId battler)
     if (IsMultiBattle() == TRUE && !AreMultiPartiesFullTeams() && (GetBattlerPosition(battler) & BIT_FLANK))
         return index + MULTI_PARTY_SIZE;
     return index;
+}
+
+static void CB2_StatEditorReturnToPartyMenu(void)
+{
+    StatEditor_Init(CB2_ReturnToPartyMenuFromSummaryScreen);
+}
+
+static void CursorCb_StatEditor(u8 taskId)
+{
+    PlaySE(SE_SELECT);
+    gSpecialVar_0x8004 = gPartyMenu.slotId;
+    sPartyMenuInternal->exitCallback = CB2_StatEditorReturnToPartyMenu;
+    Task_ClosePartyMenu(taskId);
 }
 
 #if TESTING
