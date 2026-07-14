@@ -470,6 +470,7 @@ static const u8 sText_Speed_Title[]             = _("Speed");
 static const u8 sText_ViewIVs[]                 = _("View IV");
 static const u8 sText_ViewEVs[]                 = _("View EV");
 static const u8 sText_ViewStats[]               = _("View Stats");
+static const u8 sText_Editor[]                  = _("Editor");
 static const u8 sText_Exp[]                     = _("Exp.");
 static const u8 sText_NextLv[]                  = _("Next Lv.");
 static const u8 sText_RentalPkmn[]              = _("Rental Pokémon");
@@ -713,9 +714,9 @@ static const struct WindowTemplate sSummaryTemplate[] =
     },
     [PSS_LABEL_WINDOW_PROMPT_IV_EV_STATS] = {
         .bg = 0,
-        .tilemapLeft = 20,
+        .tilemapLeft = 10,
         .tilemapTop = 18,
-        .width = 10,
+        .width = 20,
         .height = 2,
         .paletteNum = 2,
         .baseBlock = 91,
@@ -727,7 +728,7 @@ static const struct WindowTemplate sSummaryTemplate[] =
         .width = 20,
         .height = 2,
         .paletteNum = 2,
-        .baseBlock = 111,
+        .baseBlock = 131,
     },
     [PSS_LABEL_WINDOW_END] = DUMMY_WIN_TEMPLATE
 };
@@ -2643,7 +2644,12 @@ static void DrawNextSkillsButtonPrompt(u8 mode)
     default:                text = sText_ViewStats; break;
     }
     FillWindowPixelBuffer(PSS_LABEL_WINDOW_PROMPT_IV_EV_STATS, PIXEL_FILL(0));
-    PrintRightAlignedPrompt(PSS_LABEL_WINDOW_PROMPT_IV_EV_STATS, BUTTON_A, text, 76, 1);
+    if (ShouldShowStatEditor())
+    {
+        PrintButtonIcon(PSS_LABEL_WINDOW_PROMPT_IV_EV_STATS, BUTTON_START, 0, 4);
+        PrintTextOnWindowWithFont(PSS_LABEL_WINDOW_PROMPT_IV_EV_STATS, sText_Editor, 26, 0, 0, 1, FONT_SMALL);
+    }
+    PrintRightAlignedPrompt(PSS_LABEL_WINDOW_PROMPT_IV_EV_STATS, BUTTON_A, text, 156, 1);
     ScheduleBgCopyTilemapToVram(0);
 }
 
