@@ -134,6 +134,8 @@ static bool8 QuestMenu_IsQuestAvailable(u8 questId);
 static u8 CountAvailableQuests(void);
 static void QuestMenu_TryAdvanceConditionalQuests(void);
 static void TryClaimQuestReward(u8 taskId, u8 questId);
+static void QuestMenu_PrintRewardMessage(u8 questId);
+static void Task_WaitForRewardAck(u8 taskId);
 static void AssignCancelNameAndId(u8 numRow);
 
 static u8 CountUnlockedQuests(void);
@@ -252,6 +254,12 @@ static const u8 sText_ShowLocation[] =
       _("Location: {STR_VAR_2}");
 static const u8 sText_ReturnRecieveReward[] =
       _("Press {A_BUTTON} to claim\nyour reward!");
+static const u8 sText_RewardGotItem[] =
+      _("You received\n{STR_VAR_1} {STR_VAR_2}!");
+static const u8 sText_RewardGotMoney[] =
+      _("You received\n¥{STR_VAR_3}!");
+static const u8 sText_RewardGotBoth[] =
+      _("Got {STR_VAR_1} {STR_VAR_2}\nand ¥{STR_VAR_3}!");
 static const u8 sText_SubQuestButton[] = _(" {A_BUTTON}");
 static const u8 sText_Type[] = _("{R_BUTTON}Type");
 static const u8 sText_Caught[] = _("Caught");
@@ -2982,7 +2990,49 @@ static void TryClaimQuestReward(u8 taskId, u8 questId)
 
 	PlayFanfare(MUS_OBTAIN_ITEM);
 	sStateDataPtr->restoreCursor = FALSE;
-	Task_QuestMenuCleanUp(taskId);
+
+	// Show the player exactly what they earned, then wait for a button press
+	// before rebuilding the list (which happens once the quest moves to Done).
+	QuestMenu_PrintRewardMessage(questId);
+	gTasks[taskId].func = Task_WaitForRewardAck;
+}
+
+// Prints "You received <n> <item>!" (and/or the money) into the detail pane.
+static void QuestMenu_PrintRewardMessage(u8 questId)
+{
+	u16 item = sSideQuests[questId].rewardItem;
+	u8 qty = sSideQuests[questId].rewardQty;
+	u32 money = sSideQuests[questId].rewardMoney;
+	const u8 *message;
+
+	ConvertIntToDecimalStringN(gStringVar1, qty, STR_CONV_MODE_LEFT_ALIGN, 3);
+	CopyItemNameHandlePlural(item, gStringVar2, qty);
+	ConvertIntToDecimalStringN(gStringVar3, money, STR_CONV_MODE_LEFT_ALIGN, 7);
+
+	if (item != ITEM_NONE && qty != 0 && money != 0)
+		message = sText_RewardGotBoth;
+	else if (money != 0)
+		message = sText_RewardGotMoney;
+	else
+		message = sText_RewardGotItem;
+
+	StringExpandPlaceholders(gStringVar4, message);
+
+	// Print where the "Press A to claim your reward!" hint sits -- that spot is
+	// already laid out to clear the reward icon in the lower-left of the pane.
+	FillWindowPixelBuffer(1, 0);
+	QuestMenu_AddTextPrinterParameterized(1, 2, gStringVar4, 40, 19, 5, 0, 0, 4);
+}
+
+// Holds the reward message on screen until the player acknowledges it.
+static void Task_WaitForRewardAck(u8 taskId)
+{
+	if (JOY_NEW(A_BUTTON | B_BUTTON))
+	{
+		PlaySE(SE_SELECT);
+		Task_QuestMenuCleanUp(taskId);
+		gTasks[taskId].func = Task_Main;
+	}
 }
 
 void EnterSubquestModeAndCleanUp(u8 taskId, s16 *data,
