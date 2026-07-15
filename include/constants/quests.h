@@ -47,6 +47,7 @@
 #define QUEST_28        27
 #define QUEST_29        28
 #define QUEST_30        29
+#define QUEST_31        30
 
 // Post-game legendary quest aliases (custom framework tie-in)
 #define QUEST_MEWTWO     QUEST_1
@@ -89,7 +90,10 @@
 // Intro guide quest
 #define QUEST_INTRO      QUEST_30
 
-#define QUEST_COUNT     30
+// Gift-egg quest (Verdanturf traveler's mysterious Egg)
+#define QUEST_SHINY_PICHU_EGG QUEST_31
+
+#define QUEST_COUNT     31
 
 #define SUB_QUEST_1          0
 #define SUB_QUEST_2          1

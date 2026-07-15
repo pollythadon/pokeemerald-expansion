@@ -19,6 +19,8 @@
 #include "pokedex.h"
 #include "palette.h"
 #include "party_menu.h"
+#include "pokemon.h"
+#include "pokemon_storage_system.h"
 #include "scanline_effect.h"
 #include "sound.h"
 #include "string_util.h"
@@ -1024,6 +1026,23 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 		.availType = QUEST_AVAIL_ALWAYS,
 		.rewardItem = ITEM_POKE_BALL,
 		.rewardQty = 10,
+	},
+	[QUEST_SHINY_PICHU_EGG] =
+	{
+		.name = sQuestName_ShinyPichuEgg,
+		.startmap = sQuestStartMap_ShinyPichuEgg,
+		.startdesc = sQuestStart_ShinyPichuEgg,
+		.desc = {sQuestDesc_ShinyPichuEgg},
+		.donedesc = sQuestDone_ShinyPichuEgg,
+		.map = {sQuestMap_ShinyPichuEgg},
+		.sprite = {SPECIES_EGG},
+		.spritetype = {PKMN},
+		.subquests = NULL,
+		.numSubquests = 0,
+		.questVariable = 0,
+		.availType = QUEST_AVAIL_POSTGAME,
+		.rewardItem = ITEM_LIGHT_BALL,
+		.rewardQty = 1,
 	},
 };
 ////////////////////////END QUEST CUSTOMIZATION////////////////////////////////
@@ -3309,6 +3328,33 @@ static const struct { u8 quest; u16 count; } sCatchGoals[] =
 	{QUEST_CATCH_800, 800},
 };
 
+// TRUE once the player owns a hatched (non-Egg) Pichu in the party or a PC Box.
+static bool8 QuestMenu_PlayerHasHatchedPichu(void)
+{
+	u32 i, box, slot;
+
+	for (i = 0; i < PARTY_SIZE; i++)
+	{
+		struct Pokemon *mon = &gParties[B_TRAINER_PLAYER][i];
+		if (GetMonData(mon, MON_DATA_SPECIES) == SPECIES_PICHU
+		    && !GetMonData(mon, MON_DATA_IS_EGG))
+			return TRUE;
+	}
+
+	for (box = 0; box < TOTAL_BOXES_COUNT; box++)
+	{
+		for (slot = 0; slot < IN_BOX_COUNT; slot++)
+		{
+			struct BoxPokemon *boxMon = GetBoxedMonPtr(box, slot);
+			if (GetBoxMonData(boxMon, MON_DATA_SPECIES) == SPECIES_PICHU
+			    && !GetBoxMonData(boxMon, MON_DATA_IS_EGG))
+				return TRUE;
+		}
+	}
+
+	return FALSE;
+}
+
 static void QuestMenu_TryAdvanceConditionalQuests(void)
 {
 	u16 caught = GetNationalPokedexCount(FLAG_GET_CAUGHT);
@@ -3327,6 +3373,12 @@ static void QuestMenu_TryAdvanceConditionalQuests(void)
 	// The intro quest wraps up the moment the player receives the Pokédex.
 	if (FlagGet(FLAG_SYS_POKEDEX_GET))
 		QuestMenu_MarkQuestFinished(QUEST_INTRO);
+
+	// The traveler's Egg quest completes once its Pichu has actually hatched.
+	// Guarded on the active state so it only fires after the Egg is accepted.
+	if (QuestMenu_GetSetQuestState(QUEST_SHINY_PICHU_EGG, FLAG_GET_ACTIVE)
+	    && QuestMenu_PlayerHasHatchedPichu())
+		QuestMenu_MarkQuestFinished(QUEST_SHINY_PICHU_EGG);
 }
 
 // Called from new_game.c: wipe quest save data and light up the goals that are

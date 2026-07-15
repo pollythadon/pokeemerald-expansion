@@ -210,4 +210,13 @@ static const u8 sQuestDesc_Intro[] = _("Get your Pokédex and set\nout across Ho
 static const u8 sQuestDone_Intro[] = _("Your journey through Hoenn\nhas begun!");
 static const u8 sQuestMap_Intro[] = _("Littleroot Town");
 
+// ============================== Gift-egg quest ===============================
+
+static const u8 sQuestName_ShinyPichuEgg[] = _("The Traveler's Egg");
+static const u8 sQuestStartMap_ShinyPichuEgg[] = _("Verdanturf Town");
+static const u8 sQuestStart_ShinyPichuEgg[] = _("A traveler in Verdanturf Town\nholds a mysterious Egg.");
+static const u8 sQuestDesc_ShinyPichuEgg[] = _("Raise the mysterious Egg with\ncare until it hatches.");
+static const u8 sQuestDone_ShinyPichuEgg[] = _("The Egg hatched into a shining\nPichu -- a one-of-a-kind friend.");
+static const u8 sQuestMap_ShinyPichuEgg[] = _("Verdanturf Town");
+
 #endif // GUARD_QUEST_DATA_H

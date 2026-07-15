@@ -86,7 +86,7 @@
 #define FLAG_SHAYMIN_DFTD    0x3F // Set when Shaymin is caught/defeated, so it doesn't reappear.
 #define FLAG_GIRATINA_DFTD   0x40 // Giratina caught/defeated (quest completion tracking)
 #define FLAG_NORMAN_MENTIONED_ROXANNE 0x41 // Norman's "challenge Roxanne" speech seen; reveals the Stone Badge quest
-#define FLAG_UNUSED_0x042    0x42 // Unused Flag
+#define FLAG_RECEIVED_SHINY_PICHU_EGG 0x42 // Set when the player receives the shiny Pichu egg
 #define FLAG_UNUSED_0x043    0x43 // Unused Flag
 #define FLAG_UNUSED_0x044    0x44 // Unused Flag
 #define FLAG_UNUSED_0x045    0x45 // Unused Flag
