@@ -326,6 +326,15 @@
 
 #define VAR_TEMP_TRANSFERRED_SPECIES  VAR_TEMP_1
 
+// Special var aliases
+// Parameters passed to the GiveCustomEgg special (see script_pokemon_util.c).
+#define VAR_GIFT_EGG_SPECIES  VAR_0x8000
+#define VAR_GIFT_EGG_SHINY    VAR_0x8001
+#define VAR_GIFT_EGG_MOVE1    VAR_0x8002
+#define VAR_GIFT_EGG_MOVE2    VAR_0x8003
+#define VAR_GIFT_EGG_MOVE3    VAR_0x8004
+#define VAR_GIFT_EGG_MOVE4    VAR_0x8005
+
 #if TESTING
 #define TESTING_VARS_START                  0x9000
 #define TESTING_VAR_DIFFICULTY              (TESTING_VARS_START + 0x0)

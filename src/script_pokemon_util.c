@@ -78,6 +78,48 @@ u8 ScriptGiveEgg(enum Species species)
     return GiveCapturedMonToPlayer(&mon);
 }
 
+// Gives the player an Egg of any species, optionally forced Shiny and with
+// custom moves. Parameters are read from the special vars so it can be reused
+// from any script (see the VAR_GIFT_EGG_* aliases in constants/vars.h):
+//   VAR_GIFT_EGG_SPECIES = species      (required)
+//   VAR_GIFT_EGG_SHINY   = force Shiny? (TRUE = always Shiny, FALSE = natural odds)
+//   VAR_GIFT_EGG_MOVE1-4 = move slots   (MOVE_NONE keeps the Egg's natural move)
+// The forced Shiny state and the custom moves are carried over to the hatched
+// Pokemon by the hatch code (see egg_hatch.c), so the Egg hatches exactly as set.
+// Sets gSpecialVar_Result to MON_GIVEN_TO_PARTY, MON_GIVEN_TO_PC or MON_CANT_GIVE.
+void GiveCustomEgg(void)
+{
+    u32 i;
+    struct Pokemon mon;
+    u8 isEgg = TRUE;
+    enum Species species = gSpecialVar_0x8000; // VAR_GIFT_EGG_SPECIES
+    bool32 isShiny = (gSpecialVar_0x8001 != FALSE); // VAR_GIFT_EGG_SHINY
+    enum Move moves[MAX_MON_MOVES] = {
+        gSpecialVar_0x8002, // VAR_GIFT_EGG_MOVE1
+        gSpecialVar_0x8003, // VAR_GIFT_EGG_MOVE2
+        gSpecialVar_0x8004, // VAR_GIFT_EGG_MOVE3
+        gSpecialVar_0x8005, // VAR_GIFT_EGG_MOVE4
+    };
+
+    CreateEgg(&mon, species, TRUE);
+    SetMonData(&mon, MON_DATA_IS_EGG, &isEgg);
+
+    // Overwrite only the slots that were given a move; MOVE_NONE leaves the
+    // Egg's natural moveset entry for that slot untouched.
+    for (i = 0; i < MAX_MON_MOVES; i++)
+    {
+        if (moves[i] != MOVE_NONE)
+            SetMonMoveSlot(&mon, moves[i], i);
+    }
+
+    // Force the Egg Shiny when requested. egg_hatch.c reads MON_DATA_IS_SHINY
+    // from the Egg and reapplies it to the hatched Pokemon.
+    if (isShiny)
+        SetMonData(&mon, MON_DATA_IS_SHINY, &isShiny);
+
+    gSpecialVar_Result = GiveCapturedMonToPlayer(&mon);
+}
+
 void HasEnoughMonsForDoubleBattle(void)
 {
     switch (GetMonsStateToDoubles())
