@@ -1,0 +1,71 @@
+mapscripts HeatranCave_MapScripts {
+    MAP_SCRIPT_ON_TRANSITION {
+        // Arm the approach trigger unless Heatran has already been caught/defeated.
+        if (flag(FLAG_HEATRAN_DFTD) == FALSE) {
+            setvar(VAR_TEMP_1, 1)
+        }
+    }
+}
+
+script HeatranCave_EventScript_Heatran {
+    lockall
+    setvar(VAR_TEMP_1, 0)
+    // Force the player to look north, up at the cavern ceiling.
+    applymovement(LOCALID_PLAYER, Common_Movement_FaceUp)
+    waitmovement(0)
+    delay(20)
+    playse(SE_M_EMBER)
+    // Heatran drops down from its perch toward the player to begin the battle.
+    playmoncry(SPECIES_HEATRAN, CRY_MODE_ENCOUNTER)
+    applymovement(LOCALID_HEATRAN, HeatranCave_Movement_HeatranDescend)
+    waitmovement(0)
+    delay(30)
+    waitmoncry
+    setvar(VAR_LAST_TALKED, LOCALID_HEATRAN)
+    setwildbattle(SPECIES_HEATRAN, 70)
+    special(BattleSetup_StartLegendaryBattle)
+    waitstate
+    specialvar(VAR_RESULT, GetBattleOutcome)
+    if (var(VAR_RESULT) == B_OUTCOME_CAUGHT) {
+        call(HeatranCave_EventScript_Caught)
+    } elif (var(VAR_RESULT) == B_OUTCOME_WON) {
+        call(HeatranCave_EventScript_Won)
+    } else {
+        call(HeatranCave_EventScript_RanAway)
+    }
+    releaseall
+    end
+}
+
+script HeatranCave_EventScript_Caught {
+    setflag(FLAG_HEATRAN_DFTD)
+    completequest(QUEST_HEATRAN)
+    removeobject(LOCALID_HEATRAN)
+    msgbox(format("The cavern falls quiet. Heatran is yours now -- a living ember of the mountain's heart."))
+    return
+}
+
+script HeatranCave_EventScript_Won {
+    setflag(FLAG_HEATRAN_DFTD)
+    completequest(QUEST_HEATRAN)
+    fadescreenswapbuffers(FADE_TO_BLACK)
+    removeobject(LOCALID_HEATRAN)
+    fadescreenswapbuffers(FADE_FROM_BLACK)
+    msgbox(format("Heatran sinks back into the magma with a final fading glow, and the mountain grows still."))
+    return
+}
+
+script HeatranCave_EventScript_RanAway {
+    playmoncry(SPECIES_HEATRAN, CRY_MODE_ENCOUNTER)
+    delay(20)
+    fadescreenswapbuffers(FADE_TO_BLACK)
+    hideobjectat(LOCALID_HEATRAN, MAP_HEATRAN_CAVE)
+    fadescreenswapbuffers(FADE_FROM_BLACK)
+    msgbox(format("Heatran melts back into the molten ceiling and is gone -- for now. Return when you are ready to face it again."))
+    return
+}
+
+movement HeatranCave_Movement_HeatranDescend {
+    walk_down * 3
+    face_down
+}

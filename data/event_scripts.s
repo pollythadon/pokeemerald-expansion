@@ -1759,3 +1759,5 @@ EventScript_PalletTown_PlayersHouse_2F_TurnOnPC::
 	.include "data/maps/SpaceMeteor/scripts.inc"
 
 	.include "data/maps/Flower_Paradise/scripts.inc"
+
+	.include "data/maps/HeatranCave/scripts.inc"

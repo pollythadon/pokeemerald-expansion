@@ -48,6 +48,7 @@
 #define QUEST_29        28
 #define QUEST_30        29
 #define QUEST_31        30
+#define QUEST_32        31
 
 // Post-game legendary quest aliases (custom framework tie-in)
 #define QUEST_MEWTWO     QUEST_1
@@ -93,7 +94,10 @@
 // Gift-egg quest (Verdanturf traveler's mysterious Egg)
 #define QUEST_SHINY_PICHU_EGG QUEST_31
 
-#define QUEST_COUNT     31
+// Post-game legendary (Fiery Path researcher gifts the Heatranite)
+#define QUEST_HEATRAN    QUEST_32
+
+#define QUEST_COUNT     32
 
 #define SUB_QUEST_1          0
 #define SUB_QUEST_2          1

@@ -1052,6 +1052,21 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 		.rewardItem = ITEM_LIGHT_BALL,
 		.rewardQty = 1,
 	},
+	[QUEST_HEATRAN] =
+	{
+		.name = sQuestName_Heatran,
+		.startmap = sQuestStartMap_Heatran,
+		.startdesc = sQuestStart_Heatran,
+		.desc = {sQuestDesc_Heatran},
+		.donedesc = sQuestDone_Heatran,
+		.map = {sQuestMap_Heatran},
+		.sprite = {SPECIES_HEATRAN},
+		.spritetype = {PKMN},
+		.subquests = NULL,
+		.numSubquests = 0,
+		.questVariable = 0,
+		.availType = QUEST_AVAIL_POSTGAME,
+	},
 };
 ////////////////////////END QUEST CUSTOMIZATION////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////

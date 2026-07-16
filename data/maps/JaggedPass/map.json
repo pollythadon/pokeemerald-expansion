@@ -142,6 +142,13 @@
       "elevation": 0,
       "dest_map": "MAP_MAGMA_HIDEOUT_1F",
       "dest_warp_id": "0"
+    },
+    {
+      "x": 19,
+      "y": 5,
+      "elevation": 0,
+      "dest_map": "MAP_HEATRAN_CAVE",
+      "dest_warp_id": "0"
     }
   ],
   "coord_events": [
@@ -224,6 +231,42 @@
       "var": "VAR_JAGGED_PASS_STATE",
       "var_value": "1",
       "script": "JaggedPass_EventScript_OpenMagmaHideout"
+    },
+    {
+      "type": "trigger",
+      "x": 19,
+      "y": 6,
+      "elevation": 3,
+      "var": "VAR_HEATRAN_CAVE_STATE",
+      "var_value": "1",
+      "script": "JaggedPass_EventScript_OpenHeatranCave"
+    },
+    {
+      "type": "trigger",
+      "x": 18,
+      "y": 6,
+      "elevation": 3,
+      "var": "VAR_HEATRAN_CAVE_STATE",
+      "var_value": "1",
+      "script": "JaggedPass_EventScript_OpenHeatranCave"
+    },
+    {
+      "type": "trigger",
+      "x": 20,
+      "y": 6,
+      "elevation": 3,
+      "var": "VAR_HEATRAN_CAVE_STATE",
+      "var_value": "1",
+      "script": "JaggedPass_EventScript_OpenHeatranCave"
+    },
+    {
+      "type": "trigger",
+      "x": 19,
+      "y": 7,
+      "elevation": 3,
+      "var": "VAR_HEATRAN_CAVE_STATE",
+      "var_value": "1",
+      "script": "JaggedPass_EventScript_OpenHeatranCave"
     }
   ],
   "bg_events": [

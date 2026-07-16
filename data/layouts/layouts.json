@@ -4501,6 +4501,17 @@
       "layout_version": "emerald"
     },
     {
+      "id": "LAYOUT_HEATRAN_CAVE",
+      "name": "HeatranCave_Layout",
+      "width": 27,
+      "height": 30,
+      "primary_tileset": "gTileset_General",
+      "secondary_tileset": "gTileset_Cave",
+      "border_filepath": "data/layouts/HeatranCave/border.bin",
+      "blockdata_filepath": "data/layouts/HeatranCave/map.bin",
+      "layout_version": "emerald"
+    },
+    {
       "id": "LAYOUT_UNDERWATER_ROUTE105",
       "name": "Underwater_Route105_Layout",
       "width": 40,

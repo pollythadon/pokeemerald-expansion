@@ -219,4 +219,13 @@ static const u8 sQuestDesc_ShinyPichuEgg[] = _("Raise the mysterious Egg with\nc
 static const u8 sQuestDone_ShinyPichuEgg[] = _("The Egg hatched into a shining\nPichu -- a one-of-a-kind friend.");
 static const u8 sQuestMap_ShinyPichuEgg[] = _("Verdanturf Town");
 
+// ============================ Heatran quest ==================================
+
+static const u8 sQuestName_Heatran[] = _("Lord of the Magma");
+static const u8 sQuestStartMap_Heatran[] = _("Fiery Path");
+static const u8 sQuestStart_Heatran[] = _("A researcher in the Fiery Path\nstudies the volcano's tremors.");
+static const u8 sQuestDesc_Heatran[] = _("Carry the Heatranite to Jagged\nPass to reveal a hidden cave.");
+static const u8 sQuestDone_Heatran[] = _("Heatran stirred from the magma\ndeep beneath Jagged Pass.");
+static const u8 sQuestMap_Heatran[] = _("Jagged Pass");
+
 #endif // GUARD_QUEST_DATA_H

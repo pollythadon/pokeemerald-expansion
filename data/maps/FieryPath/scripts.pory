@@ -1,0 +1,43 @@
+raw `FieryPath_MapScripts::
+	map_script MAP_SCRIPT_ON_TRANSITION, FieryPath_OnTransition
+	.byte 0
+
+FieryPath_OnTransition:
+	call_if_unset FLAG_LANDMARK_FIERY_PATH, FieryPath_EventScript_MoveScottToFallarbor
+	setflag FLAG_LANDMARK_FIERY_PATH
+	end
+
+FieryPath_EventScript_MoveScottToFallarbor::
+	setflag FLAG_HIDE_VERDANTURF_TOWN_SCOTT
+	clearflag FLAG_HIDE_FALLARBOR_TOWN_BATTLE_TENT_SCOTT
+	return
+
+`
+
+script HEATRAN_quest_starter {
+    lockall
+    faceplayer
+    if (flag(FLAG_HEATRAN_GIFT)) {
+        msgbox(format("The mountain's still restless. That old boulder up on Jagged Pass -- it knows the Heatranite's near."))
+        release
+        end
+    }
+    msgbox(format("You feel it too, don't you? The whole Fiery Path has been trembling for weeks.\p"
+                  "I've measured every tremor. They all point the same way... up, toward Jagged Pass.\p"
+                  "Something's sleeping in the magma under this mountain. Something old."))
+    msgbox(format("This stone came up with the last eruption. A Heatranite, if the legends are true.\p"
+                  "Take it to the Jagged Pass. Where the rock trembles hardest, a door will open. Meet what's behind it."), MSGBOX_YESNO)
+    switch (var(VAR_RESULT)) {
+        case YES:
+            setflag(FLAG_HEATRAN_GIFT)
+            playfanfare(MUS_OBTAIN_ITEM)
+            giveitem(ITEM_HEATRANITE)
+            startquest(QUEST_HEATRAN)
+            waitfanfare
+            msgbox(format("Climb the pass while you carry it. The mountain will show you the way."))
+        case NO:
+            msgbox(format("Hold onto that thought. The mountain isn't going anywhere -- neither is what sleeps beneath it."))
+    }
+    release
+    end
+}
