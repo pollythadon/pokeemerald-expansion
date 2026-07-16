@@ -234,7 +234,7 @@ struct DebugMonData
     // Extended editor fields
     u16 heldItem;
     u16 ballItem;
-    u16 otId;
+    u32 otId;       // full 32-bit OT ID (public ID in the low half, secret ID in the high half)
     u8 editorStep;
     u32 editorMonData[PKE_MON_DATA_CAPACITY];
     u8 gender;      // 0 = default/random, 1 = male, 2 = female
@@ -2755,29 +2755,29 @@ static void DebugAction_Give_Item_SelectQuantity(u8 taskId)
 #undef tSpriteId
 
 //Pokemon
-static void ResetMonDataStruct(struct DebugMonData *sDebugMonData)
+static void ResetMonDataStruct(struct DebugMonData *mon)
 {
-    sDebugMonData->species          = 1;
-    sDebugMonData->level            = MIN_LEVEL;
-    sDebugMonData->isShiny          = FALSE;
-    sDebugMonData->nature           = 0;
-    sDebugMonData->abilityNum       = 0;
-    sDebugMonData->teraType         = TYPE_NONE;
-    sDebugMonData->dynamaxLevel     = 0;
-    sDebugMonData->gmaxFactor       = FALSE;
-    sDebugMonData->heldItem         = ITEM_NONE;
-    sDebugMonData->ballItem         = ITEM_POKE_BALL;
-    sDebugMonData->otId             = 0;
-    sDebugMonData->editorStep       = 0;
-    sDebugMonData->gender           = 0;
-    sDebugMonData->playerIsOT       = TRUE;
+    mon->species          = 1;
+    mon->level            = MIN_LEVEL;
+    mon->isShiny          = FALSE;
+    mon->nature           = 0;
+    mon->abilityNum       = 0;
+    mon->teraType         = TYPE_NONE;
+    mon->dynamaxLevel     = 0;
+    mon->gmaxFactor       = FALSE;
+    mon->heldItem         = ITEM_NONE;
+    mon->ballItem         = ITEM_POKE_BALL;
+    mon->otId             = 0;
+    mon->editorStep       = 0;
+    mon->gender           = 0;
+    mon->playerIsOT       = TRUE;
     for (u32 i = 0; i < NUM_STATS; i++)
     {
-        sDebugMonData->monIVs[i] = 0;
-        sDebugMonData->monEVs[i] = 0;
+        mon->monIVs[i] = 0;
+        mon->monEVs[i] = 0;
     }
     for (u32 i = 0; i < MAX_MON_MOVES; i++)
-        sDebugMonData->monMoves[i] = MOVE_NONE;
+        mon->monMoves[i] = MOVE_NONE;
 }
 
 #define tIsComplex  data[5]
@@ -3870,8 +3870,8 @@ static void PkmEditor_BuildValue(u8 field, u8 *dst)
     case PKF_OTID:
         if (sDebugMonData->playerIsOT)
             StringCopy(dst, COMPOUND_STRING("{COLOR LIGHT_GRAY}(yours)"));
-        else
-            ConvertIntToDecimalStringN(dst, sDebugMonData->otId, STR_CONV_MODE_LEADING_ZEROS, 5);
+        else // Show the visible (public) half of the ID, the way the game does.
+            ConvertIntToDecimalStringN(dst, sDebugMonData->otId & 0xFFFF, STR_CONV_MODE_LEADING_ZEROS, 5);
         break;
     case PKF_MOVE1 ... PKF_MOVE4:
     {
@@ -4017,11 +4017,13 @@ static void PkmEditor_CloseAll(u8 taskId)
 
     if (gTasks[taskId].tEdFromScript)
     {
-        // Opened from a field script: just tear down our window and hand control
-        // back to the script (its releaseall unfreezes the overworld).
+        // Opened from a field script: tear down our window, thaw the overworld we
+        // froze in OpenPokemonCreator, and resume the waiting script.
         ClearStdWindowAndFrame(gTasks[taskId].tSubWindowId, TRUE);
         RemoveWindow(gTasks[taskId].tSubWindowId);
         DestroyTask(taskId);
+        UnfreezeObjectEvents();
+        UnlockPlayerFieldControls();
         ScriptContext_Enable();
     }
     else
@@ -4122,7 +4124,14 @@ static void PkmEditor_Adjust(u8 field, s32 delta)
         break;
     }
     case PKF_PLAYER_OT:  sDebugMonData->playerIsOT ^= 1; break;
-    case PKF_OTID:       sDebugMonData->otId = sDebugMonData->otId + delta; break;
+    case PKF_OTID:
+    {
+        // Edit the visible (public) half of the ID; keep the secret half intact.
+        u32 secretId = sDebugMonData->otId & 0xFFFF0000;
+        u16 publicId = PkeWrap((s32)(sDebugMonData->otId & 0xFFFF) + delta, 1 << 16);
+        sDebugMonData->otId = secretId | publicId;
+        break;
+    }
     case PKF_MOVE1 ... PKF_MOVE4:
     {
         u32 i;
@@ -4360,7 +4369,10 @@ static bool32 PkmEditor_Setup(u8 taskId)
     ResetMonDataStruct(sDebugMonData);
     PkmEditor_ResetMonDataOptions();
     PkmEditor_ValidateAbility();
-    sDebugMonData->otId = (u16)(gSaveBlock2Ptr->playerTrainerId[0] | (gSaveBlock2Ptr->playerTrainerId[1] << 8));
+    sDebugMonData->otId = gSaveBlock2Ptr->playerTrainerId[0]
+                        | (gSaveBlock2Ptr->playerTrainerId[1] << 8)
+                        | (gSaveBlock2Ptr->playerTrainerId[2] << 16)
+                        | (gSaveBlock2Ptr->playerTrainerId[3] << 24);
 
     HideMapNamePopUpWindow();
     LoadMessageBoxAndBorderGfx();
@@ -4408,6 +4420,9 @@ static u8 PkmEditor_CreateTask(void)
 {
     u32 i;
 
+    // CreateTask returns 0 (a valid id) when every slot is taken, so it can't
+    // signal failure on its own. Pre-scan for a free slot and report TASK_NONE
+    // ourselves, otherwise a full task table would silently clobber task 0.
     for (i = 0; i < NUM_TASKS; i++)
     {
         if (!gTasks[i].isActive)
@@ -4420,8 +4435,14 @@ static u8 PkmEditor_CreateTask(void)
 // machine" the player interacts with):
 //     lockall
 //     special OpenPokemonCreator
+//     goto_if_eq VAR_RESULT, FALSE, Script_CreatorFailed
+//     waitstate                       @ required: keeps the overworld frozen
+//   Script_CreatorFailed:             @ while the editor is open
 //     releaseall
-// The created Pokémon is added straight to the player's party.
+// The waitstate is essential on success -- without it the script runs on and
+// unfreezes the overworld while the editor is still up, letting the player walk
+// around behind it. VAR_RESULT is FALSE if the editor could not be opened (no
+// free task or window); the branch skips the waitstate so the script never hangs.
 void OpenPokemonCreator(void)
 {
     u8 taskId = PkmEditor_CreateTask();
@@ -4441,6 +4462,12 @@ void OpenPokemonCreator(void)
         ScriptContext_Enable();
         return;
     }
+
+    // Hold the overworld still ourselves so the editor is safe even if the caller
+    // forgot to lock; PkmEditor_CloseAll thaws it again. The script's waitstate
+    // keeps the field controls locked (no script-end unlock) until we're done.
+    LockPlayerFieldControls();
+    FreezeObjectEvents();
     gSpecialVar_Result = TRUE;
 }
 
