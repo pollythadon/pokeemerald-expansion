@@ -75,6 +75,7 @@
 #include "vs_seeker.h"
 #include "frontier_util.h"
 #include "quests.h"
+#include "quest_popup.h"
 #include "constants/abilities.h"
 #include "constants/event_object_movement.h"
 #include "constants/event_objects.h"
@@ -2611,6 +2612,8 @@ static void InitObjectEventsLocal(void)
     UpdateFollowingPokemon();
     TryRunOnWarpIntoMapScript();
     RefreshQuestIcons();
+    QuestMenu_CheckCatchQuests();  // catch a milestone (e.g. 50th caught) the instant we're back outside
+    QuestPopup_KickQueue();
 }
 
 static void InitObjectEventsReturnToField(void)
@@ -2619,6 +2622,8 @@ static void InitObjectEventsReturnToField(void)
     RotatingGate_InitPuzzleAndGraphics();
     RunOnReturnToFieldMapScript();
     RefreshQuestIcons();
+    QuestMenu_CheckCatchQuests();  // catch a milestone (e.g. 50th caught) the instant we're back outside
+    QuestPopup_KickQueue();
 }
 
 static void SetCameraToTrackPlayer(void)

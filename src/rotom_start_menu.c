@@ -19,6 +19,7 @@
 #include "m4a.h"
 #include "malloc.h"
 #include "map_name_popup.h"
+#include "quest_popup.h"
 #include "menu.h"
 #include "overworld.h"
 #include "palette.h"
@@ -1453,6 +1454,7 @@ static void RotomPhone_OverworldMenu_Init(bool32 firstInit)
     }
 
     HideMapNamePopUpWindow();
+    HideQuestCompletePopup();
     ResetDexNavSearch();
 
     // Wait for VBlank to start and end in order to prevent graphical issues.

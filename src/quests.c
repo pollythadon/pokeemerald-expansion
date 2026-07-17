@@ -28,6 +28,7 @@
 #include "task.h"
 #include "text_window.h"
 #include "quests.h"
+#include "quest_popup.h"
 #include "overworld.h"
 #include "event_data.h"
 #include "constants/items.h"
@@ -3377,6 +3378,12 @@ void QuestMenu_MarkQuestFinished(u8 questId)
 		QuestMenu_GetSetQuestState(questId, FLAG_SET_REWARD);
 	else
 		QuestMenu_GetSetQuestState(questId, FLAG_SET_COMPLETED);
+
+	// Every quest announces itself with the overworld banner, whatever finished
+	// it (script, gym/champion flag, or the condition checker). The banner queues
+	// itself and waits for the field to be idle, so completions detected from
+	// inside the menu still show once the player is back outside.
+	ShowQuestCompletePopup(questId);
 }
 
 // Catch-count and Pokédex-completion quests have no scripted trigger, so we poll
@@ -3417,7 +3424,10 @@ static bool8 QuestMenu_PlayerHasHatchedPichu(void)
 	return FALSE;
 }
 
-static void QuestMenu_TryAdvanceConditionalQuests(void)
+// Marks any catch-count goal whose threshold the player has now reached. Public
+// so it can also be polled the moment the player returns to the overworld (e.g.
+// right after catching the milestone Pokémon), not just when the menu is opened.
+void QuestMenu_CheckCatchQuests(void)
 {
 	u16 caught = GetNationalPokedexCount(FLAG_GET_CAUGHT);
 	u32 i;
@@ -3427,6 +3437,14 @@ static void QuestMenu_TryAdvanceConditionalQuests(void)
 		if (caught >= sCatchGoals[i].count)
 			QuestMenu_MarkQuestFinished(sCatchGoals[i].quest);
 	}
+}
+
+static void QuestMenu_TryAdvanceConditionalQuests(void)
+{
+	u16 caught = GetNationalPokedexCount(FLAG_GET_CAUGHT);
+	u32 i;
+
+	QuestMenu_CheckCatchQuests();
 
 	if (QuestMenu_IsQuestAvailable(QUEST_POKEDEX)
 	    && caught >= NATIONAL_DEX_COUNT)
@@ -3565,5 +3583,86 @@ void RefreshQuestIcons(void)
 	{
 		if (gObjectEvents[i].active)
 			HandleQuestIconForSingleObjectEvent(&gObjectEvents[i], i);
+	}
+}
+
+// Accessors used by the quest-completion popup (src/quest_popup.c).
+u16 QuestMenu_GetQuestIconSprite(u8 questId)
+{
+	if (!QuestMenu_IsQuestIdValid(questId))
+		return 0;
+	return GetQuestSprite(questId);
+}
+
+u8 QuestMenu_GetQuestIconType(u8 questId)
+{
+	if (!QuestMenu_IsQuestIdValid(questId))
+		return 0;
+	return GetQuestSpriteType(questId);
+}
+
+// Builds a quest's icon sprite at (x, y) for the completion banner. Lives here
+// because the per-type icon builders (badge icons especially) are local to this
+// file. Handles every sprite type a quest can use, so all quests get an icon.
+#define QUEST_POPUP_ICON_TAG 0x2790
+
+u8 QuestMenu_CreateQuestIconSprite(u8 questId, s16 x, s16 y)
+{
+	u16 sprite;
+	u8 spriteType;
+	u8 spriteId = SPRITE_NONE;
+
+	if (!QuestMenu_IsQuestIdValid(questId))
+		return SPRITE_NONE;
+
+	sprite = GetQuestSprite(questId);
+	spriteType = GetQuestSpriteType(questId);
+
+	FreeSpriteTilesByTag(QUEST_POPUP_ICON_TAG);
+	FreeSpritePaletteByTag(QUEST_POPUP_ICON_TAG);
+
+	switch (spriteType)
+	{
+		case PKMN:
+			LoadMonIconPalettes();
+			spriteId = CreateMonIcon(sprite, SpriteCallbackDummy, x, y, 0, 0);
+			break;
+		case ITEM:
+			spriteId = AddItemIconSprite(QUEST_POPUP_ICON_TAG, QUEST_POPUP_ICON_TAG, sprite);
+			break;
+		case BADGE:
+			spriteId = AddBadgeIconSprite(QUEST_POPUP_ICON_TAG, QUEST_POPUP_ICON_TAG, sprite);
+			break;
+		case OBJECT:
+			spriteId = CreateObjectGraphicsSprite(sprite, SpriteCallbackDummy, x, y, 0);
+			break;
+		default:
+			return SPRITE_NONE;
+	}
+
+	if (spriteId >= MAX_SPRITES)
+		return SPRITE_NONE;
+
+	gSprites[spriteId].x = x;
+	gSprites[spriteId].y = y;
+	gSprites[spriteId].oam.priority = 0;
+	return spriteId;
+}
+
+void QuestMenu_FreeQuestIconSprite(u8 questId, u8 spriteId)
+{
+	if (spriteId >= MAX_SPRITES)
+		return;
+
+	if (QuestMenu_IsQuestIdValid(questId) && GetQuestSpriteType(questId) == PKMN)
+	{
+		FreeAndDestroyMonIconSprite(&gSprites[spriteId]);
+		FreeMonIconPalettes();
+	}
+	else
+	{
+		DestroySprite(&gSprites[spriteId]);
+		FreeSpriteTilesByTag(QUEST_POPUP_ICON_TAG);
+		FreeSpritePaletteByTag(QUEST_POPUP_ICON_TAG);
 	}
 }

@@ -3079,16 +3079,12 @@
 	waitfanfare
 	.endm
 
-    @ Completes the specified quest.
+    @ Completes the specified quest. The achievement-style drop-down banner is
+    @ raised by QuestMenu_MarkQuestFinished, so every quest announces itself no
+    @ matter what completes it. The banner is non-blocking: it waits until the
+    @ field is idle, appearing once the cutscene hands back control.
 	.macro completequest quest:req
-	closemessage
-	delay 30
 	questmenu QUEST_MENU_COMPLETE_QUEST, \quest
-	questmenu QUEST_MENU_BUFFER_QUEST_NAME \quest
-    bufferstring 1 gText_QuestComplete
-	playfanfare MUS_LEVEL_UP
-	msgbox gText_QuestAnnounce, MSGBOX_SIGN
-	waitfanfare
 	.endm
 
 	@ Updates the complex quest's variable to give it its next state.

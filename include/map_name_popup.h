@@ -9,6 +9,8 @@
 void HideMapNamePopUpWindow(void);
 void ShowMapNamePopup(void);
 u8 *GetPopUpMapName(u8 *dest, const struct MapHeader *mapHeader);
+bool8 IsMapNamePopupActive(void);
+void LoadGen5PopupFrameToWindow(u8 windowId);
 
 #define MAP_POPUP_STRING_BUFFER_LENGTH 27
 #define MAP_POPUP_PREFIX_BUFFER_LENGTH 6

@@ -641,3 +641,4 @@ gSpecials::
 	def_special StickerManGetBragFlags
 	def_special CheckAddCoins
 	def_special OpenPokemonCreator, waitstate=1
+	def_special DoQuestCompletePopup

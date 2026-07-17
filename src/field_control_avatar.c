@@ -27,6 +27,7 @@
 #include "metatile_behavior.h"
 #include "overworld.h"
 #include "pokemon.h"
+#include "quest_popup.h"
 #include "safari_zone.h"
 #include "script.h"
 #include "secret_base.h"
@@ -172,6 +173,12 @@ int ProcessPlayerFieldInput(struct FieldInput *input)
     playerDirection = GetPlayerFacingDirection();
     GetPlayerPosition(&position);
     metatileBehavior = MapGridGetMetatileBehaviorAt(position.x, position.y);
+
+    // The quest-complete banner scrolls BG0 while it is visible. Do not let A
+    // start an interaction that would draw a message box on that same BG until
+    // the banner is gone; doing so leaves both interfaces graphically offset.
+    if (IsQuestCompletePopupActive())
+        input->pressedAButton = FALSE;
 
     if (CheckForTrainersWantingBattle() == TRUE)
         return TRUE;

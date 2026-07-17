@@ -724,3 +724,40 @@ static void LoadMapNamePopUpWindowBg(void)
         BlitBitmapToWindow(popupWindowId, sMapPopUp_Table[popUpThemeId], 0, 0, 80, 24);
     }
 }
+
+bool8 IsMapNamePopupActive(void)
+{
+    return FuncIsActiveTask(Task_MapNamePopUpWindow);
+}
+
+// Draws the Gen-5-style location banner frame (the BW bar) into a 30-wide
+// window of arbitrary height >= 3, so other systems can reuse the exact pop-up
+// look at a taller size. The frame's solid top tile-row is repeated to fill the
+// extra height; its diagonal edge + bottom-border tile-rows stay at the bottom.
+// The caller owns the window; this only fills the frame graphics + palette (14).
+#define POPUP_BW_ROW_BYTES (30 * TILE_SIZE_4BPP)
+
+void LoadGen5PopupFrameToWindow(u8 windowId)
+{
+#if OW_POPUP_GENERATION == GEN_5
+    u32 height = GetWindowAttribute(windowId, WINDOW_HEIGHT);
+    u32 row;
+
+    if (OW_POPUP_BW_COLOR == OW_POPUP_BW_COLOR_WHITE)
+        LoadPalette(sMapPopUpTilesPalette_BW_White, BG_PLTT_ID(14), sizeof(sMapPopUpTilesPalette_BW_White));
+    else
+        LoadPalette(sMapPopUpTilesPalette_BW_Black, BG_PLTT_ID(14), sizeof(sMapPopUpTilesPalette_BW_Black));
+
+    for (row = 0; row < height; row++)
+    {
+        const u8 *rowSrc = sMapPopUpTilesPrimary_BW;              // solid fill
+        if (height >= 3 && row + 2 == height)
+            rowSrc = sMapPopUpTilesPrimary_BW + POPUP_BW_ROW_BYTES;      // upper diagonal edge
+        else if (height >= 2 && row + 1 == height)
+            rowSrc = sMapPopUpTilesPrimary_BW + 2 * POPUP_BW_ROW_BYTES;  // lower edge + bottom border
+        CopyToWindowPixelBuffer(windowId, rowSrc, POPUP_BW_ROW_BYTES, row * 30);
+    }
+#endif
+    PutWindowTilemap(windowId);
+    CopyWindowToVram(windowId, COPYWIN_FULL);
+}

@@ -90,12 +90,17 @@ void QuestMenu_Init(u8 a0, MainCallback callback);
 u8 QuestMenu_GetSetSubquestState(u8 quest, u8 caseId, u8 childQuest);
 u8 QuestMenu_GetSetQuestState(u8 quest, u8 caseId);
 void QuestMenu_MarkQuestFinished(u8 quest);
+void QuestMenu_CheckCatchQuests(void);
 void QuestMenu_InitNewGameQuests(void);
 u32 QuestMenu_GetQuestVariableId(u8 quest);
 u32 QuestMenu_GetQuestVariable(u8 quest);
 void Task_QuestMenu_OpenFromStartMenu(u8);
 void QuestMenu_CopyQuestName(u8 *dst, u8 questId);
 void QuestMenu_CopySubquestName(u8 *dst, u8 parentId, u8 childId);
+u16 QuestMenu_GetQuestIconSprite(u8 questId);
+u8 QuestMenu_GetQuestIconType(u8 questId);
+u8 QuestMenu_CreateQuestIconSprite(u8 questId, s16 x, s16 y);
+void QuestMenu_FreeQuestIconSprite(u8 questId, u8 spriteId);
 void QuestMenu_ResetMenuSaveData(void);
 // Overworld quest icons
 void ResetQuestIconOnObject(struct ObjectEvent *objectEvent);
