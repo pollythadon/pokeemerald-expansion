@@ -284,7 +284,7 @@ DARKRAI_quest_starter_Text_1:
 	.string "collar, one blue eye.\p"
 	.string "They're scared of it. I'm not. I think\n"
 	.string "it's just lonely.\p"
-	.string "It doesn't MEAN to give nightmares --\n"
+	.string "It doesn't MEAN to give nightmares,\n"
 	.string "that's just what spills out of a thing\l"
 	.string "that's been alone in the dark too long.$"
 
