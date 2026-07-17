@@ -123,7 +123,7 @@ script DARKRAI_quest_starter {
     }
     msgbox(format("Everyone in town tells the same story: don't sleep on the new moon, or you'll dream of HIM. Black shadow, white collar, one blue eye.\p"
                   "They're scared of it. I'm not. I think it's just lonely.\p"
-                  "It doesn't MEAN to give nightmares -- that's just what spills out of a thing that's been alone in the dark too long."))
+                  "It doesn't MEAN to give nightmares, that's just what spills out of a thing that's been alone in the dark too long."))
     msgbox(format("This stone fell from the sky the last new moon. A Darkranite, the old folks call it.\p"
                   "Take it to where the shadows pool deepest. Don't go to hurt it. Go to meet it."), MSGBOX_YESNO)
     switch (var(VAR_RESULT)) {

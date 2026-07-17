@@ -913,7 +913,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 		.sprite = {ITEM_MASTER_BALL},
 		.spritetype = {ITEM},
 		.availType = QUEST_AVAIL_FLAG_SET,
-		.availFlag = FLAG_BADGE01_GET,
+		.availFlag = FLAG_BADGE08_GET,
 		.rewardItem = ITEM_MASTER_BALL,
 		.rewardQty = 1,
 		.rewardMoney = 200000,
@@ -2201,15 +2201,12 @@ void SetFavoriteQuest(u8 countQuest)
 
 void PopulateQuestName(u8 countQuest)
 {
+	// Always show the quest's name, even before it has been accepted.
+	questNamePointer = QuestNameBufferAppend(countQuest,
+	                                sSideQuests[countQuest].name);
 	if (QuestMenu_GetSetQuestState(countQuest, FLAG_GET_UNLOCKED))
 	{
-		questNamePointer = QuestNameBufferAppend(countQuest,
-		                                sSideQuests[countQuest].name);
 		AddSubQuestButton(countQuest);
-	}
-	else
-	{
-		QuestNameBufferAppend(countQuest, sText_Unk);
 	}
 }
 
@@ -3444,6 +3441,31 @@ static void QuestMenu_TryAdvanceConditionalQuests(void)
 	if (QuestMenu_GetSetQuestState(QUEST_SHINY_PICHU_EGG, FLAG_GET_ACTIVE)
 	    && QuestMenu_PlayerHasHatchedPichu())
 		QuestMenu_MarkQuestFinished(QUEST_SHINY_PICHU_EGG);
+
+	// Gym-badge and Champion quests light up as active objectives the moment
+	// they become available (the enabling badge/flag is set), without the
+	// player having to accept them.
+	{
+		static const u8 sAutoActiveQuests[] =
+		{
+			QUEST_BADGE_1, QUEST_BADGE_2, QUEST_BADGE_3, QUEST_BADGE_4,
+			QUEST_BADGE_5, QUEST_BADGE_6, QUEST_BADGE_7, QUEST_BADGE_8,
+			QUEST_CHAMPION,
+		};
+
+		for (i = 0; i < ARRAY_COUNT(sAutoActiveQuests); i++)
+		{
+			u8 quest = sAutoActiveQuests[i];
+
+			if (QuestMenu_IsQuestAvailable(quest)
+			    && !QuestMenu_GetSetQuestState(quest, FLAG_GET_COMPLETED)
+			    && !QuestMenu_GetSetQuestState(quest, FLAG_GET_REWARD))
+			{
+				QuestMenu_GetSetQuestState(quest, FLAG_SET_UNLOCKED);
+				QuestMenu_GetSetQuestState(quest, FLAG_SET_ACTIVE);
+			}
+		}
+	}
 }
 
 // Called from new_game.c: wipe quest save data and light up the goals that are

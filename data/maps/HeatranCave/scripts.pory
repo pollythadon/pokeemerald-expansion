@@ -41,7 +41,7 @@ script HeatranCave_EventScript_Caught {
     setflag(FLAG_HEATRAN_DFTD)
     completequest(QUEST_HEATRAN)
     removeobject(LOCALID_HEATRAN)
-    msgbox(format("The cavern falls quiet. Heatran is yours now -- a living ember of the mountain's heart."))
+    msgbox(format("The cavern falls quiet. Heatran is yours now. A living ember of the mountain's heart."))
     return
 }
 
@@ -61,7 +61,7 @@ script HeatranCave_EventScript_RanAway {
     fadescreenswapbuffers(FADE_TO_BLACK)
     hideobjectat(LOCALID_HEATRAN, MAP_HEATRAN_CAVE)
     fadescreenswapbuffers(FADE_FROM_BLACK)
-    msgbox(format("Heatran melts back into the molten ceiling and is gone -- for now. Return when you are ready to face it again."))
+    msgbox(format("Heatran melts back into the molten ceiling and is gone... for now. Return when you are ready to face it again."))
     return
 }
 
