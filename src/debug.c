@@ -4178,11 +4178,20 @@ static void PkmEditor_Finalize(u8 taskId)
     PkmEditor_ValidateAbility();
     abilityNum = sDebugMonData->abilityNum;
 
-    // CreateMon with OTID_STRUCT_PLAYER_ID makes the player the OT (name + ID + gender),
-    // so the mon is fully "yours". Only override the OT ID when the player opts out.
+    // CreateMon with OTID_STRUCT_PLAYER_ID makes the player the OT (name + full ID + gender).
+    // Modern obedience mechanics also check the met level of player-owned Pokemon, though.
+    // Treat creator Pokemon as having been raised from the minimum level so choosing the
+    // player as OT guarantees obedience regardless of the level selected in the editor.
     CreateMon(&mon, sDebugMonData->species, sDebugMonData->level, personality, OTID_STRUCT_PLAYER_ID);
-    if (!sDebugMonData->playerIsOT)
+    if (sDebugMonData->playerIsOT)
+    {
+        u32 metLevel = MIN_LEVEL;
+        SetMonData(&mon, MON_DATA_MET_LEVEL, &metLevel);
+    }
+    else
+    {
         SetMonData(&mon, MON_DATA_OT_ID, &otId);
+    }
     SetMonData(&mon, MON_DATA_HELD_ITEM, &heldItem);
     SetMonData(&mon, MON_DATA_POKEBALL, &ballId);
 
@@ -4369,10 +4378,7 @@ static bool32 PkmEditor_Setup(u8 taskId)
     ResetMonDataStruct(sDebugMonData);
     PkmEditor_ResetMonDataOptions();
     PkmEditor_ValidateAbility();
-    sDebugMonData->otId = gSaveBlock2Ptr->playerTrainerId[0]
-                        | (gSaveBlock2Ptr->playerTrainerId[1] << 8)
-                        | (gSaveBlock2Ptr->playerTrainerId[2] << 16)
-                        | (gSaveBlock2Ptr->playerTrainerId[3] << 24);
+    sDebugMonData->otId = READ_OTID_FROM_SAVE;
 
     HideMapNamePopUpWindow();
     LoadMessageBoxAndBorderGfx();
