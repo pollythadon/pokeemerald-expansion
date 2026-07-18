@@ -53,12 +53,14 @@
 #define tItemPcParam    data[6]
 #define QUEST_SAVE_DATA_MAGIC 0x51554553
 #define QUEST_NAME_BUFFER_SIZE 64
+#define QUEST_ICON_SPRITE_SLOTS 2
 
 struct QuestMenuResources
 {
 	MainCallback savedCallback;
 	u8 moveModeOrigPos;
 	u8 spriteIconSlot;
+	u8 spriteIconTypes[QUEST_ICON_SPRITE_SLOTS];
 	u16 oldPaletteTag;
 	u8 maxShowed;
 	u8 nItems;
@@ -2604,6 +2606,7 @@ static void QuestMenu_CreateSprite(u16 itemId, u8 idx, u8 spriteType)
 		{
 			gSprites[spriteId].oam.objMode = ST_OAM_OBJ_BLEND;
 			ptr[idx] = spriteId;
+			sStateDataPtr->spriteIconTypes[idx] = spriteType;
 
 			if (spriteType == ITEM)
 			{
@@ -2629,6 +2632,11 @@ void ResetSpriteState(void)
 	{
 		sItemMenuIconSpriteIds[i] = 0xFF;
 	}
+
+	for (i = 0; i < QUEST_ICON_SPRITE_SLOTS; i++)
+	{
+		sStateDataPtr->spriteIconTypes[i] = 0;
+	}
 }
 
 static void QuestMenu_DestroySprite(u8 idx)
@@ -2639,8 +2647,22 @@ static void QuestMenu_DestroySprite(u8 idx)
 	{
 		u16 palTag = GetSpritePaletteTagByPaletteNum(
 		                   gSprites[ptr[idx]].oam.paletteNum);
-		DestroySprite(&gSprites[ptr[idx]]);
+
+		// Mon icons replace Sprite::images with a raw tile-data pointer. The
+		// specialized destructor restores valid image metadata before the common
+		// sprite cleanup reads it. Using DestroySprite directly corrupts the
+		// sprite tile allocator after enough cursor movement.
+		if (sStateDataPtr->spriteIconTypes[idx] == PKMN)
+		{
+			FreeAndDestroyMonIconSprite(&gSprites[ptr[idx]]);
+		}
+		else
+		{
+			DestroySprite(&gSprites[ptr[idx]]);
+		}
+
 		ptr[idx] = 0xFF;
+		sStateDataPtr->spriteIconTypes[idx] = 0;
 
 		if (sStateDataPtr->oldPaletteTag != palTag)
 		{
