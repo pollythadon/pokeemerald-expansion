@@ -301,4 +301,76 @@ static const u8 sQuestDesc_SealedChamber[] = _("Ride Route 134's currents west.\
 static const u8 sQuestDone_SealedChamber[] = _("Beneath Route 134, you found the\nancient Sealed Chamber.");
 static const u8 sQuestMap_SealedChamber[] = _("Route 134");
 
+// ===================== Post-Champion character stories ====================
+
+static const u8 sQuestName_Wally[] = _("A Gentle Beginning");
+static const u8 sQuestStartMap_Wally[] = _("Verdanturf Town");
+static const u8 sQuestStart_Wally[] = _("Wally has rehearsed a favor for\nHoenn's new Champion.");
+static const u8 sQuestDesc_Wally[] = _("Show Wally a Ralts in your party.\nHe wants to meet a new beginning.");
+static const u8 sQuestDone_Wally[] = _("You reminded Wally that courage can\nbegin with one quiet encounter.");
+static const u8 sQuestMap_Wally[] = _("Verdanturf Town");
+
+static const u8 sQuestName_Steven[] = _("The Weight of Stone");
+static const u8 sQuestStartMap_Steven[] = _("Mossdeep City");
+static const u8 sQuestStart_Steven[] = _("Steven needs help with a lecture he\ndefinitely did not forget to plan.");
+static const u8 sQuestDesc_Steven[] = _("Show Steven an Anorith or Lileep\nin your party.");
+static const u8 sQuestDone_Steven[] = _("A living fossil helped Steven speak\nabout duty, passion, and change.");
+static const u8 sQuestMap_Steven[] = _("Steven's House");
+
+static const u8 sQuestName_Roxanne[] = _("Living History");
+static const u8 sQuestStartMap_Roxanne[] = _("Rustboro City");
+static const u8 sQuestStart_Roxanne[] = _("Roxanne wants one lesson to feel\nless like a very polished rock.");
+static const u8 sQuestDesc_Roxanne[] = _("Show Roxanne a Relicanth in your\nparty for her living-history lesson.");
+static const u8 sQuestDone_Roxanne[] = _("Relicanth turned a dry lecture into\na lesson her class will remember.");
+static const u8 sQuestMap_Roxanne[] = _("Rustboro Gym");
+
+static const u8 sQuestName_Brawly[] = _("One More Rep");
+static const u8 sQuestStartMap_Brawly[] = _("Dewford Town");
+static const u8 sQuestStart_Brawly[] = _("Brawly is testing a training plan\nwith suspicious amounts of slang.");
+static const u8 sQuestDesc_Brawly[] = _("Show Brawly a Makuhita in your party\nthat can judge his new routine.");
+static const u8 sQuestDone_Brawly[] = _("Makuhita approved the workout and\nrejected Brawly's kelp protein bar.");
+static const u8 sQuestMap_Brawly[] = _("Dewford Gym");
+
+static const u8 sQuestName_Wattson[] = _("Old Sparks");
+static const u8 sQuestStartMap_Wattson[] = _("Mauville City");
+static const u8 sQuestStart_Wattson[] = _("Wattson needs a living fuse and has\npromised only a little arcing.");
+static const u8 sQuestDesc_Wattson[] = _("Show Wattson a Magnemite in your\nparty for his old generator.");
+static const u8 sQuestDone_Wattson[] = _("Magnemite revived Wattson's first\ngenerator--and his oldest memory.");
+static const u8 sQuestMap_Wattson[] = _("Mauville Gym");
+
+static const u8 sQuestName_Flannery[] = _("Finding Her Flame");
+static const u8 sQuestStartMap_Flannery[] = _("Lavaridge Town");
+static const u8 sQuestStart_Flannery[] = _("Flannery's new speech needs a safer\nending and considerably less smoke.");
+static const u8 sQuestDesc_Flannery[] = _("Bring Flannery an Ice Heal for her\nGym's emergency safety drill.");
+static const u8 sQuestDone_Flannery[] = _("Flannery stopped imitating her\ngrandfather and found her own voice.");
+static const u8 sQuestMap_Flannery[] = _("Lavaridge Gym");
+
+static const u8 sQuestName_Norman[] = _("A Day Off");
+static const u8 sQuestStartMap_Norman[] = _("Petalburg City");
+static const u8 sQuestStart_Norman[] = _("Norman is attempting the most\ndifficult exercise of all: resting.");
+static const u8 sQuestDesc_Norman[] = _("Show Norman a Slakoth in your party\nand teach him how to slow down.");
+static const u8 sQuestDone_Norman[] = _("Norman finally made room for an\nordinary day with his family.");
+static const u8 sQuestMap_Norman[] = _("Petalburg Gym");
+
+static const u8 sQuestName_Winona[] = _("Against the Wind");
+static const u8 sQuestStartMap_Winona[] = _("Fortree City");
+static const u8 sQuestStart_Winona[] = _("Winona wants to pass on the lesson\nthat first carried her into the sky.");
+static const u8 sQuestDesc_Winona[] = _("Show Winona a Swablu in your party\nthat is ready to trust the wind.");
+static const u8 sQuestDone_Winona[] = _("Winona shared how a frightened child\nlearned to fly by learning to trust.");
+static const u8 sQuestMap_Winona[] = _("Fortree Gym");
+
+static const u8 sQuestName_TateAndLiza[] = _("Two Minds, One Sky");
+static const u8 sQuestStartMap_TateAndLiza[] = _("Mossdeep City");
+static const u8 sQuestStart_TateAndLiza[] = _("Tate and Liza are trying to prove\nthey can have separate ideas.");
+static const u8 sQuestDesc_TateAndLiza[] = _("Show Tate and Liza both Solrock and\nLunatone in your party.");
+static const u8 sQuestDone_TateAndLiza[] = _("The twins found that harmony needs\ntwo distinct voices, not one echo.");
+static const u8 sQuestMap_TateAndLiza[] = _("Mossdeep Gym");
+
+static const u8 sQuestName_Juan[] = _("Beauty Beneath");
+static const u8 sQuestStartMap_Juan[] = _("Sootopolis City");
+static const u8 sQuestStart_Juan[] = _("Juan seeks a Pokémon whose beauty\ncan survive his dramatic critique.");
+static const u8 sQuestDesc_Juan[] = _("Show Juan a Feebas in your party.\nHe insists this is not an audition.");
+static const u8 sQuestDone_Juan[] = _("Feebas proved to Juan that true\nbeauty begins before anyone applauds.");
+static const u8 sQuestMap_Juan[] = _("Sootopolis Gym");
+
 #endif // GUARD_QUEST_DATA_H

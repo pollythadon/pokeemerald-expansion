@@ -1,0 +1,454 @@
+// Post-Champion character stories. FLAG_LEGENDARY_BTL is set during the main
+// story and cleared when the player becomes Champion, so every wrapper falls
+// through to the original character script until the postgame begins.
+
+script CharacterQuest_EventScript_Wally {
+    if (flag(FLAG_LEGENDARY_BTL)) {
+        goto(VerdanturfTown_WandasHouse_EventScript_Wally)
+    }
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_WALLY)
+    if (var(VAR_RESULT) == TRUE) {
+        goto(VerdanturfTown_WandasHouse_EventScript_Wally)
+    }
+    lock
+    faceplayer
+    questmenu(QUEST_MENU_CHECK_REWARD, QUEST_WALLY)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("The Gardevoirite is waiting in your Quest Log.\pI still can't believe I managed that whole speech without checking my notes!"))
+        release
+        end
+    }
+    questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_WALLY)
+    if (var(VAR_RESULT) == FALSE) {
+        msgbox(format("Champion {PLAYER}! I practiced this speech all morning.\pMy uncle says he can now recite it in his sleep."))
+        msgbox(format("When I met Ralts, I was afraid one breath of tall grass would send me straight home.\pRalts trusted me before I trusted myself."))
+        msgbox(format("Would you bring a Ralts to see me? I want to learn how to welcome a frightened new Trainer the way you once welcomed me."))
+        startquest(QUEST_WALLY)
+        msgbox(format("I'll be here in Verdanturf. And I promise not to rehearse at my uncle after bedtime."))
+        release
+        end
+    }
+    if (!checkpartymon(SPECIES_RALTS)) {
+        msgbox(format("Bring a Ralts in your party when you find one.\pThere is no rush. The best first steps happen when both Trainer and Pokémon are ready."))
+        release
+        end
+    }
+    msgbox(format("It's looking at me exactly the way mine did--quiet, but braver than everyone realizes."))
+    msgbox(format("I used to think courage meant never feeling weak.\pYou taught me it means taking one more step while you do."))
+    msgbox(format("I've registered a Gardevoirite in your Quest Log.\pMy partner does not need a stone to prove how far we've come. Let it mark how far you helped me go."))
+    completequest(QUEST_WALLY)
+    release
+    end
+}
+
+script CharacterQuest_EventScript_Steven {
+    if (flag(FLAG_LEGENDARY_BTL)) {
+        goto(MossdeepCity_StevensHouse_EventScript_Steven)
+    }
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_STEVEN)
+    if (var(VAR_RESULT) == TRUE) {
+        goto(MossdeepCity_StevensHouse_EventScript_Steven)
+    }
+    lock
+    faceplayer
+    questmenu(QUEST_MENU_CHECK_REWARD, QUEST_STEVEN)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("Your Metagrossite is waiting in the Quest Log.\pI should return to my lecture. Page forty-eight now contains two full lines about people."))
+        release
+        end
+    }
+    questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_STEVEN)
+    if (var(VAR_RESULT) == FALSE) {
+        msgbox(format("Champion. Your timing is impeccable. I require assistance with a lecture for Devon's young researchers."))
+        msgbox(format("My notes currently contain forty-seven pages on mineral lattices and one line reading, 'Remember to mention people.'"))
+        msgbox(format("My father expects me to speak about inheriting Devon. I would rather show how ancient life became stone--and how even stone can change."))
+        msgbox(format("Would you bring me an Anorith or Lileep? A living fossil may rescue both the lecture and its audience."))
+        startquest(QUEST_STEVEN)
+        release
+        end
+    }
+    if (!checkpartymon(SPECIES_ANORITH) && !checkpartymon(SPECIES_LILEEP)) {
+        msgbox(format("An Anorith or Lileep in your party would be ideal.\pDo not worry. I have reduced the mineral-lattice section to a brisk thirty-nine pages."))
+        release
+        end
+    }
+    msgbox(format("Extraordinary. The shape is ancient, yet every movement is an answer to the present."))
+    msgbox(format("When I was young, I collected stones because they asked nothing of me.\pPeople--and Pokémon--eventually taught me that responsibility can also be worth carrying."))
+    msgbox(format("I have placed a Metagrossite in your Quest Log.\pConsider it a reminder: strength is not the weight we inherit, but what we choose to do while carrying it."))
+    completequest(QUEST_STEVEN)
+    release
+    end
+}
+
+script CharacterQuest_EventScript_Roxanne {
+    if (flag(FLAG_LEGENDARY_BTL)) {
+        goto(RustboroCity_Gym_EventScript_Roxanne)
+    }
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_ROXANNE)
+    if (var(VAR_RESULT) == TRUE) {
+        goto(RustboroCity_Gym_EventScript_Roxanne)
+    }
+    lock
+    faceplayer
+    questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_ROXANNE)
+    if (var(VAR_RESULT) == FALSE) {
+        msgbox(format("Champion {PLAYER}! Excellent timing. Tomorrow's lesson is 'Ancient Life.'"))
+        msgbox(format("My notes are accurate, organized, and--according to one student--'sleepier than a Geodude.'\pI cannot deduct marks for an accurate geological comparison."))
+        msgbox(format("Would you show my class a Relicanth? A living fossil should make history feel alive."))
+        startquest(QUEST_ROXANNE)
+        release
+        end
+    }
+    if (!checkpartymon(SPECIES_RELICANTH)) {
+        msgbox(format("Please bring a Relicanth in your party.\pThe fossil record has waited a hundred million years. My lesson can wait a little longer."))
+        release
+        end
+    }
+    msgbox(format("Remarkable! Its scales preserve a design unchanged for a hundred million years."))
+    msgbox(format("Today, history is breathing. Even my back-row student has stopped naming every rock 'Steve.'"))
+    msgbox(format("This Egg was donated with a collection of ancient specimens. It belongs with a Trainer who makes history feel alive."))
+    setvar(VAR_GIFT_EGG_SPECIES, SPECIES_TYRUNT)
+    setvar(VAR_GIFT_EGG_SHINY, FALSE)
+    setvar(VAR_GIFT_EGG_MOVE1, MOVE_NONE)
+    setvar(VAR_GIFT_EGG_MOVE2, MOVE_NONE)
+    setvar(VAR_GIFT_EGG_MOVE3, MOVE_NONE)
+    setvar(VAR_GIFT_EGG_MOVE4, MOVE_NONE)
+    special(GiveCustomEgg)
+    switch (var(VAR_RESULT)) {
+        case MON_CANT_GIVE:
+            goto(CharacterQuest_EventScript_NoRoomForEgg)
+        case MON_GIVEN_TO_PC:
+            playfanfare(MUS_OBTAIN_ITEM)
+            waitfanfare
+            msgbox(format("Your party was full, so the Tyrunt Egg was sent to a Box in your PC."))
+        default:
+            playfanfare(MUS_OBTAIN_ITEM)
+            waitfanfare
+            msgbox(format("{PLAYER} received a Tyrunt Egg from Roxanne!"))
+    }
+    completequest(QUEST_ROXANNE)
+    release
+    end
+}
+
+script CharacterQuest_EventScript_Brawly {
+    if (flag(FLAG_LEGENDARY_BTL)) {
+        goto(DewfordTown_Gym_EventScript_Brawly)
+    }
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_BRAWLY)
+    if (var(VAR_RESULT) == TRUE) {
+        goto(DewfordTown_Gym_EventScript_Brawly)
+    }
+    lock
+    faceplayer
+    questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_BRAWLY)
+    if (var(VAR_RESULT) == FALSE) {
+        msgbox(format("Champion! I'm rebuilding my oldest training plan--the one Bruno taught me before I understood that 'one more rep' can mean forty."))
+        msgbox(format("Makuhita keeps staring at my kelp-protein bars and backing away.\pI need a Makuhita with a Champion's judgment to test the routine."))
+        startquest(QUEST_BRAWLY)
+        msgbox(format("Bring one in your party. One clap means the workout rules. Two claps means my snack finally rules."))
+        release
+        end
+    }
+    if (!checkpartymon(SPECIES_MAKUHITA)) {
+        msgbox(format("Bring a Makuhita in your party when you're ready.\pThe protein bar is getting greener, so maybe don't take too long."))
+        release
+        end
+    }
+    msgbox(format("Okay, little dude. One clap for the routine, two for the snack."))
+    msgbox(format("...That was one clap. Then it slapped the snack into the wall.\pRadical feedback."))
+    msgbox(format("Bruno gave me this Egg after I finally learned strength isn't just pushing harder. Raise it with balance."))
+    setvar(VAR_GIFT_EGG_SPECIES, SPECIES_RIOLU)
+    setvar(VAR_GIFT_EGG_SHINY, FALSE)
+    setvar(VAR_GIFT_EGG_MOVE1, MOVE_NONE)
+    setvar(VAR_GIFT_EGG_MOVE2, MOVE_NONE)
+    setvar(VAR_GIFT_EGG_MOVE3, MOVE_NONE)
+    setvar(VAR_GIFT_EGG_MOVE4, MOVE_NONE)
+    special(GiveCustomEgg)
+    switch (var(VAR_RESULT)) {
+        case MON_CANT_GIVE:
+            goto(CharacterQuest_EventScript_NoRoomForEgg)
+        case MON_GIVEN_TO_PC:
+            playfanfare(MUS_OBTAIN_ITEM)
+            waitfanfare
+            msgbox(format("Your party was full, so the Riolu Egg rode the next wave to a Box in your PC."))
+        default:
+            playfanfare(MUS_OBTAIN_ITEM)
+            waitfanfare
+            msgbox(format("{PLAYER} received a Riolu Egg from Brawly!"))
+    }
+    completequest(QUEST_BRAWLY)
+    release
+    end
+}
+
+script CharacterQuest_EventScript_Wattson {
+    if (flag(FLAG_LEGENDARY_BTL)) {
+        goto(MauvilleCity_Gym_EventScript_Wattson)
+    }
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_WATTSON)
+    if (var(VAR_RESULT) == TRUE) {
+        goto(MauvilleCity_Gym_EventScript_Wattson)
+    }
+    lock
+    faceplayer
+    questmenu(QUEST_MENU_CHECK_REWARD, QUEST_WATTSON)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("The Manectite is crackling away in your Quest Log!\pWahahaha! Metaphorically, I hope."))
+        release
+        end
+    }
+    questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_WATTSON)
+    if (var(VAR_RESULT) == FALSE) {
+        msgbox(format("Ah, Champion! My first generator has stopped laughing with me. A machine that old deserves manners!"))
+        msgbox(format("I built it after a blackout frightened half of Mauville. The other half was me, pretending the sparks were intentional. Wahahaha!"))
+        msgbox(format("A Magnemite can bridge its oldest circuit safely. Bring one in your party, and we may hear the old rattle again."))
+        startquest(QUEST_WATTSON)
+        release
+        end
+    }
+    if (!checkpartymon(SPECIES_MAGNEMITE)) {
+        msgbox(format("A Magnemite in your party is just the living fuse we need.\pThe generator and I will keep each other entertained until then!"))
+        release
+        end
+    }
+    msgbox(format("Contact! Easy now--one spark, two sparks... Wahahaha! Hear that terrible rattle?"))
+    msgbox(format("That sound once meant the city had light again. I was young, terrified, and laughing so nobody else would know."))
+    msgbox(format("You and Magnemite have earned this Manectite. It is registered in your Quest Log--along with my professional promise to retire this generator."))
+    msgbox(format("...My personal promise is less professional."))
+    completequest(QUEST_WATTSON)
+    release
+    end
+}
+
+script CharacterQuest_EventScript_Flannery {
+    if (flag(FLAG_LEGENDARY_BTL)) {
+        goto(LavaridgeTown_Gym_1F_EventScript_Flannery)
+    }
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_FLANNERY)
+    if (var(VAR_RESULT) == TRUE) {
+        goto(LavaridgeTown_Gym_1F_EventScript_Flannery)
+    }
+    lock
+    faceplayer
+    questmenu(QUEST_MENU_CHECK_REWARD, QUEST_FLANNERY)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("The Cameruptite is waiting in your Quest Log.\pThat delivery was calm, clear, and only a little fiery. I'm improving!"))
+        release
+        end
+    }
+    questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_FLANNERY)
+    if (var(VAR_RESULT) == FALSE) {
+        msgbox(format("Welcome, challenger! I am the scorching heir to--\pNo. That still sounds like Granddad wearing my jacket."))
+        msgbox(format("My grandfather never forgot a safety check. I forgot three while practicing that entrance."))
+        msgbox(format("Could you bring me an Ice Heal? We will run the Gym's emergency drill, and I will try giving orders in my own voice."))
+        startquest(QUEST_FLANNERY)
+        release
+        end
+    }
+    if (!checkitem(ITEM_ICE_HEAL)) {
+        msgbox(format("Bring an Ice Heal for the emergency drill.\pNot because anything is on fire! It is a drill. A very warm, completely controlled drill."))
+        release
+        end
+    }
+    msgbox(format("Valve closed! Sand ready! Ice Heal... held dramatically overhead!"))
+    msgbox(format("No smoke. No panic. And I didn't borrow Granddad's voice."))
+    msgbox(format("Being his granddaughter opened this Gym's door. Becoming Flannery is what keeps me standing here."))
+    msgbox(format("I've registered a Cameruptite in your Quest Log. Keep your Ice Heal--you are apparently the responsible one here."))
+    completequest(QUEST_FLANNERY)
+    release
+    end
+}
+
+script CharacterQuest_EventScript_Norman {
+    if (flag(FLAG_LEGENDARY_BTL)) {
+        goto(PetalburgCity_Gym_EventScript_Norman)
+    }
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_NORMAN)
+    if (var(VAR_RESULT) == TRUE) {
+        goto(PetalburgCity_Gym_EventScript_Norman)
+    }
+    lock
+    faceplayer
+    questmenu(QUEST_MENU_CHECK_REWARD, QUEST_NORMAN)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("The Ability Patch is waiting in your Quest Log.\pYour mother has informed me that checking the log does not count as training."))
+        release
+        end
+    }
+    questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_NORMAN)
+    if (var(VAR_RESULT) == FALSE) {
+        msgbox(format("Champion. I have a problem no training schedule has solved."))
+        msgbox(format("Your mother invited me to dinner. I said, 'After one more set.' She said that was the same answer I gave in Johto, before we moved."))
+        msgbox(format("I spent years proving I could support this family, and too many evenings not being part of it."))
+        msgbox(format("Bring me a Slakoth. I need instruction from an expert in doing absolutely nothing."))
+        startquest(QUEST_NORMAN)
+        release
+        end
+    }
+    if (!checkpartymon(SPECIES_SLAKOTH)) {
+        msgbox(format("Bring a Slakoth in your party.\pI attempted to rest alone. I reorganized the Gym's training schedule in under six minutes."))
+        release
+        end
+    }
+    msgbox(format("It has done nothing for a full minute."))
+    msgbox(format("...That is surprisingly difficult to watch without assigning it drills."))
+    msgbox(format("All right. I will close the Gym early. Dinner, no notes, no sets, and no evaluating the table's balance."))
+    msgbox(format("This Ability Patch was meant for optimizing a team. Today, let it reward a better kind of change. It is in your Quest Log."))
+    completequest(QUEST_NORMAN)
+    release
+    end
+}
+
+script CharacterQuest_EventScript_Winona {
+    if (flag(FLAG_LEGENDARY_BTL)) {
+        goto(FortreeCity_Gym_EventScript_Winona)
+    }
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_WINONA)
+    if (var(VAR_RESULT) == TRUE) {
+        goto(FortreeCity_Gym_EventScript_Winona)
+    }
+    lock
+    faceplayer
+    questmenu(QUEST_MENU_CHECK_REWARD, QUEST_WINONA)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("The Altarianite awaits in your Quest Log.\pTake it when you are ready. The sky never resents a careful beginning."))
+        release
+        end
+    }
+    questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_WINONA)
+    if (var(VAR_RESULT) == FALSE) {
+        msgbox(format("Champion, do you know my first memory of Fortree's bridges? I was underneath one, refusing to climb."))
+        msgbox(format("People assume I loved heights from birth. I learned the sky slowly, beside a Swablu that trusted the wind before I did."))
+        msgbox(format("Bring a Swablu in your party. I would like to pass that first lesson forward."))
+        startquest(QUEST_WINONA)
+        release
+        end
+    }
+    if (!checkpartymon(SPECIES_SWABLU)) {
+        msgbox(format("Bring a Swablu in your party.\pDo not hurry it into the air. Trust grows best when it is invited, not commanded."))
+        release
+        end
+    }
+    msgbox(format("See how it leans before the gust? It does not conquer the wind. It listens."))
+    msgbox(format("My first Swablu waited three hours on a bridge rail. I finally took one step because it refused to take another without me."))
+    msgbox(format("An Altarianite is waiting in your Quest Log.\pMay it honor every quiet moment of trust before the grand ascent."))
+    completequest(QUEST_WINONA)
+    release
+    end
+}
+
+script CharacterQuest_EventScript_TateAndLiza {
+    if (flag(FLAG_LEGENDARY_BTL)) {
+        goto(MossdeepCity_Gym_EventScript_TateAndLiza)
+    }
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_TATE_AND_LIZA)
+    if (var(VAR_RESULT) == TRUE) {
+        goto(MossdeepCity_Gym_EventScript_TateAndLiza)
+    }
+    lock
+    faceplayer
+    questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_TATE_AND_LIZA)
+    if (var(VAR_RESULT) == FALSE) {
+        msgbox(format("Champion! We need an impartial mind."))
+        msgbox(format("One that isn't currently sharing our exact irritation."))
+        msgbox(format("Everyone says we think as one."))
+        msgbox(format("Which is flattering until your brother eats your dessert and says the universe did it."))
+        msgbox(format("That happened once."))
+        msgbox(format("Bring Solrock and Lunatone together in your party. We want to observe harmony without sameness."))
+        startquest(QUEST_TATE_AND_LIZA)
+        release
+        end
+    }
+    if (!checkpartymon(SPECIES_SOLROCK) || !checkpartymon(SPECIES_LUNATONE)) {
+        msgbox(format("We need both Solrock--"))
+        msgbox(format("--and Lunatone in your party. Yes, we heard ourselves do that."))
+        release
+        end
+    }
+    msgbox(format("Solrock moves first."))
+    msgbox(format("Lunatone waits, then answers. Different choices. Same orbit."))
+    msgbox(format("So we don't have to stop understanding each other."))
+    msgbox(format("We just have to stop using it as an alibi for dessert."))
+    msgbox(format("During our last telescope watch, this Minior fell into the observatory garden."))
+    msgbox(format("It needs a partner who understands that sharing an orbit is not the same as losing yourself."))
+    setvar(VAR_TEMP_TRANSFERRED_SPECIES, SPECIES_MINIOR)
+    givemon(SPECIES_MINIOR, 35)
+    if (var(VAR_RESULT) == MON_CANT_GIVE) {
+        goto(CharacterQuest_EventScript_NoRoomForPokemon)
+    }
+    playfanfare(MUS_OBTAIN_ITEM)
+    waitfanfare
+    if (var(VAR_RESULT) == MON_GIVEN_TO_PC) {
+        msgbox(format("Your party was full, so Minior was sent to a Box in your PC!"))
+    } else {
+        msgbox(format("{PLAYER} received Minior from Tate and Liza!"))
+    }
+    completequest(QUEST_TATE_AND_LIZA)
+    release
+    end
+}
+
+script CharacterQuest_EventScript_Juan {
+    if (flag(FLAG_LEGENDARY_BTL)) {
+        goto(SootopolisCity_Gym_1F_EventScript_Juan)
+    }
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_JUAN)
+    if (var(VAR_RESULT) == TRUE) {
+        goto(SootopolisCity_Gym_1F_EventScript_Juan)
+    }
+    lock
+    faceplayer
+    questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_JUAN)
+    if (var(VAR_RESULT) == FALSE) {
+        msgbox(format("Ah, Champion! I am judging a beauty exhibition, and Wallace has accused my standards of being 'a chandelier with opinions.'"))
+        msgbox(format("He learned drama from me. Restraint, apparently, from someone else."))
+        msgbox(format("Bring me a Feebas. I want the audience to recognize beauty before applause teaches them where to look."))
+        startquest(QUEST_JUAN)
+        msgbox(format("Have it in your party. This is not an audition--though tasteful lighting never hurts."))
+        release
+        end
+    }
+    if (!checkpartymon(SPECIES_FEEBAS)) {
+        msgbox(format("Bring a Feebas in your party.\pBeauty is patient, my friend. My stagehands are less so, but they will learn."))
+        release
+        end
+    }
+    msgbox(format("Observe! Uneven fins, humble scales, and a gaze utterly unconcerned with my lighting."))
+    msgbox(format("Wallace once brought me a Feebas and asked when it would become beautiful. I told him the question was already late."))
+    msgbox(format("This Egg is from a Feebas with a rare, radiant color. Raise it without ever asking it to perform for admiration."))
+    setvar(VAR_GIFT_EGG_SPECIES, SPECIES_FEEBAS)
+    setvar(VAR_GIFT_EGG_SHINY, TRUE)
+    setvar(VAR_GIFT_EGG_MOVE1, MOVE_NONE)
+    setvar(VAR_GIFT_EGG_MOVE2, MOVE_NONE)
+    setvar(VAR_GIFT_EGG_MOVE3, MOVE_NONE)
+    setvar(VAR_GIFT_EGG_MOVE4, MOVE_NONE)
+    special(GiveCustomEgg)
+    switch (var(VAR_RESULT)) {
+        case MON_CANT_GIVE:
+            goto(CharacterQuest_EventScript_NoRoomForEgg)
+        case MON_GIVEN_TO_PC:
+            playfanfare(MUS_OBTAIN_ITEM)
+            waitfanfare
+            msgbox(format("Your party was full, so the radiant Feebas Egg was sent to a Box in your PC."))
+        default:
+            playfanfare(MUS_OBTAIN_ITEM)
+            waitfanfare
+            msgbox(format("{PLAYER} received a radiant Feebas Egg from Juan!"))
+    }
+    completequest(QUEST_JUAN)
+    release
+    end
+}
+
+script CharacterQuest_EventScript_NoRoomForEgg {
+    msgbox(format("Your party and every PC Box are full. Make room for the Egg, then return."))
+    release
+    end
+}
+
+script CharacterQuest_EventScript_NoRoomForPokemon {
+    msgbox(format("Your party and every PC Box are full. Make room for the Pokémon, then return."))
+    release
+    end
+}

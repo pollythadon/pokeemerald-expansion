@@ -54,6 +54,7 @@
 #define tItemPcParam    data[6]
 #define QUEST_SAVE_DATA_MAGIC 0x51554553
 #define QUEST_SAVE_EXTENSION_MAGIC 0x51554558
+#define QUEST_SAVE_CHARACTER_MAGIC 0x51434852
 #define QUEST_NAME_BUFFER_SIZE 64
 #define QUEST_ICON_SPRITE_SLOTS 2
 #define QUEST_CATEGORY_ICON_TAG_BASE 120
@@ -1320,6 +1321,148 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 		.availType = QUEST_AVAIL_FLAG_SET,
 		.availFlag = FLAG_RECEIVED_HM_DIVE,
 	},
+	[QUEST_WALLY] =
+	{
+		.name = sQuestName_Wally,
+		.category = QUEST_CATEGORY_SIDE,
+		.startmap = sQuestStartMap_Wally,
+		.startdesc = sQuestStart_Wally,
+		.desc = {sQuestDesc_Wally},
+		.donedesc = sQuestDone_Wally,
+		.map = {sQuestMap_Wally},
+		.sprite = {OBJ_EVENT_GFX_WALLY},
+		.spritetype = {OBJECT},
+		.availType = QUEST_AVAIL_POSTGAME,
+		.rewardItem = ITEM_GARDEVOIRITE,
+		.rewardQty = 1,
+	},
+	[QUEST_STEVEN] =
+	{
+		.name = sQuestName_Steven,
+		.category = QUEST_CATEGORY_SIDE,
+		.startmap = sQuestStartMap_Steven,
+		.startdesc = sQuestStart_Steven,
+		.desc = {sQuestDesc_Steven},
+		.donedesc = sQuestDone_Steven,
+		.map = {sQuestMap_Steven},
+		.sprite = {OBJ_EVENT_GFX_STEVEN},
+		.spritetype = {OBJECT},
+		.availType = QUEST_AVAIL_POSTGAME,
+		.rewardItem = ITEM_METAGROSSITE,
+		.rewardQty = 1,
+	},
+	[QUEST_ROXANNE] =
+	{
+		.name = sQuestName_Roxanne,
+		.category = QUEST_CATEGORY_SIDE,
+		.startmap = sQuestStartMap_Roxanne,
+		.startdesc = sQuestStart_Roxanne,
+		.desc = {sQuestDesc_Roxanne},
+		.donedesc = sQuestDone_Roxanne,
+		.map = {sQuestMap_Roxanne},
+		.sprite = {OBJ_EVENT_GFX_ROXANNE},
+		.spritetype = {OBJECT},
+		.availType = QUEST_AVAIL_POSTGAME,
+	},
+	[QUEST_BRAWLY] =
+	{
+		.name = sQuestName_Brawly,
+		.category = QUEST_CATEGORY_SIDE,
+		.startmap = sQuestStartMap_Brawly,
+		.startdesc = sQuestStart_Brawly,
+		.desc = {sQuestDesc_Brawly},
+		.donedesc = sQuestDone_Brawly,
+		.map = {sQuestMap_Brawly},
+		.sprite = {OBJ_EVENT_GFX_BRAWLY},
+		.spritetype = {OBJECT},
+		.availType = QUEST_AVAIL_POSTGAME,
+	},
+	[QUEST_WATTSON] =
+	{
+		.name = sQuestName_Wattson,
+		.category = QUEST_CATEGORY_SIDE,
+		.startmap = sQuestStartMap_Wattson,
+		.startdesc = sQuestStart_Wattson,
+		.desc = {sQuestDesc_Wattson},
+		.donedesc = sQuestDone_Wattson,
+		.map = {sQuestMap_Wattson},
+		.sprite = {OBJ_EVENT_GFX_WATTSON},
+		.spritetype = {OBJECT},
+		.availType = QUEST_AVAIL_POSTGAME,
+		.rewardItem = ITEM_MANECTITE,
+		.rewardQty = 1,
+	},
+	[QUEST_FLANNERY] =
+	{
+		.name = sQuestName_Flannery,
+		.category = QUEST_CATEGORY_SIDE,
+		.startmap = sQuestStartMap_Flannery,
+		.startdesc = sQuestStart_Flannery,
+		.desc = {sQuestDesc_Flannery},
+		.donedesc = sQuestDone_Flannery,
+		.map = {sQuestMap_Flannery},
+		.sprite = {OBJ_EVENT_GFX_FLANNERY},
+		.spritetype = {OBJECT},
+		.availType = QUEST_AVAIL_POSTGAME,
+		.rewardItem = ITEM_CAMERUPTITE,
+		.rewardQty = 1,
+	},
+	[QUEST_NORMAN] =
+	{
+		.name = sQuestName_Norman,
+		.category = QUEST_CATEGORY_SIDE,
+		.startmap = sQuestStartMap_Norman,
+		.startdesc = sQuestStart_Norman,
+		.desc = {sQuestDesc_Norman},
+		.donedesc = sQuestDone_Norman,
+		.map = {sQuestMap_Norman},
+		.sprite = {OBJ_EVENT_GFX_NORMAN},
+		.spritetype = {OBJECT},
+		.availType = QUEST_AVAIL_POSTGAME,
+		.rewardItem = ITEM_ABILITY_PATCH,
+		.rewardQty = 1,
+	},
+	[QUEST_WINONA] =
+	{
+		.name = sQuestName_Winona,
+		.category = QUEST_CATEGORY_SIDE,
+		.startmap = sQuestStartMap_Winona,
+		.startdesc = sQuestStart_Winona,
+		.desc = {sQuestDesc_Winona},
+		.donedesc = sQuestDone_Winona,
+		.map = {sQuestMap_Winona},
+		.sprite = {OBJ_EVENT_GFX_WINONA},
+		.spritetype = {OBJECT},
+		.availType = QUEST_AVAIL_POSTGAME,
+		.rewardItem = ITEM_ALTARIANITE,
+		.rewardQty = 1,
+	},
+	[QUEST_TATE_AND_LIZA] =
+	{
+		.name = sQuestName_TateAndLiza,
+		.category = QUEST_CATEGORY_SIDE,
+		.startmap = sQuestStartMap_TateAndLiza,
+		.startdesc = sQuestStart_TateAndLiza,
+		.desc = {sQuestDesc_TateAndLiza},
+		.donedesc = sQuestDone_TateAndLiza,
+		.map = {sQuestMap_TateAndLiza},
+		.sprite = {OBJ_EVENT_GFX_TATE},
+		.spritetype = {OBJECT},
+		.availType = QUEST_AVAIL_POSTGAME,
+	},
+	[QUEST_JUAN] =
+	{
+		.name = sQuestName_Juan,
+		.category = QUEST_CATEGORY_SIDE,
+		.startmap = sQuestStartMap_Juan,
+		.startdesc = sQuestStart_Juan,
+		.desc = {sQuestDesc_Juan},
+		.donedesc = sQuestDone_Juan,
+		.map = {sQuestMap_Juan},
+		.sprite = {OBJ_EVENT_GFX_JUAN},
+		.spritetype = {OBJECT},
+		.availType = QUEST_AVAIL_POSTGAME,
+	},
 };
 ////////////////////////END QUEST CUSTOMIZATION////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
@@ -2546,6 +2689,15 @@ static void QuestMenu_ValidateSaveData(void)
 		       sizeof(gSaveBlock3Ptr->questDataExtension));
 		gSaveBlock3Ptr->questDataExtensionMagic = QUEST_SAVE_EXTENSION_MAGIC;
 	}
+
+	if (gSaveBlock3Ptr->characterQuestDataMagic != QUEST_SAVE_CHARACTER_MAGIC)
+	{
+		// Character quests were added after the Hoenn extension had shipped.
+		// Initialize only their versioned block, preserving every older quest.
+		memset(gSaveBlock3Ptr->characterQuestData, 0,
+		       sizeof(gSaveBlock3Ptr->characterQuestData));
+		gSaveBlock3Ptr->characterQuestDataMagic = QUEST_SAVE_CHARACTER_MAGIC;
+	}
 }
 
 u8 QuestMenu_GetSetSubquestState(u8 quest, u8 caseId, u8 childQuest)
@@ -2583,10 +2735,15 @@ u8 QuestMenu_GetSetQuestState(u8 quest, u8 caseId)
 	{
 		questData = gSaveBlock3Ptr->questData;
 	}
-	else
+	else if (quest < QUEST_CHARACTER_START)
 	{
 		questData = gSaveBlock3Ptr->questDataExtension;
 		quest -= QUEST_LEGACY_COUNT;
+	}
+	else
+	{
+		questData = gSaveBlock3Ptr->characterQuestData;
+		quest -= QUEST_CHARACTER_START;
 	}
 
 	u8 unlockedIndex = quest * 5 / 8;
@@ -4097,8 +4254,11 @@ void QuestMenu_ResetMenuSaveData(void)
 	memset(gSaveBlock3Ptr->subQuests, 0, sizeof(gSaveBlock3Ptr->subQuests));
 	memset(gSaveBlock3Ptr->questDataExtension, 0,
 	       sizeof(gSaveBlock3Ptr->questDataExtension));
+	memset(gSaveBlock3Ptr->characterQuestData, 0,
+	       sizeof(gSaveBlock3Ptr->characterQuestData));
 	gSaveBlock3Ptr->questDataMagic = QUEST_SAVE_DATA_MAGIC;
 	gSaveBlock3Ptr->questDataExtensionMagic = QUEST_SAVE_EXTENSION_MAGIC;
+	gSaveBlock3Ptr->characterQuestDataMagic = QUEST_SAVE_CHARACTER_MAGIC;
 }
 
 u32 QuestMenu_GetQuestVariableId(u8 quest)

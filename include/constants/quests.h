@@ -58,6 +58,16 @@
 #define QUEST_39        38
 #define QUEST_40        39
 #define QUEST_41        40
+#define QUEST_42        41
+#define QUEST_43        42
+#define QUEST_44        43
+#define QUEST_45        44
+#define QUEST_46        45
+#define QUEST_47        46
+#define QUEST_48        47
+#define QUEST_49        48
+#define QUEST_50        49
+#define QUEST_51        50
 
 // Post-game legendary quest aliases (custom framework tie-in)
 #define QUEST_MEWTWO     QUEST_1
@@ -120,9 +130,24 @@
 #define QUEST_EON_TICKET  QUEST_40
 #define QUEST_SEALED_CHAMBER QUEST_41
 
-#define QUEST_LEGACY_COUNT 33
-#define QUEST_COUNT        41
-#define QUEST_EXTENSION_COUNT (QUEST_COUNT - QUEST_LEGACY_COUNT)
+// Post-Champion character stories. Keep these appended so every older quest ID
+// and the first extension block remain stable in existing save files.
+#define QUEST_WALLY             QUEST_42
+#define QUEST_STEVEN            QUEST_43
+#define QUEST_ROXANNE           QUEST_44
+#define QUEST_BRAWLY            QUEST_45
+#define QUEST_WATTSON           QUEST_46
+#define QUEST_FLANNERY          QUEST_47
+#define QUEST_NORMAN            QUEST_48
+#define QUEST_WINONA            QUEST_49
+#define QUEST_TATE_AND_LIZA     QUEST_50
+#define QUEST_JUAN              QUEST_51
+
+#define QUEST_LEGACY_COUNT            33
+#define QUEST_HOENN_EXTENSION_COUNT    8
+#define QUEST_CHARACTER_START         QUEST_42
+#define QUEST_CHARACTER_COUNT         10
+#define QUEST_COUNT                   51
 
 #define SUB_QUEST_1          0
 #define SUB_QUEST_2          1

@@ -291,9 +291,12 @@ struct SaveBlock3
     u8 questData[QUEST_LEGACY_COUNT * 5 / 8 + 1];
     u8 subQuests[SUB_QUEST_COUNT / 8 + 1]; // Quest menu: 1 bit per subquest
     u32 questDataExtensionMagic;
-    // Rounded up exactly so appended quests can use any spare bits without
-    // changing this save layout until another byte is genuinely required.
-    u8 questDataExtension[(QUEST_EXTENSION_COUNT * 5 + 7) / 8];
+    // This first extension remains frozen at eight Hoenn quests. Growing it
+    // would reinterpret uninitialized bytes in saves that already know its
+    // magic value, so character quests get their own versioned block below.
+    u8 questDataExtension[(QUEST_HOENN_EXTENSION_COUNT * 5 + 7) / 8];
+    u32 characterQuestDataMagic;
+    u8 characterQuestData[(QUEST_CHARACTER_COUNT * 5 + 7) / 8];
 }; /* max size 1624 bytes */
 
 extern struct SaveBlock3 *gSaveBlock3Ptr;
