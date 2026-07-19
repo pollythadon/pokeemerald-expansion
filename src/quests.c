@@ -4872,14 +4872,6 @@ void QuestMenu_InitNewGameQuests(void)
 
 // ==================== Overworld quest-giver icons (ported from Starbound) ====================
 
-static bool32 ObjectEventAlreadyHasQuest(bool32 hasQuestIcon)
-{
-	if (!FieldEffectActiveListContains(FLDEFF_QUEST_ICON))
-		return FALSE;
-
-	return hasQuestIcon;
-}
-
 static void SetQuestIconOnObject(struct ObjectEvent *objectEvent)
 {
 	objectEvent->hasQuestIcon = TRUE;
@@ -4930,13 +4922,14 @@ void HandleQuestIconForSingleObjectEvent(struct ObjectEvent *objectEvent, u32 ob
 	if (QuestMenu_GetSetQuestState(questId, FLAG_GET_UNLOCKED))
 		return;
 
-	// Already has icon? Do nothing
-	if (ObjectEventAlreadyHasQuest(objectEvent->hasQuestIcon))
+	// Each quest giver owns its marker independently. The field-effect active
+	// list supports duplicate effect IDs, so multiple quest NPCs can safely
+	// display icons on the same map.
+	if (objectEvent->hasQuestIcon)
 		return;
 
 	// Add icon to NPCs who have quests
-	if (!objectEvent->hasQuestIcon && !FieldEffectActiveListContains(FLDEFF_QUEST_ICON))
-		SpawnQuestIconForObject(objectEvent, objectEventId);
+	SpawnQuestIconForObject(objectEvent, objectEventId);
 }
 
 void RefreshQuestIcons(void)
