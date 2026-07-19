@@ -90,8 +90,8 @@
 #define FLAG_HEATRAN_GIFT    0x43 // Set when the player receives the Heatranite from the Fiery Path researcher.
 #define FLAG_HEATRAN_BATTLE  0x44 // Heatran sprite hide flag; set when Heatran is caught/defeated to keep it gone.
 #define FLAG_HEATRAN_DFTD    0x45 // Set when Heatran is caught/defeated, so it doesn't reappear.
-#define FLAG_UNUSED_0x046    0x46 // Unused Flag
-#define FLAG_UNUSED_0x047    0x47 // Unused Flag
+#define FLAG_REGIGIGAS_BATTLE 0x46 // Regigigas statue hide flag; set when Regigigas is caught/defeated.
+#define FLAG_REGIGIGAS_DFTD   0x47 // Set when Regigigas is caught/defeated, so it doesn't reappear.
 #define FLAG_UNUSED_0x048    0x48 // Unused Flag
 #define FLAG_UNUSED_0x049    0x49 // Unused Flag
 #define FLAG_UNUSED_0x04A    0x4A // Unused Flag

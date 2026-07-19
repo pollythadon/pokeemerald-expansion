@@ -228,4 +228,13 @@ static const u8 sQuestDesc_Heatran[] = _("Carry the Heatranite to Jagged\nPass t
 static const u8 sQuestDone_Heatran[] = _("Heatran stirred from the magma\ndeep beneath Jagged Pass.");
 static const u8 sQuestMap_Heatran[] = _("Jagged Pass");
 
+// ========================== Regigigas quest =================================
+
+static const u8 sQuestName_Regigigas[] = _("The Ancient Titan");
+static const u8 sQuestStartMap_Regigigas[] = _("Desert Underpass");
+static const u8 sQuestStart_Regigigas[] = _("A colossal statue sleeps at the\nfar end of Desert Underpass.");
+static const u8 sQuestDesc_Regigigas[] = _("Bring Regirock, Regice, and\nRegisteel before the statue.");
+static const u8 sQuestDone_Regigigas[] = _("The three titans awakened their\nancient master, Regigigas.");
+static const u8 sQuestMap_Regigigas[] = _("Desert Underpass");
+
 #endif // GUARD_QUEST_DATA_H

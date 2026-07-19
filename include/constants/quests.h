@@ -49,6 +49,7 @@
 #define QUEST_30        29
 #define QUEST_31        30
 #define QUEST_32        31
+#define QUEST_33        32
 
 // Post-game legendary quest aliases (custom framework tie-in)
 #define QUEST_MEWTWO     QUEST_1
@@ -97,7 +98,10 @@
 // Post-game legendary (Fiery Path researcher gifts the Heatranite)
 #define QUEST_HEATRAN    QUEST_32
 
-#define QUEST_COUNT     32
+// Post-game legendary (the three Hoenn titans awaken the Desert Underpass statue)
+#define QUEST_REGIGIGAS  QUEST_33
+
+#define QUEST_COUNT     33
 
 #define SUB_QUEST_1          0
 #define SUB_QUEST_2          1

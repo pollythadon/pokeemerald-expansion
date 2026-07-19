@@ -1,0 +1,114 @@
+raw `DesertUnderpass_MapScripts::
+	map_script MAP_SCRIPT_ON_TRANSITION, DesertUnderpass_OnTransition
+	.byte 0
+
+DesertUnderpass_OnTransition:
+	setflag FLAG_LANDMARK_DESERT_UNDERPASS
+	end
+
+DesertUnderpass_EventScript_Fossil::
+	lock
+	faceplayer
+	goto_if_set FLAG_CHOSE_ROOT_FOSSIL, DesertUnderpass_EventScript_GiveClawFossil
+	goto_if_set FLAG_CHOSE_CLAW_FOSSIL, DesertUnderpass_EventScript_GiveRootFossil
+	release
+	end
+
+DesertUnderpass_EventScript_GiveClawFossil::
+	giveitem ITEM_CLAW_FOSSIL
+	goto_if_eq VAR_RESULT, FALSE, Common_EventScript_ShowBagIsFull
+	removeobject LOCALID_UNDERPASS_FOSSIL
+	release
+	end
+
+DesertUnderpass_EventScript_GiveRootFossil::
+	giveitem ITEM_ROOT_FOSSIL
+	goto_if_eq VAR_RESULT, FALSE, Common_EventScript_ShowBagIsFull
+	removeobject LOCALID_UNDERPASS_FOSSIL
+	release
+	end
+
+@ Unused
+DesertUnderpass_Text_FoundRootFossil::
+	.string "{PLAYER} found the ROOT FOSSIL.$"
+
+@ Unused
+DesertUnderpass_Text_FoundClawFossil::
+	.string "{PLAYER} found the CLAW FOSSIL.$"
+
+`
+
+script DesertUnderpass_EventScript_Regigigas {
+    lockall
+    faceplayer
+
+    // FLAG_LEGENDARY_BTL is set during the new game and cleared when the
+    // player becomes Champion. Until then, Regigigas remains an inert statue.
+    if (flag(FLAG_LEGENDARY_BTL)) {
+        msgbox(format("A colossal stone statue towers over you. Its body is cold and perfectly still."))
+        releaseall
+        end
+    }
+
+    // The statue itself is the quest giver. The first postgame interaction
+    // activates its objective. subsequent interactions go straight to the
+    // party check without replaying the quest-start announcement.
+    questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_REGIGIGAS)
+    if (var(VAR_RESULT) == FALSE) {
+        startquest(QUEST_REGIGIGAS)
+    }
+
+    if (!checkpartymon(SPECIES_REGIROCK) || !checkpartymon(SPECIES_REGICE) || !checkpartymon(SPECIES_REGISTEEL)) {
+        msgbox(format("Three patterns are carved into the statue's base. They resemble Regirock, Regice, and Registeel.\p"
+                      "The ancient titan may awaken if all three stand before it together."))
+        releaseall
+        end
+    }
+
+    msgbox(format("The three titans resonate as one. Deep within the statue, something begins to move..."), MSGBOX_AUTOCLOSE)
+    closemessage
+    playse(SE_TRUCK_MOVE)
+    special(DoSealedChamberShakingEffect_Short)
+    applymovement(LOCALID_REGIGIGAS, DesertUnderpass_Movement_RegigigasAwakens)
+    waitmovement(0)
+    playmoncry(SPECIES_REGIGIGAS, CRY_MODE_ENCOUNTER)
+    delay(40)
+    waitmoncry
+    msgbox(format("REGIGIGAS has awakened!"), MSGBOX_AUTOCLOSE)
+    setvar(VAR_LAST_TALKED, LOCALID_REGIGIGAS)
+    setwildbattle(SPECIES_REGIGIGAS, 80)
+    special(StartRegiBattle)
+    specialvar(VAR_RESULT, GetBattleOutcome)
+    if (var(VAR_RESULT) == B_OUTCOME_CAUGHT || var(VAR_RESULT) == B_OUTCOME_WON) {
+        call(DesertUnderpass_EventScript_RegigigasDefeated)
+    } else {
+        call(DesertUnderpass_EventScript_RegigigasEscaped)
+    }
+    releaseall
+    end
+}
+
+script DesertUnderpass_EventScript_RegigigasDefeated {
+    fadescreenswapbuffers(FADE_TO_BLACK)
+    removeobject(LOCALID_REGIGIGAS)
+    setflag(FLAG_REGIGIGAS_BATTLE)
+    setflag(FLAG_REGIGIGAS_DFTD)
+    completequest(QUEST_REGIGIGAS)
+    fadescreenswapbuffers(FADE_FROM_BLACK)
+    msgbox(format("The ancient titan's footsteps fade, and the Desert Underpass falls silent once more."))
+    return
+}
+
+script DesertUnderpass_EventScript_RegigigasEscaped {
+    playmoncry(SPECIES_REGIGIGAS, CRY_MODE_ENCOUNTER)
+    delay(20)
+    msgbox(format("Regigigas grinds to a halt and becomes as still as stone once more. Return when you are ready."))
+    return
+}
+
+movement DesertUnderpass_Movement_RegigigasAwakens {
+    walk_in_place_faster_down * 4
+    jump_in_place_down
+    walk_in_place_faster_down * 2
+    face_player
+}

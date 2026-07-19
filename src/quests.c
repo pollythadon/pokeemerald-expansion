@@ -1070,6 +1070,21 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 		.questVariable = 0,
 		.availType = QUEST_AVAIL_POSTGAME,
 	},
+	[QUEST_REGIGIGAS] =
+	{
+		.name = sQuestName_Regigigas,
+		.startmap = sQuestStartMap_Regigigas,
+		.startdesc = sQuestStart_Regigigas,
+		.desc = {sQuestDesc_Regigigas},
+		.donedesc = sQuestDone_Regigigas,
+		.map = {sQuestMap_Regigigas},
+		.sprite = {SPECIES_REGIGIGAS},
+		.spritetype = {PKMN},
+		.subquests = NULL,
+		.numSubquests = 0,
+		.questVariable = 0,
+		.availType = QUEST_AVAIL_POSTGAME,
+	},
 };
 ////////////////////////END QUEST CUSTOMIZATION////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
