@@ -9,6 +9,7 @@
 #include "item_icon.h"
 #include "item_menu.h"
 #include "item_menu_icons.h"
+#include "international_string_util.h"
 #include "list_menu.h"
 #include "item_use.h"
 #include "main.h"
@@ -54,6 +55,25 @@
 #define QUEST_SAVE_DATA_MAGIC 0x51554553
 #define QUEST_NAME_BUFFER_SIZE 64
 #define QUEST_ICON_SPRITE_SLOTS 2
+#define QUEST_CATEGORY_ICON_TAG_BASE 120
+
+#define QUEST_MENU_PAGE_HUB  0
+#define QUEST_MENU_PAGE_LIST 1
+
+#define QUEST_HUB_CARD_FIRST_WINDOW 3
+#define QUEST_HUB_DESC_FIRST_WINDOW 6
+#define QUEST_HUB_DESC_BUFFER_COUNT 2
+#define QUEST_HUB_LAST_WINDOW       (QUEST_HUB_DESC_FIRST_WINDOW + QUEST_HUB_DESC_BUFFER_COUNT - 1)
+#define QUEST_HUB_CARD_TOP          4
+#define QUEST_HUB_CARD_SELECTED_TOP 3
+#define QUEST_HUB_ICON_Y            76
+#define QUEST_HUB_ICON_SELECTED_Y   68
+#define QUEST_HUB_BG_PANEL_TILE     383
+
+#define QUEST_WINDOW_COLOR_PANEL          10
+#define QUEST_WINDOW_COLOR_PANEL_SELECTED 11
+#define QUEST_WINDOW_COLOR_BORDER         12
+#define QUEST_WINDOW_COLOR_ACCENT         13
 
 struct QuestMenuResources
 {
@@ -68,6 +88,11 @@ struct QuestMenuResources
 	s16 data[3];
 	u8 filterMode;
 	u8 parentQuest;
+	u8 menuPage;
+	u8 category;
+	u8 hubDescSlot;
+	u8 categorySpriteIds[QUEST_CATEGORY_COUNT];
+	bool8 hubGraphicsReady;
 	bool8 restoreCursor;
 };
 
@@ -100,6 +125,21 @@ static bool8 SetupGraphics(void);
 static bool8 LoadGraphics(void);
 static void QuestMenu_InitWindows(void);
 static bool8 InitBackgrounds(void);
+static void Task_CategoryMain(u8 taskId);
+static void ShowCategoryHub(void);
+static void DrawCategoryHub(void);
+static void DrawCategoryHubBackground(void);
+static void UpdateCategoryHubSelection(void);
+static void DrawCategoryCard(u8 category);
+static void DrawCategoryDescription(u8 category, u8 slot);
+static void CreateCategorySprites(void);
+static void DestroyCategorySprites(void);
+static void SetCategorySpritesVisible(bool8 visible);
+static void OpenCategoryList(u8 taskId);
+static void Task_OpenCategoryListFadeOut(u8 taskId);
+static void Task_OpenCategoryListFadeIn(u8 taskId);
+static void ReturnToCategoryHub(u8 taskId);
+static void ClearQuestDetailsWindow(void);
 static void InitItems(void);
 static bool8 AllocateResourcesForListMenu(void);
 static bool8 AllocateMemoryForArray(void);
@@ -112,10 +152,6 @@ static void PlaceTopMenuScrollIndicatorArrows(void);
 static void SetInitializedFlag(u8 a0);
 
 static u8 GetCursorPosition(void);
-static void SetCursorPosition(void);
-static void SetScrollPosition(void);
-static bool8 IfScrollIsOutOfBounds(void);
-static bool8 IfRowIsOutOfBounds(void);
 static void SaveScrollAndRow(s16 *data);
 
 static void ClearModeOnStartup(void);
@@ -134,7 +170,10 @@ static u8 *DefineQuestOrder();
 static u8 GenerateSubquestList();
 static u8 GenerateList(bool8 isFiltered);
 static bool8 QuestMenu_IsQuestAvailable(u8 questId);
+static bool8 QuestMenu_IsQuestInCurrentCategory(u8 questId);
 static u8 CountAvailableQuests(void);
+static u8 CountAvailableQuestsInCategory(u8 category);
+static u8 CountCompletedQuestsInCategory(u8 category);
 static void QuestMenu_TryAdvanceConditionalQuests(void);
 static void TryClaimQuestReward(u8 taskId, u8 questId);
 static void QuestMenu_PrintRewardMessage(u8 questId);
@@ -239,14 +278,21 @@ static const u16 sQuestMenuBgPals[] =
 static const u32 sQuestMenuTilemap[] =
         INCBIN_U32("graphics/quest_menu/menu.bin.lz");
 
+// A single solid BG1 tile replaces the busy list artwork while the category
+// hub is open. The cards and text stay on BG0 above this quiet charcoal canvas.
+static const u32 sQuestHubBgTile[] =
+{
+	0xBBBBBBBB, 0xBBBBBBBB, 0xBBBBBBBB, 0xBBBBBBBB,
+	0xBBBBBBBB, 0xBBBBBBBB, 0xBBBBBBBB, 0xBBBBBBBB,
+};
+
 //Strings used for the Quest Menu
 static const u8 sText_Empty[] = _("");
-static const u8 sText_AllHeader[] = _("All Missions");
-static const u8 sText_InactiveHeader[] = _("Inactive Missions");
-static const u8 sText_ActiveHeader[] = _("Active Missions");
-static const u8 sText_RewardHeader[] = _("Reward Available");
-static const u8 sText_CompletedHeader[] =
-      _("Completed Missions");
+static const u8 sText_AllHeader[] = _("All");
+static const u8 sText_InactiveHeader[] = _("Inactive");
+static const u8 sText_ActiveHeader[] = _("Active");
+static const u8 sText_RewardHeader[] = _("Rewards");
+static const u8 sText_CompletedHeader[] = _("Completed");
 static const u8 sText_QuestNumberDisplay[] =
       _("{STR_VAR_1}/{STR_VAR_2}");
 static const u8 sText_Unk[] = _("??????");
@@ -270,12 +316,58 @@ static const u8 sText_Found[] = _("Found");
 static const u8 sText_Read[] = _("Read");
 static const u8 sText_Back[] = _("Back");
 static const u8 sText_DotSpace[] = _(". ");
-static const u8 sText_Close[] = _("Close");
 static const u8 sText_NoQuests[] = _("No missions yet.");
 static const u8 sText_NoQuestsHint[] =
       _("New missions will appear here\nas your adventure unfolds.");
 static const u8 sText_ColorGreen[] = _("{COLOR}{GREEN}");
 static const u8 sText_AZ[] = _(" A-Z");
+static const u8 sText_QuestLog[] = _("QUEST LOG");
+static const u8 sText_ChooseCategory[] = _("CHOOSE A CATEGORY");
+static const u8 sText_Quests[] = _("QUESTS");
+static const u8 sText_HeaderDivider[] = _(" / ");
+static const u8 sText_CategoryProgress[] = _("{STR_VAR_1}/{STR_VAR_2} complete");
+static const u8 sText_NoCategoryQuests[] = _("No quests yet");
+
+static const u8 sText_StoryCard[] = _("STORY");
+static const u8 sText_PokemonCard[] = _("POKéMON");
+static const u8 sText_SideCard[] = _("SIDE");
+static const u8 sText_StoryCategory[] = _("Story Quests");
+static const u8 sText_PokemonCategory[] = _("Pokémon Quests");
+static const u8 sText_SideCategory[] = _("Side Quests");
+static const u8 sText_StoryCategoryDesc[] =
+      _("Follow Hoenn's journey, earn\nbadges, and become Champion.");
+static const u8 sText_PokemonCategoryDesc[] =
+      _("Track rare Pokémon sightings\nand legendary encounters.");
+static const u8 sText_SideCategoryDesc[] =
+      _("Tackle optional requests,\ncollection goals, and local tales.");
+
+static const u8 *const sQuestCategoryCardNames[QUEST_CATEGORY_COUNT] =
+{
+	sText_StoryCard,
+	sText_PokemonCard,
+	sText_SideCard,
+};
+
+static const u8 *const sQuestCategoryNames[QUEST_CATEGORY_COUNT] =
+{
+	sText_StoryCategory,
+	sText_PokemonCategory,
+	sText_SideCategory,
+};
+
+static const u8 *const sQuestCategoryDescriptions[QUEST_CATEGORY_COUNT] =
+{
+	sText_StoryCategoryDesc,
+	sText_PokemonCategoryDesc,
+	sText_SideCategoryDesc,
+};
+
+static const u16 sQuestCategoryIconItems[QUEST_CATEGORY_COUNT] =
+{
+	ITEM_TOWN_MAP,
+	ITEM_POKE_BALL,
+	ITEM_VS_SEEKER,
+};
 
 ///////////////////////////////////////////////////////////////////////////////
 //////////////////////BEGIN SUBQUEST CUSTOMIZATION/////////////////////////////
@@ -602,6 +694,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_MEWTWO] =
 	{
 		.name = sQuestName_Mewtwo,
+		.category = QUEST_CATEGORY_POKEMON,
 		.startmap = sQuestStartMap_Mewtwo,
 		.startdesc = sQuestStart_Mewtwo,
 		.desc = {sQuestDesc_Mewtwo},
@@ -617,6 +710,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_DIALGA] =
 	{
 		.name = sQuestName_Dialga,
+		.category = QUEST_CATEGORY_POKEMON,
 		.startmap = sQuestStartMap_Dialga,
 		.startdesc = sQuestStart_Dialga,
 		.desc = {sQuestDesc_Dialga},
@@ -632,6 +726,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_PALKIA] =
 	{
 		.name = sQuestName_Palkia,
+		.category = QUEST_CATEGORY_POKEMON,
 		.startmap = sQuestStartMap_Palkia,
 		.startdesc = sQuestStart_Palkia,
 		.desc = {sQuestDesc_Palkia},
@@ -647,6 +742,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_GIRATINA] =
 	{
 		.name = sQuestName_Giratina,
+		.category = QUEST_CATEGORY_POKEMON,
 		.startmap = sQuestStartMap_Giratina,
 		.startdesc = sQuestStart_Giratina,
 		.desc = {sQuestDesc_Giratina},
@@ -662,6 +758,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_ARCEUS] =
 	{
 		.name = sQuestName_Arceus,
+		.category = QUEST_CATEGORY_POKEMON,
 		.startmap = sQuestStartMap_Arceus,
 		.startdesc = sQuestStart_Arceus,
 		.desc = {sQuestDesc_Arceus},
@@ -677,6 +774,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_JIRACHI] =
 	{
 		.name = sQuestName_Jirachi,
+		.category = QUEST_CATEGORY_POKEMON,
 		.startmap = sQuestStartMap_Jirachi,
 		.startdesc = sQuestStart_Jirachi,
 		.desc = {sQuestDesc_Jirachi_0, sQuestDesc_Jirachi_1},
@@ -692,6 +790,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_CELEBI] =
 	{
 		.name = sQuestName_Celebi,
+		.category = QUEST_CATEGORY_POKEMON,
 		.startmap = sQuestStartMap_Celebi,
 		.startdesc = sQuestStart_Celebi,
 		.desc = {sQuestDesc_Celebi},
@@ -707,6 +806,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_DARKRAI] =
 	{
 		.name = sQuestName_Darkrai,
+		.category = QUEST_CATEGORY_POKEMON,
 		.startmap = sQuestStartMap_Darkrai,
 		.startdesc = sQuestStart_Darkrai,
 		.desc = {sQuestDesc_Darkrai},
@@ -722,6 +822,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_CRESSELIA] =
 	{
 		.name = sQuestName_Cresselia,
+		.category = QUEST_CATEGORY_POKEMON,
 		.startmap = sQuestStartMap_Cresselia,
 		.startdesc = sQuestStart_Cresselia,
 		.desc = {sQuestDesc_Cresselia},
@@ -737,6 +838,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_SHAYMIN] =
 	{
 		.name = sQuestName_Shaymin,
+		.category = QUEST_CATEGORY_POKEMON,
 		.startmap = sQuestStartMap_Shaymin,
 		.startdesc = sQuestStart_Shaymin,
 		.desc = {sQuestDesc_Shaymin},
@@ -752,6 +854,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_MEW] =
 	{
 		.name = sQuestName_Mew,
+		.category = QUEST_CATEGORY_POKEMON,
 		.startmap = sQuestStartMap_Mew,
 		.startdesc = sQuestStart_Mew,
 		.desc = {sQuestDesc_Mew},
@@ -764,6 +867,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_LUGIA] =
 	{
 		.name = sQuestName_Lugia,
+		.category = QUEST_CATEGORY_POKEMON,
 		.startmap = sQuestStartMap_Lugia,
 		.startdesc = sQuestStart_Lugia,
 		.desc = {sQuestDesc_Lugia},
@@ -776,6 +880,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_DEOXYS] =
 	{
 		.name = sQuestName_Deoxys,
+		.category = QUEST_CATEGORY_POKEMON,
 		.startmap = sQuestStartMap_Deoxys,
 		.startdesc = sQuestStart_Deoxys,
 		.desc = {sQuestDesc_Deoxys},
@@ -788,6 +893,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_BADGE_1] =
 	{
 		.name = sQuestName_Badge1,
+		.category = QUEST_CATEGORY_STORY,
 		.startmap = sQuestMap_Badge1,
 		.startdesc = sQuestDesc_Badge1,
 		.desc = {sQuestDesc_Badge1},
@@ -803,6 +909,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_BADGE_2] =
 	{
 		.name = sQuestName_Badge2,
+		.category = QUEST_CATEGORY_STORY,
 		.startmap = sQuestMap_Badge2,
 		.startdesc = sQuestDesc_Badge2,
 		.desc = {sQuestDesc_Badge2},
@@ -818,6 +925,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_BADGE_3] =
 	{
 		.name = sQuestName_Badge3,
+		.category = QUEST_CATEGORY_STORY,
 		.startmap = sQuestMap_Badge3,
 		.startdesc = sQuestDesc_Badge3,
 		.desc = {sQuestDesc_Badge3},
@@ -833,6 +941,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_BADGE_4] =
 	{
 		.name = sQuestName_Badge4,
+		.category = QUEST_CATEGORY_STORY,
 		.startmap = sQuestMap_Badge4,
 		.startdesc = sQuestDesc_Badge4,
 		.desc = {sQuestDesc_Badge4},
@@ -848,6 +957,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_BADGE_5] =
 	{
 		.name = sQuestName_Badge5,
+		.category = QUEST_CATEGORY_STORY,
 		.startmap = sQuestMap_Badge5,
 		.startdesc = sQuestDesc_Badge5,
 		.desc = {sQuestDesc_Badge5},
@@ -863,6 +973,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_BADGE_6] =
 	{
 		.name = sQuestName_Badge6,
+		.category = QUEST_CATEGORY_STORY,
 		.startmap = sQuestMap_Badge6,
 		.startdesc = sQuestDesc_Badge6,
 		.desc = {sQuestDesc_Badge6},
@@ -878,6 +989,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_BADGE_7] =
 	{
 		.name = sQuestName_Badge7,
+		.category = QUEST_CATEGORY_STORY,
 		.startmap = sQuestMap_Badge7,
 		.startdesc = sQuestDesc_Badge7,
 		.desc = {sQuestDesc_Badge7},
@@ -893,6 +1005,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_BADGE_8] =
 	{
 		.name = sQuestName_Badge8,
+		.category = QUEST_CATEGORY_STORY,
 		.startmap = sQuestMap_Badge8,
 		.startdesc = sQuestDesc_Badge8,
 		.desc = {sQuestDesc_Badge8},
@@ -908,6 +1021,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_CHAMPION] =
 	{
 		.name = sQuestName_Champion,
+		.category = QUEST_CATEGORY_STORY,
 		.startmap = sQuestMap_Champion,
 		.startdesc = sQuestDesc_Champion,
 		.desc = {sQuestDesc_Champion},
@@ -924,6 +1038,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_DEXNAV] =
 	{
 		.name = sQuestName_DexNav,
+		.category = QUEST_CATEGORY_STORY,
 		.startmap = sQuestStartMap_DexNav,
 		.startdesc = sQuestStart_DexNav,
 		.desc = {sQuestDesc_DexNav},
@@ -937,6 +1052,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_POKEDEX] =
 	{
 		.name = sQuestName_Pokedex,
+		.category = QUEST_CATEGORY_STORY,
 		.startmap = sQuestMap_Pokedex,
 		.startdesc = sQuestDesc_Pokedex,
 		.desc = {sQuestDesc_Pokedex},
@@ -952,6 +1068,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_CATCH_50] =
 	{
 		.name = sQuestName_Catch50,
+		.category = QUEST_CATEGORY_SIDE,
 		.startmap = sQuestMap_Catch,
 		.startdesc = sQuestDesc_Catch50,
 		.desc = {sQuestDesc_Catch50},
@@ -967,6 +1084,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_CATCH_100] =
 	{
 		.name = sQuestName_Catch100,
+		.category = QUEST_CATEGORY_SIDE,
 		.startmap = sQuestMap_Catch,
 		.startdesc = sQuestDesc_Catch100,
 		.desc = {sQuestDesc_Catch100},
@@ -982,6 +1100,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_CATCH_300] =
 	{
 		.name = sQuestName_Catch300,
+		.category = QUEST_CATEGORY_SIDE,
 		.startmap = sQuestMap_Catch,
 		.startdesc = sQuestDesc_Catch300,
 		.desc = {sQuestDesc_Catch300},
@@ -997,6 +1116,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_CATCH_500] =
 	{
 		.name = sQuestName_Catch500,
+		.category = QUEST_CATEGORY_SIDE,
 		.startmap = sQuestMap_Catch,
 		.startdesc = sQuestDesc_Catch500,
 		.desc = {sQuestDesc_Catch500},
@@ -1012,6 +1132,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_CATCH_800] =
 	{
 		.name = sQuestName_Catch800,
+		.category = QUEST_CATEGORY_SIDE,
 		.startmap = sQuestMap_Catch,
 		.startdesc = sQuestDesc_Catch800,
 		.desc = {sQuestDesc_Catch800},
@@ -1027,6 +1148,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_INTRO] =
 	{
 		.name = sQuestName_Intro,
+		.category = QUEST_CATEGORY_STORY,
 		.startmap = sQuestMap_Intro,
 		.startdesc = sQuestDesc_Intro,
 		.desc = {sQuestDesc_Intro},
@@ -1041,6 +1163,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_SHINY_PICHU_EGG] =
 	{
 		.name = sQuestName_ShinyPichuEgg,
+		.category = QUEST_CATEGORY_SIDE,
 		.startmap = sQuestStartMap_ShinyPichuEgg,
 		.startdesc = sQuestStart_ShinyPichuEgg,
 		.desc = {sQuestDesc_ShinyPichuEgg},
@@ -1058,6 +1181,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_HEATRAN] =
 	{
 		.name = sQuestName_Heatran,
+		.category = QUEST_CATEGORY_POKEMON,
 		.startmap = sQuestStartMap_Heatran,
 		.startdesc = sQuestStart_Heatran,
 		.desc = {sQuestDesc_Heatran},
@@ -1073,6 +1197,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_REGIGIGAS] =
 	{
 		.name = sQuestName_Regigigas,
+		.category = QUEST_CATEGORY_POKEMON,
 		.startmap = sQuestStartMap_Regigigas,
 		.startdesc = sQuestStart_Regigigas,
 		.desc = {sQuestDesc_Regigigas},
@@ -1127,9 +1252,9 @@ static const struct WindowTemplate sQuestMenuHeaderWindowTemplates[] =
 		.tilemapLeft = 0,
 		.tilemapTop = 12,
 		.width = 30,
-		.height = 12,
+		.height = 8,
 		.paletteNum = 15,
-		.baseBlock = 361
+		.baseBlock = 241
 	},
 	{
 		// 2: Header window
@@ -1139,9 +1264,104 @@ static const struct WindowTemplate sQuestMenuHeaderWindowTemplates[] =
 		.width = 30,
 		.height = 2,
 		.paletteNum = 15,
-		.baseBlock = 721
+		.baseBlock = 481
+	},
+	{
+		// 3: Story category card
+		.bg = 0,
+		.tilemapLeft = 1,
+		.tilemapTop = QUEST_HUB_CARD_TOP,
+		.width = 8,
+		.height = 7,
+		.paletteNum = 15,
+		.baseBlock = 541
+	},
+	{
+		// 4: Pokémon category card
+		.bg = 0,
+		.tilemapLeft = 11,
+		.tilemapTop = QUEST_HUB_CARD_TOP,
+		.width = 8,
+		.height = 7,
+		.paletteNum = 15,
+		.baseBlock = 597
+	},
+	{
+		// 5: Side category card
+		.bg = 0,
+		.tilemapLeft = 21,
+		.tilemapTop = QUEST_HUB_CARD_TOP,
+		.width = 8,
+		.height = 7,
+		.paletteNum = 15,
+		.baseBlock = 653
+	},
+	{
+		// 6: Category description front buffer
+		.bg = 0,
+		.tilemapLeft = 2,
+		.tilemapTop = 13,
+		.width = 25,
+		.height = 6,
+		.paletteNum = 15,
+		.baseBlock = 709
+	},
+	{
+		// 7: Category description back buffer
+		.bg = 0,
+		.tilemapLeft = 2,
+		.tilemapTop = 13,
+		.width = 25,
+		.height = 6,
+		.paletteNum = 15,
+		.baseBlock = 859
 	},
 	DUMMY_WIN_TEMPLATE
+};
+
+// Dedicated dark text/window palette. Slots 10-13 are used as the dashboard's
+// panel, elevated panel, border, and gold focus colors respectively.
+static const u16 sQuestMenuWindowPal[16] =
+{
+	[TEXT_COLOR_TRANSPARENT] = RGB(0, 0, 0),
+	[TEXT_COLOR_WHITE] = RGB(31, 31, 31),
+	[TEXT_COLOR_DARK_GRAY] = RGB(19, 21, 25),
+	[TEXT_COLOR_LIGHT_GRAY] = RGB(10, 12, 16),
+	[TEXT_COLOR_RED] = RGB(31, 9, 7),
+	[TEXT_COLOR_LIGHT_RED] = RGB(31, 23, 9),
+	[TEXT_COLOR_GREEN] = RGB(8, 26, 14),
+	[TEXT_COLOR_LIGHT_GREEN] = RGB(15, 31, 20),
+	[TEXT_COLOR_BLUE] = RGB(8, 18, 31),
+	[TEXT_COLOR_LIGHT_BLUE] = RGB(16, 25, 31),
+	[QUEST_WINDOW_COLOR_PANEL] = RGB(4, 6, 9),
+	[QUEST_WINDOW_COLOR_PANEL_SELECTED] = RGB(2, 3, 5),
+	[QUEST_WINDOW_COLOR_BORDER] = RGB(7, 9, 13),
+	[QUEST_WINDOW_COLOR_ACCENT] = RGB(30, 21, 7),
+	[14] = RGB(22, 23, 25),
+	[15] = RGB(0, 0, 0),
+};
+
+// Cards use the same pixel data in both states. Switching only their tilemap
+// palette gives the selected card its gold border and elevated slate fill,
+// avoiding visible tile uploads during navigation.
+static const u16 sQuestMenuSelectedCardPal[16] =
+{
+	[TEXT_COLOR_TRANSPARENT] = RGB(0, 0, 0),
+	[TEXT_COLOR_WHITE] = RGB(31, 23, 9),
+	[TEXT_COLOR_DARK_GRAY] = RGB(19, 21, 25),
+	[TEXT_COLOR_LIGHT_GRAY] = RGB(10, 12, 16),
+	[TEXT_COLOR_RED] = RGB(31, 9, 7),
+	[TEXT_COLOR_LIGHT_RED] = RGB(31, 23, 9),
+	[TEXT_COLOR_GREEN] = RGB(8, 26, 14),
+	[TEXT_COLOR_LIGHT_GREEN] = RGB(15, 31, 20),
+	[TEXT_COLOR_BLUE] = RGB(8, 18, 31),
+	[TEXT_COLOR_LIGHT_BLUE] = RGB(16, 25, 31),
+	[QUEST_WINDOW_COLOR_PANEL] = RGB(7, 10, 14),
+	[QUEST_WINDOW_COLOR_PANEL_SELECTED] = RGB(2, 3, 5),
+	[QUEST_WINDOW_COLOR_BORDER] = RGB(30, 21, 7),
+	[QUEST_WINDOW_COLOR_ACCENT] = RGB(30, 21, 7),
+	[14] = RGB(22, 23, 25),
+	[15] = RGB(0, 0, 0),
 };
 
 //Font color combinations for printed text
@@ -1175,6 +1395,18 @@ static const u8 sQuestMenuWindowFontColors[][4] =
 		//Footer flavor text
 		TEXT_COLOR_TRANSPARENT,
 		TEXT_COLOR_WHITE,
+		TEXT_COLOR_TRANSPARENT
+	},
+	{
+		//Selected category card / gold accent text
+		TEXT_COLOR_TRANSPARENT,
+		TEXT_COLOR_LIGHT_RED,
+		TEXT_COLOR_TRANSPARENT
+	},
+	{
+		//Muted dashboard helper text
+		TEXT_COLOR_TRANSPARENT,
+		TEXT_COLOR_LIGHT_GRAY,
 		TEXT_COLOR_TRANSPARENT
 	},
 };
@@ -1211,9 +1443,21 @@ void QuestMenu_Init(u8 a0, MainCallback callback)
 	sStateDataPtr->spriteIconSlot = 0;
 	sStateDataPtr->scrollIndicatorArrowPairId = 0xFF;
 	sStateDataPtr->savedCallback = 0;
+	sStateDataPtr->oldPaletteTag = 0;
+	sStateDataPtr->filterMode = SORT_DEFAULT;
+	sStateDataPtr->parentQuest = 0;
+	sStateDataPtr->menuPage = QUEST_MENU_PAGE_HUB;
+	sStateDataPtr->category = QUEST_CATEGORY_STORY;
+	sStateDataPtr->hubDescSlot = 0;
+	sStateDataPtr->hubGraphicsReady = FALSE;
+	sStateDataPtr->restoreCursor = FALSE;
 	for (i = 0; i < 3; i++)
 	{
 		sStateDataPtr->data[i] = 0;
+	}
+	for (i = 0; i < QUEST_CATEGORY_COUNT; i++)
+	{
+		sStateDataPtr->categorySpriteIds[i] = 0xFF;
 	}
 
 	SetMainCallback2(RunSetup);
@@ -1248,7 +1492,6 @@ static void RunSetup(void)
 
 static bool8 SetupGraphics(void)
 {
-	u8 taskId;
 	switch (gMain.state)
 	{
 		case 0:
@@ -1304,26 +1547,16 @@ static bool8 SetupGraphics(void)
 			break;
 		case 10:
 			ClearModeOnStartup();
-			InitItems();
-			SetCursorPosition();
-			SetScrollPosition();
+			sListMenuState.scroll = 0;
+			sListMenuState.row = 0;
 			gMain.state++;
 			break;
 		case 11:
-			if (AllocateResourcesForListMenu())
-			{
-				gMain.state++;
-			}
-			else
-			{
-				FadeAndBail();
-				return TRUE;
-			}
+			gMain.state++;
 			break;
 		case 12:
 			if (AllocateMemoryForArray())
 			{
-				BuildMenuTemplate();
 				gMain.state++;
 			}
 			else
@@ -1333,21 +1566,18 @@ static bool8 SetupGraphics(void)
 			}
 			break;
 		case 13:
-			GenerateAndPrintHeader();
+			CreateCategorySprites();
+			ShowCategoryHub();
 			gMain.state++;
 			break;
 		case 14:
 			gMain.state++;
 			break;
 		case 15:
-			taskId = CreateTask(Task_Main, 0);
-			gTasks[taskId].data[0] = ListMenuInit(&gMultiuseListMenuTemplate,
-			                                      sListMenuState.scroll,
-			                                      sListMenuState.row);
+			CreateTask(Task_CategoryMain, 0);
 			gMain.state++;
 			break;
 		case 16:
-			PlaceTopMenuScrollIndicatorArrows();
 			gMain.state++;
 			break;
 		case 17:
@@ -1398,7 +1628,12 @@ static bool8 LoadGraphics(void)
 			}
 			break;
 		case 2:
-			LoadPalette(sQuestMenuBgPals, 0x00, 0x60);
+			LoadBgTiles(1, sQuestHubBgTile, sizeof(sQuestHubBgTile),
+			            QUEST_HUB_BG_PANEL_TILE);
+			LoadPalette(sQuestMenuBgPals, BG_PLTT_ID(0), sizeof(sQuestMenuBgPals));
+			LoadPalette(sQuestMenuSelectedCardPal, BG_PLTT_ID(14),
+			            sizeof(sQuestMenuSelectedCardPal));
+			LoadPalette(sQuestMenuWindowPal, BG_PLTT_ID(15), sizeof(sQuestMenuWindowPal));
 			sStateDataPtr->data[0]++;
 			break;
 		case 3:
@@ -1418,10 +1653,10 @@ static void QuestMenu_InitWindows(void)
 	InitWindows(sQuestMenuHeaderWindowTemplates);
 	DeactivateAllTextPrinters();
 
-	for (i = 0; i < 3; i++)
+	for (i = 0; i < ARRAY_COUNT(sQuestMenuHeaderWindowTemplates) - 1; i++)
 	{
 		FillWindowPixelBuffer(i, 0x00);
-		PutWindowTilemap(i);
+		ClearWindowTilemap(i);
 	}
 
 	ScheduleBgCopyTilemapToVram(0);
@@ -1447,6 +1682,341 @@ static bool8 InitBackgrounds(void)
 	ShowBg(0);
 	ShowBg(1);
 	return TRUE;
+}
+
+static void Task_CategoryMain(u8 taskId)
+{
+	u8 oldCategory;
+
+	if (gPaletteFade.active)
+		return;
+
+	oldCategory = sStateDataPtr->category;
+	if (JOY_REPEAT(DPAD_LEFT))
+	{
+		if (sStateDataPtr->category == QUEST_CATEGORY_STORY)
+			sStateDataPtr->category = QUEST_CATEGORY_SIDE;
+		else
+			sStateDataPtr->category--;
+	}
+	else if (JOY_REPEAT(DPAD_RIGHT))
+	{
+		sStateDataPtr->category++;
+		if (sStateDataPtr->category >= QUEST_CATEGORY_COUNT)
+			sStateDataPtr->category = QUEST_CATEGORY_STORY;
+	}
+
+	if (oldCategory != sStateDataPtr->category)
+	{
+		PlaySE(SE_RG_BAG_CURSOR);
+		sStateDataPtr->hubDescSlot ^= 1;
+		DrawCategoryDescription(sStateDataPtr->category,
+		                        sStateDataPtr->hubDescSlot);
+		UpdateCategoryHubSelection();
+	}
+
+	if (JOY_NEW(A_BUTTON))
+	{
+		PlaySE(SE_SELECT);
+		// A short accelerated fade makes the dashboard resolve into the selected
+		// list as one intentional transition, while B-to-hub remains immediate.
+		BeginNormalPaletteFade(0xFFFFFFFF, -1, 0, 16, RGB_BLACK);
+		gTasks[taskId].func = Task_OpenCategoryListFadeOut;
+	}
+	else if (JOY_NEW(B_BUTTON))
+	{
+		PlaySE(SE_SELECT);
+		TurnOffQuestMenu(taskId);
+	}
+}
+
+static void ShowCategoryHub(void)
+{
+	ClearWindowTilemap(0);
+	ClearWindowTilemap(1);
+	sStateDataPtr->menuPage = QUEST_MENU_PAGE_HUB;
+	sStateDataPtr->filterMode = SORT_DEFAULT;
+	sListMenuState.scroll = 0;
+	sListMenuState.row = 0;
+	SetCategorySpritesVisible(TRUE);
+	DrawCategoryHub();
+}
+
+static void DrawCategoryHub(void)
+{
+	u8 x;
+	u8 category;
+
+	DrawCategoryHubBackground();
+
+	// The hub owns its header pixels, so none of the list screen's gold rule can
+	// show through beneath it.
+	FillWindowPixelBuffer(2, PIXEL_FILL(QUEST_WINDOW_COLOR_PANEL));
+	PutWindowTilemap(2);
+	QuestMenu_AddTextPrinterParameterized(2, 0, sText_QuestLog, 8, 1,
+	                                      0, 1, 0, 5);
+	x = 232 - GetStringWidth(0, sText_ChooseCategory, 0);
+	QuestMenu_AddTextPrinterParameterized(2, 0, sText_ChooseCategory, x, 1,
+	                                      0, 1, 0, 6);
+	CopyWindowToVram(2, COPYWIN_GFX);
+
+	// These tiles live above the list windows' VRAM range. Once uploaded they
+	// survive category-list visits, making B-to-hub a lightweight tilemap swap.
+	if (!sStateDataPtr->hubGraphicsReady)
+	{
+		for (category = 0; category < QUEST_CATEGORY_COUNT; category++)
+			DrawCategoryCard(category);
+		sStateDataPtr->hubDescSlot = 0;
+		DrawCategoryDescription(sStateDataPtr->category,
+		                        sStateDataPtr->hubDescSlot);
+		sStateDataPtr->hubGraphicsReady = TRUE;
+	}
+
+	UpdateCategoryHubSelection();
+}
+
+static void DrawCategoryHubBackground(void)
+{
+	FillBgTilemapBufferRect(1, QUEST_HUB_BG_PANEL_TILE,
+	                        0, 2, 30, 18, 15);
+	ScheduleBgCopyTilemapToVram(1);
+}
+
+static void UpdateCategoryHubSelection(void)
+{
+	u8 category;
+	u8 windowId;
+	u8 spriteId;
+	bool8 selected;
+
+	// Compose the complete next layout in the BG0 tilemap buffer, then submit a
+	// single VBlank copy. There is never a frame where a card has been erased but
+	// its replacement has not arrived yet.
+	FillBgTilemapBufferRect(0, 0, 0, 2, 30, 10, 0);
+	for (category = 0; category < QUEST_CATEGORY_COUNT; category++)
+	{
+		windowId = QUEST_HUB_CARD_FIRST_WINDOW + category;
+		selected = category == sStateDataPtr->category;
+		SetWindowAttribute(windowId, WINDOW_TILEMAP_TOP,
+		                   selected ? QUEST_HUB_CARD_SELECTED_TOP
+		                            : QUEST_HUB_CARD_TOP);
+		SetWindowAttribute(windowId, WINDOW_PALETTE_NUM,
+		                   selected ? 14 : 15);
+		PutWindowTilemap(windowId);
+
+		// Cards move by one tile, so their icons move by the same eight pixels in
+		// the same update. No independent easing or visual separation.
+		spriteId = sStateDataPtr->categorySpriteIds[category];
+		if (spriteId < MAX_SPRITES)
+			gSprites[spriteId].y2 = selected ? QUEST_HUB_ICON_SELECTED_Y
+			                                  : QUEST_HUB_ICON_Y;
+	}
+	PutWindowTilemap(QUEST_HUB_DESC_FIRST_WINDOW
+	                 + sStateDataPtr->hubDescSlot);
+	ScheduleBgCopyTilemapToVram(0);
+}
+
+static void DrawCategoryCard(u8 category)
+{
+	u8 windowId = QUEST_HUB_CARD_FIRST_WINDOW + category;
+	u8 x;
+
+	FillWindowPixelBuffer(windowId, PIXEL_FILL(QUEST_WINDOW_COLOR_BORDER));
+	FillWindowPixelRect(windowId, PIXEL_FILL(QUEST_WINDOW_COLOR_PANEL),
+	                    2, 2, 60, 52);
+
+	x = GetStringCenterAlignXOffset(2, sQuestCategoryCardNames[category], 64);
+	QuestMenu_AddTextPrinterParameterized(windowId, 2,
+	                                      sQuestCategoryCardNames[category],
+	                                      x, 5, 0, 0, 0, 4);
+	x = GetStringCenterAlignXOffset(2, sText_Quests, 64);
+	QuestMenu_AddTextPrinterParameterized(windowId, 2, sText_Quests,
+	                                      x, 17, 0, 0, 0, 4);
+	CopyWindowToVram(windowId, COPYWIN_GFX);
+}
+
+static void DrawCategoryDescription(u8 category, u8 slot)
+{
+	u8 windowId = QUEST_HUB_DESC_FIRST_WINDOW + slot;
+	u8 completed = CountCompletedQuestsInCategory(category);
+	u8 available = CountAvailableQuestsInCategory(category);
+	const u8 *progressText;
+	u8 x;
+
+	FillWindowPixelBuffer(windowId,
+	                      PIXEL_FILL(QUEST_WINDOW_COLOR_BORDER));
+	FillWindowPixelRect(windowId,
+	                    PIXEL_FILL(QUEST_WINDOW_COLOR_PANEL), 2, 2, 196, 44);
+
+	QuestMenu_AddTextPrinterParameterized(windowId, 0,
+	                                      sQuestCategoryNames[category],
+	                                      8, 3, 0, 1, 0, 5);
+	if (available == 0)
+	{
+		progressText = sText_NoCategoryQuests;
+	}
+	else
+	{
+		ConvertIntToDecimalStringN(gStringVar1, completed,
+		                           STR_CONV_MODE_LEFT_ALIGN, 2);
+		ConvertIntToDecimalStringN(gStringVar2, available,
+		                           STR_CONV_MODE_LEFT_ALIGN, 2);
+		StringExpandPlaceholders(gStringVar4, sText_CategoryProgress);
+		progressText = gStringVar4;
+	}
+	x = 192 - GetStringWidth(0, progressText, 0);
+	QuestMenu_AddTextPrinterParameterized(windowId, 0,
+	                                      progressText, x, 3, 0, 1, 0, 6);
+	QuestMenu_AddTextPrinterParameterized(windowId, 2,
+	                                      sQuestCategoryDescriptions[category],
+	                                      8, 18, 0, 0, 0, 4);
+	CopyWindowToVram(windowId, COPYWIN_GFX);
+}
+
+static void CreateCategorySprites(void)
+{
+	u8 category;
+	u8 spriteId;
+
+	for (category = 0; category < QUEST_CATEGORY_COUNT; category++)
+	{
+		spriteId = AddItemIconSprite(QUEST_CATEGORY_ICON_TAG_BASE + category,
+		                             QUEST_CATEGORY_ICON_TAG_BASE + category,
+		                             sQuestCategoryIconItems[category]);
+		if (spriteId < MAX_SPRITES)
+		{
+			sStateDataPtr->categorySpriteIds[category] = spriteId;
+			gSprites[spriteId].x2 = 40 + category * 80;
+			gSprites[spriteId].y2 = category == sStateDataPtr->category
+			                         ? QUEST_HUB_ICON_SELECTED_Y
+			                         : QUEST_HUB_ICON_Y;
+			gSprites[spriteId].oam.priority = 0;
+		}
+	}
+}
+
+static void DestroyCategorySprites(void)
+{
+	u8 category;
+	u8 spriteId;
+
+	if (sStateDataPtr == NULL)
+		return;
+
+	for (category = 0; category < QUEST_CATEGORY_COUNT; category++)
+	{
+		spriteId = sStateDataPtr->categorySpriteIds[category];
+		if (spriteId < MAX_SPRITES)
+		{
+			DestroySprite(&gSprites[spriteId]);
+			FreeSpriteTilesByTag(QUEST_CATEGORY_ICON_TAG_BASE + category);
+			FreeSpritePaletteByTag(QUEST_CATEGORY_ICON_TAG_BASE + category);
+			sStateDataPtr->categorySpriteIds[category] = 0xFF;
+		}
+	}
+}
+
+static void SetCategorySpritesVisible(bool8 visible)
+{
+	u8 category;
+	u8 spriteId;
+
+	for (category = 0; category < QUEST_CATEGORY_COUNT; category++)
+	{
+		spriteId = sStateDataPtr->categorySpriteIds[category];
+		if (spriteId < MAX_SPRITES)
+			gSprites[spriteId].invisible = !visible;
+	}
+}
+
+static void OpenCategoryList(u8 taskId)
+{
+	s16 *data = gTasks[taskId].data;
+	u8 windowId;
+
+	for (windowId = QUEST_HUB_CARD_FIRST_WINDOW;
+	     windowId <= QUEST_HUB_LAST_WINDOW; windowId++)
+		ClearWindowTilemap(windowId);
+	SetCategorySpritesVisible(FALSE);
+	DecompressDataWithHeaderWram(sQuestMenuTilemap, sBg1TilemapBuffer);
+	ScheduleBgCopyTilemapToVram(1);
+
+	for (windowId = 0; windowId < QUEST_HUB_CARD_FIRST_WINDOW; windowId++)
+	{
+		if (windowId == 1)
+			ClearQuestDetailsWindow();
+		else
+			FillWindowPixelBuffer(windowId, 0);
+		PutWindowTilemap(windowId);
+		CopyWindowToVram(windowId, COPYWIN_FULL);
+	}
+
+	sStateDataPtr->menuPage = QUEST_MENU_PAGE_LIST;
+	sStateDataPtr->filterMode = SORT_DEFAULT;
+	sStateDataPtr->restoreCursor = FALSE;
+	sListMenuState.scroll = 0;
+	sListMenuState.row = 0;
+	InitItems();
+
+	if (!AllocateResourcesForListMenu())
+	{
+		PlaySE(SE_BOO);
+		ShowCategoryHub();
+		gTasks[taskId].func = Task_CategoryMain;
+		return;
+	}
+
+	BuildMenuTemplate();
+	GenerateAndPrintHeader();
+	data[0] = ListMenuInit(&gMultiuseListMenuTemplate, 0, 0);
+	PlaceTopMenuScrollIndicatorArrows();
+	ScheduleBgCopyTilemapToVram(0);
+	gTasks[taskId].func = Task_Main;
+}
+
+static void Task_OpenCategoryListFadeOut(u8 taskId)
+{
+	if (gPaletteFade.active)
+		return;
+
+	// Rebuild while the screen is fully dark, so no intermediate list or footer
+	// tiles are exposed to the player.
+	OpenCategoryList(taskId);
+	BeginNormalPaletteFade(0xFFFFFFFF, -1, 16, 0, RGB_BLACK);
+	gTasks[taskId].func = Task_OpenCategoryListFadeIn;
+}
+
+static void Task_OpenCategoryListFadeIn(u8 taskId)
+{
+	if (gPaletteFade.active)
+		return;
+
+	if (sStateDataPtr->menuPage == QUEST_MENU_PAGE_LIST)
+		gTasks[taskId].func = Task_Main;
+	else
+		gTasks[taskId].func = Task_CategoryMain;
+}
+
+static void ReturnToCategoryHub(u8 taskId)
+{
+	s16 *data = gTasks[taskId].data;
+	u8 windowId;
+
+	QuestMenu_RemoveScrollIndicatorArrowPair();
+	DestroyListMenuTask(data[0], &sListMenuState.scroll, &sListMenuState.row);
+	if (sListMenuItems != NULL)
+	{
+		Free(sListMenuItems);
+		sListMenuItems = NULL;
+	}
+	QuestMenu_DestroySprite(0);
+	QuestMenu_DestroySprite(1);
+
+	for (windowId = 0; windowId < QUEST_HUB_CARD_FIRST_WINDOW; windowId++)
+		ClearWindowTilemap(windowId);
+
+	ShowCategoryHub();
+	gTasks[taskId].func = Task_CategoryMain;
 }
 
 static void InitItems(void)
@@ -1505,73 +2075,6 @@ static void SetInitializedFlag(u8 a0)
 static u8 GetCursorPosition(void)
 {
 	return sListMenuState.scroll + sListMenuState.row;
-}
-
-static void SetCursorPosition(void)
-{
-	if (IfScrollIsOutOfBounds())
-	{
-		sListMenuState.scroll = (sStateDataPtr->nItems + 1) -
-		                        sStateDataPtr->maxShowed;
-	}
-
-	if (IfRowIsOutOfBounds())
-	{
-		if (sStateDataPtr->nItems + 1 < 2)
-		{
-			sListMenuState.row = 0;
-		}
-		else
-		{
-			sListMenuState.row = sStateDataPtr->nItems;
-		}
-	}
-}
-
-
-static void SetScrollPosition(void)
-{
-	u8 i;
-
-	if (sListMenuState.row > 3)
-	{
-		for (i = 0; i <= sListMenuState.row - 3;
-		            sListMenuState.row--, sListMenuState.scroll++, i++)
-		{
-			if (sListMenuState.scroll + sStateDataPtr->maxShowed ==
-			            sStateDataPtr->nItems + 1)
-			{
-				break;
-			}
-		}
-	}
-}
-
-bool8 IfScrollIsOutOfBounds(void)
-{
-	if (sListMenuState.scroll != 0
-	            && sListMenuState.scroll + sStateDataPtr->maxShowed >
-	            sStateDataPtr->nItems + 1)
-	{
-		return TRUE;
-	}
-	else
-	{
-		return FALSE;
-	}
-}
-
-bool8 IfRowIsOutOfBounds(void)
-{
-	if (sListMenuState.scroll + sListMenuState.row >= sStateDataPtr->nItems +
-	            1)
-	{
-		return TRUE;
-	}
-	else
-	{
-		return FALSE;
-	}
 }
 
 static void SaveScrollAndRow(s16 *data)
@@ -1821,6 +2324,11 @@ bool8 QuestMenu_IsQuestAvailable(u8 questId)
 	}
 }
 
+static bool8 QuestMenu_IsQuestInCurrentCategory(u8 questId)
+{
+	return sSideQuests[questId].category == sStateDataPtr->category;
+}
+
 u8 GenerateList(bool8 isFiltered)
 {
 	u8 mode = sStateDataPtr-> filterMode % 10;
@@ -1835,6 +2343,10 @@ u8 GenerateList(bool8 isFiltered)
 		selectedQuestId = *(sortedQuestList + countQuest);
 
 		if (!QuestMenu_IsQuestAvailable(selectedQuestId))
+		{
+			continue;
+		}
+		if (!QuestMenu_IsQuestInCurrentCategory(selectedQuestId))
 		{
 			continue;
 		}
@@ -1878,7 +2390,7 @@ static void AssignCancelNameAndId(u8 numRow)
 	}
 	else
 	{
-		sListMenuItems[numRow].name = sText_Close;
+		sListMenuItems[numRow].name = sText_Back;
 	}
 
 	sListMenuItems[numRow].id = LIST_CANCEL;
@@ -2043,18 +2555,24 @@ u8 QuestMenu_GetSetQuestState(u8 quest, u8 caseId)
 
 // Counts quests currently visible in the menu (used for the "x/y" header total
 // and the default list length). Only available quests are ever shown or counted.
-u8 CountAvailableQuests(void)
+static u8 CountAvailableQuestsInCategory(u8 category)
 {
 	u8 q = 0, i = 0;
 
 	for (i = 0; i < QUEST_COUNT; i++)
 	{
-		if (QuestMenu_IsQuestAvailable(i))
+		if (sSideQuests[i].category == category
+		    && QuestMenu_IsQuestAvailable(i))
 		{
 			q++;
 		}
 	}
 	return q;
+}
+
+u8 CountAvailableQuests(void)
+{
+	return CountAvailableQuestsInCategory(sStateDataPtr->category);
 }
 
 u8 CountUnlockedQuests(void)
@@ -2063,7 +2581,8 @@ u8 CountUnlockedQuests(void)
 
 	for (i = 0; i < QUEST_COUNT; i++)
 	{
-		if (QuestMenu_IsQuestAvailable(i)
+		if (QuestMenu_IsQuestInCurrentCategory(i)
+		    && QuestMenu_IsQuestAvailable(i)
 		    && QuestMenu_GetSetQuestState(i, FLAG_GET_UNLOCKED))
 		{
 			q++;
@@ -2080,7 +2599,8 @@ u8 CountInactiveQuests(void)
 	// count to quests that are actually revealed in the menu.
 	for (i = 0; i < QUEST_COUNT; i++)
 	{
-		if (QuestMenu_IsQuestAvailable(i)
+		if (QuestMenu_IsQuestInCurrentCategory(i)
+		    && QuestMenu_IsQuestAvailable(i)
 		    && QuestMenu_GetSetQuestState(i, FLAG_GET_INACTIVE))
 		{
 			q++;
@@ -2095,7 +2615,8 @@ u8 CountActiveQuests(void)
 
 	for (i = 0; i < QUEST_COUNT; i++)
 	{
-		if (QuestMenu_IsQuestAvailable(i)
+		if (QuestMenu_IsQuestInCurrentCategory(i)
+		    && QuestMenu_IsQuestAvailable(i)
 		    && QuestMenu_GetSetQuestState(i, FLAG_GET_ACTIVE))
 		{
 			q++;
@@ -2110,7 +2631,8 @@ u8 CountRewardQuests(void)
 
 	for (i = 0; i < QUEST_COUNT; i++)
 	{
-		if (QuestMenu_IsQuestAvailable(i)
+		if (QuestMenu_IsQuestInCurrentCategory(i)
+		    && QuestMenu_IsQuestAvailable(i)
 		    && QuestMenu_GetSetQuestState(i, FLAG_GET_REWARD))
 		{
 			q++;
@@ -2139,7 +2661,8 @@ u8 CountCompletedQuests(void)
 	{
 		for (i = 0; i < QUEST_COUNT; i++)
 		{
-			if (QuestMenu_IsQuestAvailable(i)
+			if (QuestMenu_IsQuestInCurrentCategory(i)
+			    && QuestMenu_IsQuestAvailable(i)
 			    && QuestMenu_GetSetQuestState(i, FLAG_GET_COMPLETED))
 			{
 				q++;
@@ -2150,6 +2673,23 @@ u8 CountCompletedQuests(void)
 	return q;
 }
 
+static u8 CountCompletedQuestsInCategory(u8 category)
+{
+	u8 q = 0;
+	u8 i;
+
+	for (i = 0; i < QUEST_COUNT; i++)
+	{
+		if (sSideQuests[i].category == category
+		    && QuestMenu_IsQuestAvailable(i)
+		    && QuestMenu_GetSetQuestState(i, FLAG_GET_COMPLETED))
+		{
+			q++;
+		}
+	}
+	return q;
+}
+
 u8 CountFavoriteQuests(void)
 {
 	u8 q = 0, i = 0, x = 0;
@@ -2157,7 +2697,8 @@ u8 CountFavoriteQuests(void)
 
 	for (i = 0; i < QUEST_COUNT; i++)
 	{
-		if (QuestMenu_IsQuestAvailable(i)
+		if (QuestMenu_IsQuestInCurrentCategory(i)
+		    && QuestMenu_IsQuestAvailable(i)
 		    && QuestMenu_GetSetQuestState(i, FLAG_GET_FAVORITE))
 		{
 			if (QuestMenu_GetSetQuestState(i, mode))
@@ -2308,13 +2849,21 @@ static void PlayCursorSound(bool8 firstRun)
 	}
 }
 
+static void ClearQuestDetailsWindow(void)
+{
+	// An opaque, uniform footer lets the quest icon sit directly beside the
+	// description instead of exposing the old black icon-box artwork on BG1.
+	FillWindowPixelBuffer(1,
+	                      PIXEL_FILL(QUEST_WINDOW_COLOR_PANEL_SELECTED));
+}
+
 static void PrintDetailsForCancel()
 {
 	// On the empty pre-Champion list, spell out when missions unlock.
 	const u8 *detail = (!IsSubquestMode() && CountAvailableQuests() == 0)
 	                   ? sText_NoQuestsHint : sText_Empty;
 
-	FillWindowPixelBuffer(1, 0);
+	ClearQuestDetailsWindow();
 
 	QuestMenu_AddTextPrinterParameterized(1, 2, sText_Empty, 2, 3, 2, 0, 0,
 	                                      0);
@@ -2363,7 +2912,7 @@ void GenerateQuestLocation(s32 questId)
 }
 void PrintQuestLocation(s32 questId)
 {
-	FillWindowPixelBuffer(1, 0);
+	ClearQuestDetailsWindow();
 	QuestMenu_AddTextPrinterParameterized(1, 2, gStringVar4, 2, 3, 2, 0, 0,
 	                                      4);
 }
@@ -2793,7 +3342,7 @@ static void GenerateAndPrintHeader(void)
 }
 static void GenerateDenominatorNumQuests(void)
 {
-	ConvertIntToDecimalStringN(gStringVar2, QUEST_COUNT,
+	ConvertIntToDecimalStringN(gStringVar2, CountAvailableQuests(),
 	                           STR_CONV_MODE_LEFT_ALIGN, 6);
 }
 
@@ -2845,26 +3394,31 @@ static void GenerateMenuContext(void)
 	u8 mode = sStateDataPtr->filterMode % 10;
 	u8 parentQuest = sStateDataPtr->parentQuest;
 
+	questNamePointer = QuestNameBufferCopy(QUEST_ARRAY_COUNT,
+	                                      sQuestCategoryCardNames[sStateDataPtr->category]);
+	questNamePointer = QuestNameBufferAppend(QUEST_ARRAY_COUNT,
+	                                        sText_HeaderDivider);
+
 	switch (mode)
 	{
 		case SORT_DEFAULT:
-			questNamePointer = QuestNameBufferCopy(QUEST_ARRAY_COUNT,
+			questNamePointer = QuestNameBufferAppend(QUEST_ARRAY_COUNT,
 			                              sText_AllHeader);
 			break;
 		case SORT_INACTIVE:
-			questNamePointer = QuestNameBufferCopy(QUEST_ARRAY_COUNT,
+			questNamePointer = QuestNameBufferAppend(QUEST_ARRAY_COUNT,
 			                              sText_InactiveHeader);
 			break;
 		case SORT_ACTIVE:
-			questNamePointer = QuestNameBufferCopy(QUEST_ARRAY_COUNT,
+			questNamePointer = QuestNameBufferAppend(QUEST_ARRAY_COUNT,
 			                              sText_ActiveHeader);
 			break;
 		case SORT_REWARD:
-			questNamePointer = QuestNameBufferCopy(QUEST_ARRAY_COUNT,
+			questNamePointer = QuestNameBufferAppend(QUEST_ARRAY_COUNT,
 			                              sText_RewardHeader);
 			break;
 		case SORT_DONE:
-			questNamePointer = QuestNameBufferCopy(QUEST_ARRAY_COUNT,
+			questNamePointer = QuestNameBufferAppend(QUEST_ARRAY_COUNT,
 			                              sText_CompletedHeader);
 			break;
 	}
@@ -2936,7 +3490,7 @@ static void Task_Main(u8 taskId)
 				}
 				else
 				{
-					TurnOffQuestMenu(taskId);
+					ReturnToCategoryHub(taskId);
 				}
 				break;
 
@@ -2973,12 +3527,28 @@ static void Task_QuestMenuCleanUp(u8 taskId)
 
 	QuestMenu_RemoveScrollIndicatorArrowPair();
 	DestroyListMenuTask(data[0], &sListMenuState.scroll, &sListMenuState.row);
-	ClearStdWindowAndFrameToTransparent(2, FALSE);
+	if (sListMenuItems != NULL)
+	{
+		Free(sListMenuItems);
+		sListMenuItems = NULL;
+	}
+	FillWindowPixelBuffer(0, 0);
+	ClearQuestDetailsWindow();
+	FillWindowPixelBuffer(2, 0);
+	PutWindowTilemap(0);
+	PutWindowTilemap(1);
+	PutWindowTilemap(2);
 
 	InitItems();
-	GenerateAndPrintHeader();
-	AllocateResourcesForListMenu();
+	if (!AllocateResourcesForListMenu())
+	{
+		PlaySE(SE_BOO);
+		ShowCategoryHub();
+		gTasks[taskId].func = Task_CategoryMain;
+		return;
+	}
 	BuildMenuTemplate();
+	GenerateAndPrintHeader();
 	PlaceTopMenuScrollIndicatorArrows();
 
 	if (sStateDataPtr->restoreCursor == TRUE)
@@ -3070,7 +3640,7 @@ static void QuestMenu_PrintRewardMessage(u8 questId)
 
 	// Print where the "Press A to claim your reward!" hint sits -- that spot is
 	// already laid out to clear the reward icon in the lower-left of the pane.
-	FillWindowPixelBuffer(1, 0);
+	ClearQuestDetailsWindow();
 	QuestMenu_AddTextPrinterParameterized(1, 2, gStringVar4, 40, 19, 5, 0, 0, 4);
 }
 
@@ -3275,6 +3845,13 @@ static void FreeResources(void)
 {
 	int i;
 
+	if (sStateDataPtr != NULL)
+	{
+		QuestMenu_DestroySprite(0);
+		QuestMenu_DestroySprite(1);
+		DestroyCategorySprites();
+	}
+
 	if (questNameArray != NULL)
 	{
 		for (i = QUEST_ARRAY_COUNT; i > -1; i--)
@@ -3313,7 +3890,12 @@ static void Task_QuestMenuTurnOff2(u8 taskId)
 
 	if (!gPaletteFade.active)
 	{
-		DestroyListMenuTask(data[0], &sListMenuState.scroll, &sListMenuState.row);
+		if (sStateDataPtr->menuPage == QUEST_MENU_PAGE_LIST
+		    && sListMenuItems != NULL)
+		{
+			DestroyListMenuTask(data[0], &sListMenuState.scroll,
+			                    &sListMenuState.row);
+		}
 		if (sStateDataPtr->savedCallback != NULL)
 		{
 			SetMainCallback2(sStateDataPtr->savedCallback);

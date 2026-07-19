@@ -31,6 +31,12 @@
 #define QUEST_AVAIL_FLAG_SET  1  // shown once availFlag is set
 #define QUEST_AVAIL_POSTGAME  2  // shown once Champion (FLAG_LEGENDARY_BTL cleared)
 
+// Top-level Quest Log categories.
+#define QUEST_CATEGORY_STORY    0
+#define QUEST_CATEGORY_POKEMON  1
+#define QUEST_CATEGORY_SIDE     2
+#define QUEST_CATEGORY_COUNT    3
+
 #define MAX_QUEST_STATES 50
 /* Defines how many states a complex quest can have */
 
@@ -58,6 +64,7 @@ struct SideQuest
 	const struct SubQuest *subquests;
 	const u8 numSubquests;
 	const u16 questVariable;
+	const u8 category;                  // QUEST_CATEGORY_* — dashboard/list grouping
 	const u8 availType;                 // QUEST_AVAIL_* — when the quest appears in the menu
 	const u16 availFlag;                // flag checked when availType == QUEST_AVAIL_FLAG_SET
 	const u16 rewardItem;               // item handed out on claim (ITEM_NONE = none)
