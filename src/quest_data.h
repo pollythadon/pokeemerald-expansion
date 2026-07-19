@@ -237,4 +237,68 @@ static const u8 sQuestDesc_Regigigas[] = _("Bring Regirock, Regice, and\nRegiste
 static const u8 sQuestDone_Regigigas[] = _("The three titans awakened their\nancient master, Regigigas.");
 static const u8 sQuestMap_Regigigas[] = _("Desert Underpass");
 
+// ======================== Native Hoenn legendaries =========================
+
+static const u8 sQuestName_Groudon[] = _("Continent in Motion");
+static const u8 sQuestStartMap_Groudon[] = _("Weather Institute");
+static const u8 sQuestStart_Groudon[] = _("The Weather Institute detects\nstrange post-League droughts.");
+static const u8 sQuestDesc_Groudon[] = _("Track the drought to Terra Cave's\nshifting entrance.");
+static const u8 sQuestDone_Groudon[] = _("Deep in Terra Cave, you faced\nGroudon, the continent Pokémon.");
+static const u8 sQuestMap_Groudon[] = _("Terra Cave");
+
+static const u8 sQuestName_Kyogre[] = _("The Deep Stirs");
+static const u8 sQuestStartMap_Kyogre[] = _("Weather Institute");
+static const u8 sQuestStart_Kyogre[] = _("The Weather Institute detects\nstrange post-League downpours.");
+static const u8 sQuestDesc_Kyogre[] = _("Track the rain to Marine Cave's\nshifting entrance.");
+static const u8 sQuestDone_Kyogre[] = _("Deep in Marine Cave, you faced\nKyogre, the sea basin Pokémon.");
+static const u8 sQuestMap_Kyogre[] = _("Marine Cave");
+
+static const u8 sQuestName_Rayquaza[] = _("Lord of the Sky");
+static const u8 sQuestStartMap_Rayquaza[] = _("Cave of Origin");
+static const u8 sQuestStart_Rayquaza[] = _("Wallace believes Sky Pillar holds\nthe answer to Hoenn's crisis.");
+static const u8 sQuestDesc_Rayquaza[] = _("Follow Wallace to Sky Pillar.\nReturn later to face Rayquaza.");
+static const u8 sQuestDone_Rayquaza[] = _("At Sky Pillar's summit, you faced\nRayquaza, the sky high Pokémon.");
+static const u8 sQuestMap_Rayquaza[] = _("Sky Pillar");
+
+// The three ruin quests unlock together when the Sealed Chamber opens. This
+// preserves the original any-order puzzles while making them one linked chain.
+static const u8 sQuestName_Regirock[] = _("The Stone Seal");
+static const u8 sQuestStartMap_Regirock[] = _("Sealed Chamber");
+static const u8 sQuestStart_Regirock[] = _("The Sealed Chamber's message\nechoes through three old ruins.");
+static const u8 sQuestDesc_Regirock[] = _("Find Desert Ruins on Route 111.\nBreak its seal for Regirock.");
+static const u8 sQuestDone_Regirock[] = _("The stone seal answered.\nRegirock joined the titans.");
+static const u8 sQuestMap_Regirock[] = _("Desert Ruins");
+
+static const u8 sQuestName_Regice[] = _("The Frozen Seal");
+static const u8 sQuestStartMap_Regice[] = _("Sealed Chamber");
+static const u8 sQuestStart_Regice[] = _("The Sealed Chamber's message\nechoes through three old ruins.");
+static const u8 sQuestDesc_Regice[] = _("Find Island Cave on Route 105.\nCircle its walls for Regice.");
+static const u8 sQuestDone_Regice[] = _("The frozen seal answered.\nRegice joined the titans.");
+static const u8 sQuestMap_Regice[] = _("Island Cave");
+
+static const u8 sQuestName_Registeel[] = _("The Iron Seal");
+static const u8 sQuestStartMap_Registeel[] = _("Sealed Chamber");
+static const u8 sQuestStart_Registeel[] = _("The Sealed Chamber's message\nechoes through three old ruins.");
+static const u8 sQuestDesc_Registeel[] = _("Find Ancient Tomb on Route 120.\nShine at its heart for Registeel.");
+static const u8 sQuestDone_Registeel[] = _("The iron seal answered.\nRegisteel joined the titans.");
+static const u8 sQuestMap_Registeel[] = _("Ancient Tomb");
+
+// ============================= Eon Ticket ==================================
+
+static const u8 sQuestName_EonTicket[] = _("The Eon Couple");
+static const u8 sQuestStartMap_EonTicket[] = _("Fortree City");
+static const u8 sQuestStart_EonTicket[] = _("A retired Fortree navigator has\nan Eon Ticket.");
+static const u8 sQuestDesc_EonTicket[] = _("Take the Eon Ticket to Lilycove's\nferry and sail for Southern Island.");
+static const u8 sQuestDone_EonTicket[] = _("On Southern Island, you met the Eon\nPokémon that answered the Ticket.");
+static const u8 sQuestMap_EonTicket[] = _("Southern Island");
+
+// ========================== Sealed Chamber prelude =========================
+
+static const u8 sQuestName_SealedChamber[] = _("The Sunken Chamber");
+static const u8 sQuestStartMap_SealedChamber[] = _("Route 134");
+static const u8 sQuestStart_SealedChamber[] = _("Dive may reveal an ancient chamber\nbeneath Route 134's currents.");
+static const u8 sQuestDesc_SealedChamber[] = _("Ride Route 134's currents west.\nDive where calm water hides a trench.");
+static const u8 sQuestDone_SealedChamber[] = _("Beneath Route 134, you found the\nancient Sealed Chamber.");
+static const u8 sQuestMap_SealedChamber[] = _("Route 134");
+
 #endif // GUARD_QUEST_DATA_H

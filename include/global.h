@@ -286,8 +286,14 @@ struct SaveBlock3
     u8 rotomRealityMenuOrderCount;
     u8 rotomRealityMenuOrder[ROTOM_REALITY_SAVED_APP_CAPACITY];
     u32 questDataMagic;
-    u8 questData[QUEST_COUNT * 5 / 8 + 1]; // Quest menu: 5 state bits per quest
+    // The original 33 quest slots stay fixed in place so adding quests does not
+    // move subquest data in existing saves. New quest state is appended below.
+    u8 questData[QUEST_LEGACY_COUNT * 5 / 8 + 1];
     u8 subQuests[SUB_QUEST_COUNT / 8 + 1]; // Quest menu: 1 bit per subquest
+    u32 questDataExtensionMagic;
+    // Rounded up exactly so appended quests can use any spare bits without
+    // changing this save layout until another byte is genuinely required.
+    u8 questDataExtension[(QUEST_EXTENSION_COUNT * 5 + 7) / 8];
 }; /* max size 1624 bytes */
 
 extern struct SaveBlock3 *gSaveBlock3Ptr;

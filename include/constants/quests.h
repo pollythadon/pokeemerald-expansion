@@ -50,6 +50,14 @@
 #define QUEST_31        30
 #define QUEST_32        31
 #define QUEST_33        32
+#define QUEST_34        33
+#define QUEST_35        34
+#define QUEST_36        35
+#define QUEST_37        36
+#define QUEST_38        37
+#define QUEST_39        38
+#define QUEST_40        39
+#define QUEST_41        40
 
 // Post-game legendary quest aliases (custom framework tie-in)
 #define QUEST_MEWTWO     QUEST_1
@@ -101,7 +109,20 @@
 // Post-game legendary (the three Hoenn titans awaken the Desert Underpass statue)
 #define QUEST_REGIGIGAS  QUEST_33
 
-#define QUEST_COUNT     33
+// Hoenn's native legendary encounters and the Southern Island event.
+// Keep these appended so existing quest IDs remain save-compatible.
+#define QUEST_GROUDON     QUEST_34
+#define QUEST_KYOGRE      QUEST_35
+#define QUEST_RAYQUAZA    QUEST_36
+#define QUEST_REGIROCK    QUEST_37
+#define QUEST_REGICE      QUEST_38
+#define QUEST_REGISTEEL   QUEST_39
+#define QUEST_EON_TICKET  QUEST_40
+#define QUEST_SEALED_CHAMBER QUEST_41
+
+#define QUEST_LEGACY_COUNT 33
+#define QUEST_COUNT        41
+#define QUEST_EXTENSION_COUNT (QUEST_COUNT - QUEST_LEGACY_COUNT)
 
 #define SUB_QUEST_1          0
 #define SUB_QUEST_2          1

@@ -53,6 +53,7 @@
 #define tPageItems      data[4]
 #define tItemPcParam    data[6]
 #define QUEST_SAVE_DATA_MAGIC 0x51554553
+#define QUEST_SAVE_EXTENSION_MAGIC 0x51554558
 #define QUEST_NAME_BUFFER_SIZE 64
 #define QUEST_ICON_SPRITE_SLOTS 2
 #define QUEST_CATEGORY_ICON_TAG_BASE 120
@@ -1209,6 +1210,115 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 		.numSubquests = 0,
 		.questVariable = 0,
 		.availType = QUEST_AVAIL_POSTGAME,
+	},
+	[QUEST_GROUDON] =
+	{
+		.name = sQuestName_Groudon,
+		.category = QUEST_CATEGORY_POKEMON,
+		.startmap = sQuestStartMap_Groudon,
+		.startdesc = sQuestStart_Groudon,
+		.desc = {sQuestDesc_Groudon},
+		.donedesc = sQuestDone_Groudon,
+		.map = {sQuestMap_Groudon},
+		.sprite = {SPECIES_GROUDON},
+		.spritetype = {PKMN},
+		.availType = QUEST_AVAIL_POSTGAME,
+	},
+	[QUEST_KYOGRE] =
+	{
+		.name = sQuestName_Kyogre,
+		.category = QUEST_CATEGORY_POKEMON,
+		.startmap = sQuestStartMap_Kyogre,
+		.startdesc = sQuestStart_Kyogre,
+		.desc = {sQuestDesc_Kyogre},
+		.donedesc = sQuestDone_Kyogre,
+		.map = {sQuestMap_Kyogre},
+		.sprite = {SPECIES_KYOGRE},
+		.spritetype = {PKMN},
+		.availType = QUEST_AVAIL_POSTGAME,
+	},
+	[QUEST_RAYQUAZA] =
+	{
+		.name = sQuestName_Rayquaza,
+		.category = QUEST_CATEGORY_POKEMON,
+		.startmap = sQuestStartMap_Rayquaza,
+		.startdesc = sQuestStart_Rayquaza,
+		.desc = {sQuestDesc_Rayquaza},
+		.donedesc = sQuestDone_Rayquaza,
+		.map = {sQuestMap_Rayquaza},
+		.sprite = {SPECIES_RAYQUAZA},
+		.spritetype = {PKMN},
+		.availType = QUEST_AVAIL_FLAG_SET,
+		.availFlag = FLAG_WALLACE_GOES_TO_SKY_PILLAR,
+	},
+	[QUEST_REGIROCK] =
+	{
+		.name = sQuestName_Regirock,
+		.category = QUEST_CATEGORY_POKEMON,
+		.startmap = sQuestStartMap_Regirock,
+		.startdesc = sQuestStart_Regirock,
+		.desc = {sQuestDesc_Regirock},
+		.donedesc = sQuestDone_Regirock,
+		.map = {sQuestMap_Regirock},
+		.sprite = {SPECIES_REGIROCK},
+		.spritetype = {PKMN},
+		.availType = QUEST_AVAIL_FLAG_SET,
+		.availFlag = FLAG_SYS_BRAILLE_DIG,
+	},
+	[QUEST_REGICE] =
+	{
+		.name = sQuestName_Regice,
+		.category = QUEST_CATEGORY_POKEMON,
+		.startmap = sQuestStartMap_Regice,
+		.startdesc = sQuestStart_Regice,
+		.desc = {sQuestDesc_Regice},
+		.donedesc = sQuestDone_Regice,
+		.map = {sQuestMap_Regice},
+		.sprite = {SPECIES_REGICE},
+		.spritetype = {PKMN},
+		.availType = QUEST_AVAIL_FLAG_SET,
+		.availFlag = FLAG_SYS_BRAILLE_DIG,
+	},
+	[QUEST_REGISTEEL] =
+	{
+		.name = sQuestName_Registeel,
+		.category = QUEST_CATEGORY_POKEMON,
+		.startmap = sQuestStartMap_Registeel,
+		.startdesc = sQuestStart_Registeel,
+		.desc = {sQuestDesc_Registeel},
+		.donedesc = sQuestDone_Registeel,
+		.map = {sQuestMap_Registeel},
+		.sprite = {SPECIES_REGISTEEL},
+		.spritetype = {PKMN},
+		.availType = QUEST_AVAIL_FLAG_SET,
+		.availFlag = FLAG_SYS_BRAILLE_DIG,
+	},
+	[QUEST_EON_TICKET] =
+	{
+		.name = sQuestName_EonTicket,
+		.category = QUEST_CATEGORY_POKEMON,
+		.startmap = sQuestStartMap_EonTicket,
+		.startdesc = sQuestStart_EonTicket,
+		.desc = {sQuestDesc_EonTicket},
+		.donedesc = sQuestDone_EonTicket,
+		.map = {sQuestMap_EonTicket},
+		.sprite = {ITEM_EON_TICKET},
+		.spritetype = {ITEM},
+		.availType = QUEST_AVAIL_POSTGAME,
+	},
+	[QUEST_SEALED_CHAMBER] =
+	{
+		.name = sQuestName_SealedChamber,
+		.category = QUEST_CATEGORY_POKEMON,
+		.startmap = sQuestStartMap_SealedChamber,
+		.startdesc = sQuestStart_SealedChamber,
+		.desc = {sQuestDesc_SealedChamber},
+		.donedesc = sQuestDone_SealedChamber,
+		.map = {sQuestMap_SealedChamber},
+		.sprite = {SPECIES_RELICANTH},
+		.spritetype = {PKMN},
+		.availType = QUEST_AVAIL_FLAG_SET,
+		.availFlag = FLAG_RECEIVED_HM_DIVE,
 	},
 };
 ////////////////////////END QUEST CUSTOMIZATION////////////////////////////////
@@ -2415,6 +2525,14 @@ static void QuestMenu_ValidateSaveData(void)
 {
 	if (gSaveBlock3Ptr->questDataMagic != QUEST_SAVE_DATA_MAGIC)
 		QuestMenu_ResetMenuSaveData();
+	else if (gSaveBlock3Ptr->questDataExtensionMagic != QUEST_SAVE_EXTENSION_MAGIC)
+	{
+		// Older saves end after subQuests. Initialize only the appended storage so
+		// their original quest and subquest progress remains untouched.
+		memset(gSaveBlock3Ptr->questDataExtension, 0,
+		       sizeof(gSaveBlock3Ptr->questDataExtension));
+		gSaveBlock3Ptr->questDataExtensionMagic = QUEST_SAVE_EXTENSION_MAGIC;
+	}
 }
 
 u8 QuestMenu_GetSetSubquestState(u8 quest, u8 caseId, u8 childQuest)
@@ -2442,12 +2560,27 @@ u8 QuestMenu_GetSetSubquestState(u8 quest, u8 caseId, u8 childQuest)
 
 u8 QuestMenu_GetSetQuestState(u8 quest, u8 caseId)
 {
+	u8 *questData;
+
 	QuestMenu_ValidateSaveData();
 	if (!QuestMenu_IsQuestIdValid(quest))
 		return FALSE;
 
-	u8 index = quest * 5 / 8;
-	u8 bit = quest * 5 % 8;
+	if (quest < QUEST_LEGACY_COUNT)
+	{
+		questData = gSaveBlock3Ptr->questData;
+	}
+	else
+	{
+		questData = gSaveBlock3Ptr->questDataExtension;
+		quest -= QUEST_LEGACY_COUNT;
+	}
+
+	u8 unlockedIndex = quest * 5 / 8;
+	u8 unlockedBit = quest * 5 % 8;
+	u8 unlockedMask = 1 << unlockedBit;
+	u8 index = unlockedIndex;
+	u8 bit = unlockedBit;
 	u8 mask = 0, index2 = 0, bit2 = 0, index3 = 0, bit3 = 0, mask2 = 0,
 	   mask3 = 0;
 
@@ -2493,9 +2626,9 @@ u8 QuestMenu_GetSetQuestState(u8 quest, u8 caseId)
 	switch (caseId)
 	{
 		case FLAG_GET_UNLOCKED:
-			return gSaveBlock3Ptr->questData[index] & mask;
+			return questData[index] & mask;
 		case FLAG_SET_UNLOCKED:
-			gSaveBlock3Ptr->questData[index] |= mask;
+			questData[index] |= mask;
 			return 1;
 		case FLAG_GET_INACTIVE:
 			bit2 = bit + 1;
@@ -2516,38 +2649,38 @@ u8 QuestMenu_GetSetQuestState(u8 quest, u8 caseId)
 
 			mask2 = 1 << bit2;
 			mask3 = 1 << bit3;
-			return QuestMenu_GetSetQuestState(quest, FLAG_GET_UNLOCKED) && \
-			       !(gSaveBlock3Ptr->questData[index] & mask) && \
-			       !(gSaveBlock3Ptr->questData[index2] & mask2) && \
-			       !(gSaveBlock3Ptr->questData[index3] & mask3);
+			return (questData[unlockedIndex] & unlockedMask) && \
+			       !(questData[index] & mask) && \
+			       !(questData[index2] & mask2) && \
+			       !(questData[index3] & mask3);
 		case FLAG_GET_ACTIVE:
-			return gSaveBlock3Ptr->questData[index] & mask;
+			return questData[index] & mask;
 		case FLAG_SET_ACTIVE:
-			gSaveBlock3Ptr->questData[index] |= mask;
+			questData[index] |= mask;
 			return 1;
 		case FLAG_REMOVE_ACTIVE:
-			gSaveBlock3Ptr->questData[index] &= ~mask;
+			questData[index] &= ~mask;
 			return 1;
 		case FLAG_GET_REWARD:
-			return gSaveBlock3Ptr->questData[index] & mask;
+			return questData[index] & mask;
 		case FLAG_SET_REWARD:
-			gSaveBlock3Ptr->questData[index] |= mask;
+			questData[index] |= mask;
 			return 1;
 		case FLAG_REMOVE_REWARD:
-			gSaveBlock3Ptr->questData[index] &= ~mask;
+			questData[index] &= ~mask;
 			return 1;
 		case FLAG_GET_COMPLETED:
-			return gSaveBlock3Ptr->questData[index] & mask;
+			return questData[index] & mask;
 		case FLAG_SET_COMPLETED:
-			gSaveBlock3Ptr->questData[index] |= mask;
+			questData[index] |= mask;
 			return 1;
 		case FLAG_GET_FAVORITE:
-			return gSaveBlock3Ptr->questData[index] & mask;
+			return questData[index] & mask;
 		case FLAG_SET_FAVORITE:
-			gSaveBlock3Ptr->questData[index] |= mask;
+			questData[index] |= mask;
 			return 1;
 		case FLAG_REMOVE_FAVORITE:
-			gSaveBlock3Ptr->questData[index] &= ~mask;
+			questData[index] &= ~mask;
 			return 1;
 	}
 	return FALSE;
@@ -2722,7 +2855,8 @@ u8 CountFavoriteQuests(void)
 
 void PopulateEmptyRow(u8 countQuest)
 {
-	questNamePointer = QuestNameBufferCopy(countQuest, sText_Empty);
+	questNameArray[countQuest][0] = EOS;
+	questNamePointer = questNameArray[countQuest];
 }
 
 static u8 *QuestNameBufferCopy(u8 bufferId, const u8 *src)
@@ -3948,7 +4082,10 @@ void QuestMenu_ResetMenuSaveData(void)
 {
 	memset(gSaveBlock3Ptr->questData, 0, sizeof(gSaveBlock3Ptr->questData));
 	memset(gSaveBlock3Ptr->subQuests, 0, sizeof(gSaveBlock3Ptr->subQuests));
+	memset(gSaveBlock3Ptr->questDataExtension, 0,
+	       sizeof(gSaveBlock3Ptr->questDataExtension));
 	gSaveBlock3Ptr->questDataMagic = QUEST_SAVE_DATA_MAGIC;
+	gSaveBlock3Ptr->questDataExtensionMagic = QUEST_SAVE_EXTENSION_MAGIC;
 }
 
 u32 QuestMenu_GetQuestVariableId(u8 quest)
@@ -3986,6 +4123,9 @@ static bool8 QuestHasReward(u8 questId)
 // player claims it from the menu; a quest with no reward completes outright.
 void QuestMenu_MarkQuestFinished(u8 questId)
 {
+	if (!QuestMenu_IsQuestIdValid(questId))
+		return;
+
 	if (QuestMenu_GetSetQuestState(questId, FLAG_GET_COMPLETED)
 	    || QuestMenu_GetSetQuestState(questId, FLAG_GET_REWARD))
 		return;
@@ -4058,12 +4198,53 @@ void QuestMenu_CheckCatchQuests(void)
 	}
 }
 
+// New quest state lives in appended save data, but the encounter flags already
+// exist in older saves. Reconcile those flags without dumping a stack of quest
+// completion banners on a returning player. An active quest still announces a
+// completion, because that represents normal in-progress gameplay.
+static void QuestMenu_SyncLegendaryQuest(u8 questId, bool8 encounterFinished)
+{
+	if (!encounterFinished
+	 || QuestMenu_GetSetQuestState(questId, FLAG_GET_COMPLETED)
+	 || QuestMenu_GetSetQuestState(questId, FLAG_GET_REWARD))
+		return;
+
+	if (QuestMenu_GetSetQuestState(questId, FLAG_GET_ACTIVE))
+	{
+		QuestMenu_MarkQuestFinished(questId);
+	}
+	else
+	{
+		QuestMenu_GetSetQuestState(questId, FLAG_SET_UNLOCKED);
+		QuestMenu_GetSetQuestState(questId, FLAG_REMOVE_ACTIVE);
+		QuestMenu_GetSetQuestState(questId, FLAG_SET_COMPLETED);
+	}
+}
+
 static void QuestMenu_TryAdvanceConditionalQuests(void)
 {
 	u16 caught = GetNationalPokedexCount(FLAG_GET_CAUGHT);
 	u32 i;
 
 	QuestMenu_CheckCatchQuests();
+
+	QuestMenu_SyncLegendaryQuest(QUEST_GROUDON,
+	                              FlagGet(FLAG_DEFEATED_GROUDON));
+	QuestMenu_SyncLegendaryQuest(QUEST_KYOGRE,
+	                              FlagGet(FLAG_DEFEATED_KYOGRE));
+	QuestMenu_SyncLegendaryQuest(QUEST_RAYQUAZA,
+	                              FlagGet(FLAG_DEFEATED_RAYQUAZA));
+	QuestMenu_SyncLegendaryQuest(QUEST_REGIROCK,
+	                              FlagGet(FLAG_DEFEATED_REGIROCK));
+	QuestMenu_SyncLegendaryQuest(QUEST_REGICE,
+	                              FlagGet(FLAG_DEFEATED_REGICE));
+	QuestMenu_SyncLegendaryQuest(QUEST_REGISTEEL,
+	                              FlagGet(FLAG_DEFEATED_REGISTEEL));
+	QuestMenu_SyncLegendaryQuest(QUEST_EON_TICKET,
+	                              FlagGet(FLAG_DEFEATED_LATIAS_OR_LATIOS)
+	                           || FlagGet(FLAG_CAUGHT_LATIAS_OR_LATIOS));
+	QuestMenu_SyncLegendaryQuest(QUEST_SEALED_CHAMBER,
+	                              FlagGet(FLAG_LANDMARK_SEALED_CHAMBER));
 
 	if (QuestMenu_IsQuestAvailable(QUEST_POKEDEX)
 	    && caught >= NATIONAL_DEX_COUNT)
@@ -4088,6 +4269,8 @@ static void QuestMenu_TryAdvanceConditionalQuests(void)
 			QUEST_BADGE_1, QUEST_BADGE_2, QUEST_BADGE_3, QUEST_BADGE_4,
 			QUEST_BADGE_5, QUEST_BADGE_6, QUEST_BADGE_7, QUEST_BADGE_8,
 			QUEST_CHAMPION,
+			QUEST_SEALED_CHAMBER,
+			QUEST_REGIROCK, QUEST_REGICE, QUEST_REGISTEEL,
 		};
 
 		for (i = 0; i < ARRAY_COUNT(sAutoActiveQuests); i++)
@@ -4102,6 +4285,20 @@ static void QuestMenu_TryAdvanceConditionalQuests(void)
 				QuestMenu_GetSetQuestState(quest, FLAG_SET_ACTIVE);
 			}
 		}
+	}
+
+	// Once the three ruin encounters are resolved, the linked chain converges
+	// on the post-game statue. The statue can still start this quest itself for
+	// traded titans, preserving the original party-only awakening condition.
+	if (!FlagGet(FLAG_LEGENDARY_BTL)
+	 && FlagGet(FLAG_DEFEATED_REGIROCK)
+	 && FlagGet(FLAG_DEFEATED_REGICE)
+	 && FlagGet(FLAG_DEFEATED_REGISTEEL)
+	 && !QuestMenu_GetSetQuestState(QUEST_REGIGIGAS, FLAG_GET_COMPLETED)
+	 && !QuestMenu_GetSetQuestState(QUEST_REGIGIGAS, FLAG_GET_REWARD))
+	{
+		QuestMenu_GetSetQuestState(QUEST_REGIGIGAS, FLAG_SET_UNLOCKED);
+		QuestMenu_GetSetQuestState(QUEST_REGIGIGAS, FLAG_SET_ACTIVE);
 	}
 }
 
