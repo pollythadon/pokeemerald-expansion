@@ -50,9 +50,23 @@ script DesertUnderpass_EventScript_Regigigas {
         end
     }
 
-    // The statue itself is the quest giver. The first postgame interaction
-    // activates its objective. subsequent interactions go straight to the
-    // party check without replaying the quest-start announcement.
+    // The statue remains sealed until the player completes the full ruin
+    // quest chain. Simply trading for the three titans cannot bypass it.
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_REGIROCK)
+    if (var(VAR_RESULT) == FALSE) {
+        goto(DesertUnderpass_EventScript_RegigigasSealsIntact)
+    }
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_REGICE)
+    if (var(VAR_RESULT) == FALSE) {
+        goto(DesertUnderpass_EventScript_RegigigasSealsIntact)
+    }
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_REGISTEEL)
+    if (var(VAR_RESULT) == FALSE) {
+        goto(DesertUnderpass_EventScript_RegigigasSealsIntact)
+    }
+
+    // The first eligible interaction activates the finale. Later interactions
+    // go straight to the party check without replaying the announcement.
     questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_REGIGIGAS)
     if (var(VAR_RESULT) == FALSE) {
         startquest(QUEST_REGIGIGAS)
@@ -84,6 +98,13 @@ script DesertUnderpass_EventScript_Regigigas {
     } else {
         call(DesertUnderpass_EventScript_RegigigasEscaped)
     }
+    releaseall
+    end
+}
+
+script DesertUnderpass_EventScript_RegigigasSealsIntact {
+    msgbox(format("The statue's three carved patterns remain dark.\p"
+                  "Somewhere across Hoenn, the ancient seals of Regirock, Regice, and Registeel remain unbroken."))
     releaseall
     end
 }

@@ -80,62 +80,80 @@ DesertUnderpass_EventScript_Regigigas::
 	faceplayer
 # 47 "data/maps/DesertUnderpass/scripts.pory"
 	goto_if_set FLAG_LEGENDARY_BTL, DesertUnderpass_EventScript_Regigigas_2
+# 55 "data/maps/DesertUnderpass/scripts.pory"
+	questmenu QUEST_MENU_CHECK_COMPLETE, QUEST_REGIROCK
 # 56 "data/maps/DesertUnderpass/scripts.pory"
-	questmenu QUEST_MENU_CHECK_ACTIVE, QUEST_REGIGIGAS
-# 57 "data/maps/DesertUnderpass/scripts.pory"
 	compare VAR_RESULT, FALSE
 	goto_if_eq DesertUnderpass_EventScript_Regigigas_5
 DesertUnderpass_EventScript_Regigigas_4:
+# 59 "data/maps/DesertUnderpass/scripts.pory"
+	questmenu QUEST_MENU_CHECK_COMPLETE, QUEST_REGICE
+# 60 "data/maps/DesertUnderpass/scripts.pory"
+	compare VAR_RESULT, FALSE
+	goto_if_eq DesertUnderpass_EventScript_Regigigas_8
+DesertUnderpass_EventScript_Regigigas_7:
+# 63 "data/maps/DesertUnderpass/scripts.pory"
+	questmenu QUEST_MENU_CHECK_COMPLETE, QUEST_REGISTEEL
+# 64 "data/maps/DesertUnderpass/scripts.pory"
+	compare VAR_RESULT, FALSE
+	goto_if_eq DesertUnderpass_EventScript_Regigigas_11
+DesertUnderpass_EventScript_Regigigas_10:
+# 70 "data/maps/DesertUnderpass/scripts.pory"
+	questmenu QUEST_MENU_CHECK_ACTIVE, QUEST_REGIGIGAS
+# 71 "data/maps/DesertUnderpass/scripts.pory"
+	compare VAR_RESULT, FALSE
+	goto_if_eq DesertUnderpass_EventScript_Regigigas_14
+DesertUnderpass_EventScript_Regigigas_13:
 	checkpartymon SPECIES_REGIROCK
 # 0 "data/maps/DesertUnderpass/scripts.pory"
 	compare VAR_RESULT, 0
-	goto_if_eq DesertUnderpass_EventScript_Regigigas_8
+	goto_if_eq DesertUnderpass_EventScript_Regigigas_17
 	checkpartymon SPECIES_REGICE
 # 0 "data/maps/DesertUnderpass/scripts.pory"
 	compare VAR_RESULT, 0
-	goto_if_eq DesertUnderpass_EventScript_Regigigas_8
+	goto_if_eq DesertUnderpass_EventScript_Regigigas_17
 	checkpartymon SPECIES_REGISTEEL
 # 0 "data/maps/DesertUnderpass/scripts.pory"
 	compare VAR_RESULT, 0
-	goto_if_eq DesertUnderpass_EventScript_Regigigas_8
-# 68 "data/maps/DesertUnderpass/scripts.pory"
+	goto_if_eq DesertUnderpass_EventScript_Regigigas_17
+# 82 "data/maps/DesertUnderpass/scripts.pory"
 	msgbox DesertUnderpass_EventScript_Regigigas_Text_2, MSGBOX_AUTOCLOSE
-# 69 "data/maps/DesertUnderpass/scripts.pory"
+# 83 "data/maps/DesertUnderpass/scripts.pory"
 	closemessage
-# 70 "data/maps/DesertUnderpass/scripts.pory"
+# 84 "data/maps/DesertUnderpass/scripts.pory"
 	playse SE_TRUCK_MOVE
-# 71 "data/maps/DesertUnderpass/scripts.pory"
-	special DoSealedChamberShakingEffect_Short
-# 72 "data/maps/DesertUnderpass/scripts.pory"
-	applymovement LOCALID_REGIGIGAS, DesertUnderpass_Movement_RegigigasAwakens
-# 73 "data/maps/DesertUnderpass/scripts.pory"
-	waitmovement 0
-# 74 "data/maps/DesertUnderpass/scripts.pory"
-	playmoncry SPECIES_REGIGIGAS, CRY_MODE_ENCOUNTER
-# 75 "data/maps/DesertUnderpass/scripts.pory"
-	delay 40
-# 76 "data/maps/DesertUnderpass/scripts.pory"
-	waitmoncry
-# 77 "data/maps/DesertUnderpass/scripts.pory"
-	msgbox DesertUnderpass_EventScript_Regigigas_Text_3, MSGBOX_AUTOCLOSE
-# 78 "data/maps/DesertUnderpass/scripts.pory"
-	setvar VAR_LAST_TALKED, LOCALID_REGIGIGAS
-# 79 "data/maps/DesertUnderpass/scripts.pory"
-	setwildbattle SPECIES_REGIGIGAS, 80
-# 80 "data/maps/DesertUnderpass/scripts.pory"
-	special StartRegiBattle
-# 81 "data/maps/DesertUnderpass/scripts.pory"
-	specialvar VAR_RESULT, GetBattleOutcome
-# 82 "data/maps/DesertUnderpass/scripts.pory"
-	compare VAR_RESULT, B_OUTCOME_CAUGHT
-	goto_if_eq DesertUnderpass_EventScript_Regigigas_15
-# 82 "data/maps/DesertUnderpass/scripts.pory"
-	compare VAR_RESULT, B_OUTCOME_WON
-	goto_if_eq DesertUnderpass_EventScript_Regigigas_15
 # 85 "data/maps/DesertUnderpass/scripts.pory"
-	call DesertUnderpass_EventScript_RegigigasEscaped
-DesertUnderpass_EventScript_Regigigas_14:
+	special DoSealedChamberShakingEffect_Short
+# 86 "data/maps/DesertUnderpass/scripts.pory"
+	applymovement LOCALID_REGIGIGAS, DesertUnderpass_Movement_RegigigasAwakens
 # 87 "data/maps/DesertUnderpass/scripts.pory"
+	waitmovement 0
+# 88 "data/maps/DesertUnderpass/scripts.pory"
+	playmoncry SPECIES_REGIGIGAS, CRY_MODE_ENCOUNTER
+# 89 "data/maps/DesertUnderpass/scripts.pory"
+	delay 40
+# 90 "data/maps/DesertUnderpass/scripts.pory"
+	waitmoncry
+# 91 "data/maps/DesertUnderpass/scripts.pory"
+	msgbox DesertUnderpass_EventScript_Regigigas_Text_3, MSGBOX_AUTOCLOSE
+# 92 "data/maps/DesertUnderpass/scripts.pory"
+	setvar VAR_LAST_TALKED, LOCALID_REGIGIGAS
+# 93 "data/maps/DesertUnderpass/scripts.pory"
+	setwildbattle SPECIES_REGIGIGAS, 80
+# 94 "data/maps/DesertUnderpass/scripts.pory"
+	special StartRegiBattle
+# 95 "data/maps/DesertUnderpass/scripts.pory"
+	specialvar VAR_RESULT, GetBattleOutcome
+# 96 "data/maps/DesertUnderpass/scripts.pory"
+	compare VAR_RESULT, B_OUTCOME_CAUGHT
+	goto_if_eq DesertUnderpass_EventScript_Regigigas_24
+# 96 "data/maps/DesertUnderpass/scripts.pory"
+	compare VAR_RESULT, B_OUTCOME_WON
+	goto_if_eq DesertUnderpass_EventScript_Regigigas_24
+# 99 "data/maps/DesertUnderpass/scripts.pory"
+	call DesertUnderpass_EventScript_RegigigasEscaped
+DesertUnderpass_EventScript_Regigigas_23:
+# 101 "data/maps/DesertUnderpass/scripts.pory"
 	releaseall
 	end
 
@@ -147,68 +165,91 @@ DesertUnderpass_EventScript_Regigigas_2:
 	end
 
 DesertUnderpass_EventScript_Regigigas_5:
-# 58 "data/maps/DesertUnderpass/scripts.pory"
-	startquest QUEST_REGIGIGAS
+# 57 "data/maps/DesertUnderpass/scripts.pory"
+	goto DesertUnderpass_EventScript_RegigigasSealsIntact
 	goto DesertUnderpass_EventScript_Regigigas_4
 
 DesertUnderpass_EventScript_Regigigas_8:
-# 62 "data/maps/DesertUnderpass/scripts.pory"
+# 61 "data/maps/DesertUnderpass/scripts.pory"
+	goto DesertUnderpass_EventScript_RegigigasSealsIntact
+	goto DesertUnderpass_EventScript_Regigigas_7
+
+DesertUnderpass_EventScript_Regigigas_11:
+# 65 "data/maps/DesertUnderpass/scripts.pory"
+	goto DesertUnderpass_EventScript_RegigigasSealsIntact
+	goto DesertUnderpass_EventScript_Regigigas_10
+
+DesertUnderpass_EventScript_Regigigas_14:
+# 72 "data/maps/DesertUnderpass/scripts.pory"
+	startquest QUEST_REGIGIGAS
+	goto DesertUnderpass_EventScript_Regigigas_13
+
+DesertUnderpass_EventScript_Regigigas_17:
+# 76 "data/maps/DesertUnderpass/scripts.pory"
 	msgbox DesertUnderpass_EventScript_Regigigas_Text_1
-# 64 "data/maps/DesertUnderpass/scripts.pory"
+# 78 "data/maps/DesertUnderpass/scripts.pory"
 	releaseall
 	end
 
-DesertUnderpass_EventScript_Regigigas_15:
-# 83 "data/maps/DesertUnderpass/scripts.pory"
+DesertUnderpass_EventScript_Regigigas_24:
+# 97 "data/maps/DesertUnderpass/scripts.pory"
 	call DesertUnderpass_EventScript_RegigigasDefeated
-	goto DesertUnderpass_EventScript_Regigigas_14
+	goto DesertUnderpass_EventScript_Regigigas_23
+
+
+DesertUnderpass_EventScript_RegigigasSealsIntact::
+# 106 "data/maps/DesertUnderpass/scripts.pory"
+	msgbox DesertUnderpass_EventScript_RegigigasSealsIntact_Text_0
+# 108 "data/maps/DesertUnderpass/scripts.pory"
+	releaseall
+	end
 
 
 DesertUnderpass_EventScript_RegigigasDefeated::
-# 92 "data/maps/DesertUnderpass/scripts.pory"
+# 113 "data/maps/DesertUnderpass/scripts.pory"
 	fadescreenswapbuffers FADE_TO_BLACK
-# 93 "data/maps/DesertUnderpass/scripts.pory"
+# 114 "data/maps/DesertUnderpass/scripts.pory"
 	removeobject LOCALID_REGIGIGAS
-# 94 "data/maps/DesertUnderpass/scripts.pory"
+# 115 "data/maps/DesertUnderpass/scripts.pory"
 	setflag FLAG_REGIGIGAS_BATTLE
-# 95 "data/maps/DesertUnderpass/scripts.pory"
+# 116 "data/maps/DesertUnderpass/scripts.pory"
 	setflag FLAG_REGIGIGAS_DFTD
-# 96 "data/maps/DesertUnderpass/scripts.pory"
+# 117 "data/maps/DesertUnderpass/scripts.pory"
 	completequest QUEST_REGIGIGAS
-# 97 "data/maps/DesertUnderpass/scripts.pory"
+# 118 "data/maps/DesertUnderpass/scripts.pory"
 	fadescreenswapbuffers FADE_FROM_BLACK
-# 98 "data/maps/DesertUnderpass/scripts.pory"
+# 119 "data/maps/DesertUnderpass/scripts.pory"
 	msgbox DesertUnderpass_EventScript_RegigigasDefeated_Text_0
 	return
 
 
 DesertUnderpass_EventScript_RegigigasEscaped::
-# 103 "data/maps/DesertUnderpass/scripts.pory"
+# 124 "data/maps/DesertUnderpass/scripts.pory"
 	playmoncry SPECIES_REGIGIGAS, CRY_MODE_ENCOUNTER
-# 104 "data/maps/DesertUnderpass/scripts.pory"
+# 125 "data/maps/DesertUnderpass/scripts.pory"
 	delay 20
-# 105 "data/maps/DesertUnderpass/scripts.pory"
+# 126 "data/maps/DesertUnderpass/scripts.pory"
 	msgbox DesertUnderpass_EventScript_RegigigasEscaped_Text_0
 	return
 
 
-# 109 "data/maps/DesertUnderpass/scripts.pory"
+# 130 "data/maps/DesertUnderpass/scripts.pory"
 DesertUnderpass_Movement_RegigigasAwakens:
-# 110 "data/maps/DesertUnderpass/scripts.pory"
+# 131 "data/maps/DesertUnderpass/scripts.pory"
 	walk_in_place_faster_down
-# 110 "data/maps/DesertUnderpass/scripts.pory"
+# 131 "data/maps/DesertUnderpass/scripts.pory"
 	walk_in_place_faster_down
-# 110 "data/maps/DesertUnderpass/scripts.pory"
+# 131 "data/maps/DesertUnderpass/scripts.pory"
 	walk_in_place_faster_down
-# 110 "data/maps/DesertUnderpass/scripts.pory"
+# 131 "data/maps/DesertUnderpass/scripts.pory"
 	walk_in_place_faster_down
-# 111 "data/maps/DesertUnderpass/scripts.pory"
+# 132 "data/maps/DesertUnderpass/scripts.pory"
 	jump_in_place_down
-# 112 "data/maps/DesertUnderpass/scripts.pory"
+# 133 "data/maps/DesertUnderpass/scripts.pory"
 	walk_in_place_faster_down
-# 112 "data/maps/DesertUnderpass/scripts.pory"
+# 133 "data/maps/DesertUnderpass/scripts.pory"
 	walk_in_place_faster_down
-# 113 "data/maps/DesertUnderpass/scripts.pory"
+# 134 "data/maps/DesertUnderpass/scripts.pory"
 	face_player
 	step_end
 
@@ -219,7 +260,7 @@ DesertUnderpass_EventScript_Regigigas_Text_0:
 	.string "still.$"
 
 DesertUnderpass_EventScript_Regigigas_Text_1:
-# 62 "data/maps/DesertUnderpass/scripts.pory"
+# 76 "data/maps/DesertUnderpass/scripts.pory"
 	.string "Three patterns are carved into the\n"
 	.string "statue's base. They resemble Regirock,\l"
 	.string "Regice, and Registeel.\p"
@@ -227,23 +268,31 @@ DesertUnderpass_EventScript_Regigigas_Text_1:
 	.string "three stand before it together.$"
 
 DesertUnderpass_EventScript_Regigigas_Text_2:
-# 68 "data/maps/DesertUnderpass/scripts.pory"
+# 82 "data/maps/DesertUnderpass/scripts.pory"
 	.string "The three titans resonate as one. Deep\n"
 	.string "within the statue, something begins to\l"
 	.string "move...$"
 
 DesertUnderpass_EventScript_Regigigas_Text_3:
-# 77 "data/maps/DesertUnderpass/scripts.pory"
+# 91 "data/maps/DesertUnderpass/scripts.pory"
 	.string "REGIGIGAS has awakened!$"
 
+DesertUnderpass_EventScript_RegigigasSealsIntact_Text_0:
+# 106 "data/maps/DesertUnderpass/scripts.pory"
+	.string "The statue's three carved patterns\n"
+	.string "remain dark.\p"
+	.string "Somewhere across Hoenn, the ancient\n"
+	.string "seals of Regirock, Regice, and Registeel\l"
+	.string "remain unbroken.$"
+
 DesertUnderpass_EventScript_RegigigasDefeated_Text_0:
-# 98 "data/maps/DesertUnderpass/scripts.pory"
+# 119 "data/maps/DesertUnderpass/scripts.pory"
 	.string "The ancient titan's footsteps fade,\n"
 	.string "and the Desert Underpass falls silent\l"
 	.string "once more.$"
 
 DesertUnderpass_EventScript_RegigigasEscaped_Text_0:
-# 105 "data/maps/DesertUnderpass/scripts.pory"
+# 126 "data/maps/DesertUnderpass/scripts.pory"
 	.string "Regigigas grinds to a halt and becomes\n"
 	.string "as still as stone once more. Return when\l"
 	.string "you are ready.$"

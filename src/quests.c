@@ -2420,8 +2420,21 @@ u8 GenerateSubquestList()
 // Each quest decides for itself when it appears in the menu. FLAG_LEGENDARY_BTL
 // is set at new game and cleared on becoming Champion (the same flag that unhides
 // every legendary quest-giver NPC), so a cleared flag means "post-game is live."
+static bool8 QuestMenu_AreRegiQuestsComplete(void)
+{
+	return QuestMenu_GetSetQuestState(QUEST_REGIROCK, FLAG_GET_COMPLETED)
+	    && QuestMenu_GetSetQuestState(QUEST_REGICE, FLAG_GET_COMPLETED)
+	    && QuestMenu_GetSetQuestState(QUEST_REGISTEEL, FLAG_GET_COMPLETED);
+}
+
 bool8 QuestMenu_IsQuestAvailable(u8 questId)
 {
+	// Regigigas is the finale of the titan chain. Owning traded titans must not
+	// reveal or start it before the player finishes all three ruin quests.
+	if (questId == QUEST_REGIGIGAS)
+		return !FlagGet(FLAG_LEGENDARY_BTL)
+		    && QuestMenu_AreRegiQuestsComplete();
+
 	switch (sSideQuests[questId].availType)
 	{
 		case QUEST_AVAIL_FLAG_SET:
@@ -4287,13 +4300,9 @@ static void QuestMenu_TryAdvanceConditionalQuests(void)
 		}
 	}
 
-	// Once the three ruin encounters are resolved, the linked chain converges
-	// on the post-game statue. The statue can still start this quest itself for
-	// traded titans, preserving the original party-only awakening condition.
-	if (!FlagGet(FLAG_LEGENDARY_BTL)
-	 && FlagGet(FLAG_DEFEATED_REGIROCK)
-	 && FlagGet(FLAG_DEFEATED_REGICE)
-	 && FlagGet(FLAG_DEFEATED_REGISTEEL)
+	// Once all three ruin quests are complete, the linked chain converges on
+	// the post-game statue. Party ownership alone cannot unlock this finale.
+	if (QuestMenu_IsQuestAvailable(QUEST_REGIGIGAS)
 	 && !QuestMenu_GetSetQuestState(QUEST_REGIGIGAS, FLAG_GET_COMPLETED)
 	 && !QuestMenu_GetSetQuestState(QUEST_REGIGIGAS, FLAG_GET_REWARD))
 	{
