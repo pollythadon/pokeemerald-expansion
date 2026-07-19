@@ -70,11 +70,13 @@ AncientTomb_EventScript_Registeel::
 	goto_if_eq VAR_RESULT, B_OUTCOME_RAN, AncientTomb_EventScript_RanFromRegisteel
 	goto_if_eq VAR_RESULT, B_OUTCOME_PLAYER_TELEPORTED, AncientTomb_EventScript_RanFromRegisteel
 	setflag FLAG_DEFEATED_REGISTEEL
+	completequest QUEST_REGISTEEL
 	release
 	end
 
 AncientTomb_EventScript_DefeatedRegisteel::
 	setflag FLAG_DEFEATED_REGISTEEL
+	completequest QUEST_REGISTEEL
 	goto Common_EventScript_RemoveStaticPokemon
 	end
 
@@ -82,4 +84,3 @@ AncientTomb_EventScript_RanFromRegisteel::
 	setvar VAR_0x8004, SPECIES_REGISTEEL
 	goto Common_EventScript_LegendaryFlewAway
 	end
-

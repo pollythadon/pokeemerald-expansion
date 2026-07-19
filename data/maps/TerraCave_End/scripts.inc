@@ -44,12 +44,14 @@ TerraCave_End_EventScript_Groudon::
 	goto_if_eq VAR_RESULT, B_OUTCOME_PLAYER_TELEPORTED, TerraCave_End_EventScript_RanFromGroudon
 	setvar VAR_SHOULD_END_ABNORMAL_WEATHER, 1
 	setflag FLAG_DEFEATED_GROUDON
+	completequest QUEST_GROUDON
 	releaseall
 	end
 
 TerraCave_End_EventScript_DefeatedGroudon::
 	setvar VAR_SHOULD_END_ABNORMAL_WEATHER, 1
 	setflag FLAG_DEFEATED_GROUDON
+	completequest QUEST_GROUDON
 	goto Common_EventScript_RemoveStaticPokemon
 	end
 
@@ -68,4 +70,3 @@ TerraCave_End_Movement_GroudonApproach:
 	delay_16
 	walk_down_affine
 	step_end
-

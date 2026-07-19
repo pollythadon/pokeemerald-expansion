@@ -57,7 +57,7 @@ CaveOfOrigin_B1F_EventScript_AtSkyPillar::
 	removeobject LOCALID_CAVE_OF_ORIGIN_WALLACE
 	clearflag FLAG_HIDE_SKY_PILLAR_WALLACE
 	fadescreen FADE_FROM_BLACK
-	release
+	goto CaveOfOrigin_B1F_EventScript_StartRayquazaQuest
 	end
 
 CaveOfOrigin_B1F_Text_WallaceStory:
@@ -190,4 +190,10 @@ script DIALGARanAway {
     fadescreenswapbuffers(FADE_FROM_WHITE)
     msgbox(format("Gone in an instant. To It, my whole life is just an instant."))
     return
+}
+
+script CaveOfOrigin_B1F_EventScript_StartRayquazaQuest {
+    startquest(QUEST_RAYQUAZA)
+    release
+    end
 }

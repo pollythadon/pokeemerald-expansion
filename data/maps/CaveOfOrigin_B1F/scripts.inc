@@ -117,7 +117,7 @@ CaveOfOrigin_B1F_EventScript_AtSkyPillar::
 # 59 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	fadescreen FADE_FROM_BLACK
 # 60 "data/maps/CaveOfOrigin_B1F/scripts.pory"
-	release
+	goto CaveOfOrigin_B1F_EventScript_StartRayquazaQuest
 # 61 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	end
 # 62 "data/maps/CaveOfOrigin_B1F/scripts.pory"
@@ -383,6 +383,14 @@ DIALGARanAway::
 # 191 "data/maps/CaveOfOrigin_B1F/scripts.pory"
 	msgbox DIALGARanAway_Text_0
 	return
+
+
+CaveOfOrigin_B1F_EventScript_StartRayquazaQuest::
+# 196 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	startquest QUEST_RAYQUAZA
+# 197 "data/maps/CaveOfOrigin_B1F/scripts.pory"
+	release
+	end
 
 
 Legendary_EventScript_DIALGA_Text_0:

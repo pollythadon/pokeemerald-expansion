@@ -70,11 +70,13 @@ DesertRuins_EventScript_Regirock::
 	goto_if_eq VAR_RESULT, B_OUTCOME_RAN, DesertRuins_EventScript_RanFromRegirock
 	goto_if_eq VAR_RESULT, B_OUTCOME_PLAYER_TELEPORTED, DesertRuins_EventScript_RanFromRegirock
 	setflag FLAG_DEFEATED_REGIROCK
+	completequest QUEST_REGIROCK
 	release
 	end
 
 DesertRuins_EventScript_DefeatedRegirock::
 	setflag FLAG_DEFEATED_REGIROCK
+	completequest QUEST_REGIROCK
 	goto Common_EventScript_RemoveStaticPokemon
 	end
 
@@ -82,4 +84,3 @@ DesertRuins_EventScript_RanFromRegirock::
 	setvar VAR_0x8004, SPECIES_REGIROCK
 	goto Common_EventScript_LegendaryFlewAway
 	end
-

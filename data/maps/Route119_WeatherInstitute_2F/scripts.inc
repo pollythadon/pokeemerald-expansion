@@ -138,11 +138,21 @@ Route119_WeatherInstitute_2F_EventScript_TryStartAbnormalWeather::
 	call_if_unset FLAG_TEMP_2, Route119_WeatherInstitute_2F_EventScript_CreateAbnormalWeather
 	specialvar VAR_RESULT, GetAbnormalWeatherMapNameAndType
 	goto_if_eq VAR_RESULT, 1, Route119_WeatherInstitute_2F_EventScript_KyogreWeather
+	questmenu QUEST_MENU_CHECK_UNLOCKED, QUEST_GROUDON
+	goto_if_eq VAR_RESULT, TRUE, Route119_WeatherInstitute_2F_EventScript_GroudonWeatherMessage
+	startquest QUEST_GROUDON
+	specialvar VAR_RESULT, GetAbnormalWeatherMapNameAndType @ Restore STR_VAR_1 after the quest banner uses it.
+Route119_WeatherInstitute_2F_EventScript_GroudonWeatherMessage::
 	msgbox Route119_WeatherInstitute_2F_Text_GroudonWeather, MSGBOX_DEFAULT
 	release
 	end
 
 Route119_WeatherInstitute_2F_EventScript_KyogreWeather::
+	questmenu QUEST_MENU_CHECK_UNLOCKED, QUEST_KYOGRE
+	goto_if_eq VAR_RESULT, TRUE, Route119_WeatherInstitute_2F_EventScript_KyogreWeatherMessage
+	startquest QUEST_KYOGRE
+	specialvar VAR_RESULT, GetAbnormalWeatherMapNameAndType @ Restore STR_VAR_1 after the quest banner uses it.
+Route119_WeatherInstitute_2F_EventScript_KyogreWeatherMessage::
 	msgbox Route119_WeatherInstitute_2F_Text_KyogreWeather, MSGBOX_DEFAULT
 	release
 	end
@@ -323,4 +333,3 @@ Route119_WeatherInstitute_2F_Text_NoAbnormalWeather:
 	.string "no longer being reported.\p"
 	.string "The occasional rainfall is a blessing,\n"
 	.string "really.$"
-

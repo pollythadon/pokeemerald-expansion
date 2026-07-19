@@ -44,12 +44,14 @@ MarineCave_End_EventScript_Kyogre::
 	goto_if_eq VAR_RESULT, B_OUTCOME_PLAYER_TELEPORTED, MarineCave_End_EventScript_RanFromKyogre
 	setvar VAR_SHOULD_END_ABNORMAL_WEATHER, 1
 	setflag FLAG_DEFEATED_KYOGRE
+	completequest QUEST_KYOGRE
 	releaseall
 	end
 
 MarineCave_End_EventScript_DefeatedKyogre::
 	setvar VAR_SHOULD_END_ABNORMAL_WEATHER, 1
 	setflag FLAG_DEFEATED_KYOGRE
+	completequest QUEST_KYOGRE
 	goto Common_EventScript_RemoveStaticPokemon
 	end
 
@@ -68,4 +70,3 @@ MarineCave_End_Movement_KyogreApproach:
 	delay_16
 	walk_down_affine
 	step_end
-

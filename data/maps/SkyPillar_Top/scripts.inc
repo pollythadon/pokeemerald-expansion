@@ -55,11 +55,13 @@ SkyPillar_Top_EventScript_Rayquaza::
 	goto_if_eq VAR_RESULT, B_OUTCOME_RAN, SkyPillar_Top_EventScript_RanFromRayquaza
 	goto_if_eq VAR_RESULT, B_OUTCOME_PLAYER_TELEPORTED, SkyPillar_Top_EventScript_RanFromRayquaza
 	setflag FLAG_DEFEATED_RAYQUAZA
+	completequest QUEST_RAYQUAZA
 	releaseall
 	end
 
 SkyPillar_Top_EventScript_DefeatedRayquaza::
 	setflag FLAG_DEFEATED_RAYQUAZA
+	completequest QUEST_RAYQUAZA
 	goto SkyPillar_Top_EventScript_DefeatedRayquaza2
 	end
 
@@ -179,4 +181,3 @@ SkyPillar_Top_Movement_CameraPanDown:
 
 SkyPillar_Top_Text_RayquazaFlewOff:
 	.string "The awakened RAYQUAZA flew off…$"
-
