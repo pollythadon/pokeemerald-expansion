@@ -373,4 +373,80 @@ static const u8 sQuestDesc_Juan[] = _("Show Juan a Feebas in your party.\nHe ins
 static const u8 sQuestDone_Juan[] = _("Feebas proved to Juan that true\nbeauty begins before anyone applauds.");
 static const u8 sQuestMap_Juan[] = _("Sootopolis Gym");
 
+// ======================= Pokédex type collections =========================
+
+static const u8 sQuestMap_TypeCollector[] = _("Anywhere");
+
+static const u8 sQuestName_TypeNormal[] = _("Normal Collector");
+static const u8 sQuestDesc_TypeNormal[] = _("Register 10 different\nNormal-type Pokémon as caught.");
+static const u8 sQuestDone_TypeNormal[] = _("Ten different Normal-type\nPokémon are registered as caught!");
+
+static const u8 sQuestName_TypeFighting[] = _("Fighting Collector");
+static const u8 sQuestDesc_TypeFighting[] = _("Register 10 different\nFighting-type Pokémon as caught.");
+static const u8 sQuestDone_TypeFighting[] = _("Ten different Fighting-type\nPokémon are registered as caught!");
+
+static const u8 sQuestName_TypeFlying[] = _("Flying Collector");
+static const u8 sQuestDesc_TypeFlying[] = _("Register 10 different\nFlying-type Pokémon as caught.");
+static const u8 sQuestDone_TypeFlying[] = _("Ten different Flying-type\nPokémon are registered as caught!");
+
+static const u8 sQuestName_TypePoison[] = _("Poison Collector");
+static const u8 sQuestDesc_TypePoison[] = _("Register 10 different\nPoison-type Pokémon as caught.");
+static const u8 sQuestDone_TypePoison[] = _("Ten different Poison-type\nPokémon are registered as caught!");
+
+static const u8 sQuestName_TypeGround[] = _("Ground Collector");
+static const u8 sQuestDesc_TypeGround[] = _("Register 10 different\nGround-type Pokémon as caught.");
+static const u8 sQuestDone_TypeGround[] = _("Ten different Ground-type\nPokémon are registered as caught!");
+
+static const u8 sQuestName_TypeRock[] = _("Rock Collector");
+static const u8 sQuestDesc_TypeRock[] = _("Register 10 different\nRock-type Pokémon as caught.");
+static const u8 sQuestDone_TypeRock[] = _("Ten different Rock-type\nPokémon are registered as caught!");
+
+static const u8 sQuestName_TypeBug[] = _("Bug Collector");
+static const u8 sQuestDesc_TypeBug[] = _("Register 10 different\nBug-type Pokémon as caught.");
+static const u8 sQuestDone_TypeBug[] = _("Ten different Bug-type\nPokémon are registered as caught!");
+
+static const u8 sQuestName_TypeGhost[] = _("Ghost Collector");
+static const u8 sQuestDesc_TypeGhost[] = _("Register 10 different\nGhost-type Pokémon as caught.");
+static const u8 sQuestDone_TypeGhost[] = _("Ten different Ghost-type\nPokémon are registered as caught!");
+
+static const u8 sQuestName_TypeSteel[] = _("Steel Collector");
+static const u8 sQuestDesc_TypeSteel[] = _("Register 10 different\nSteel-type Pokémon as caught.");
+static const u8 sQuestDone_TypeSteel[] = _("Ten different Steel-type\nPokémon are registered as caught!");
+
+static const u8 sQuestName_TypeFire[] = _("Fire Collector");
+static const u8 sQuestDesc_TypeFire[] = _("Register 10 different\nFire-type Pokémon as caught.");
+static const u8 sQuestDone_TypeFire[] = _("Ten different Fire-type\nPokémon are registered as caught!");
+
+static const u8 sQuestName_TypeWater[] = _("Water Collector");
+static const u8 sQuestDesc_TypeWater[] = _("Register 10 different\nWater-type Pokémon as caught.");
+static const u8 sQuestDone_TypeWater[] = _("Ten different Water-type\nPokémon are registered as caught!");
+
+static const u8 sQuestName_TypeGrass[] = _("Grass Collector");
+static const u8 sQuestDesc_TypeGrass[] = _("Register 10 different\nGrass-type Pokémon as caught.");
+static const u8 sQuestDone_TypeGrass[] = _("Ten different Grass-type\nPokémon are registered as caught!");
+
+static const u8 sQuestName_TypeElectric[] = _("Electric Collector");
+static const u8 sQuestDesc_TypeElectric[] = _("Register 10 different\nElectric-type Pokémon as caught.");
+static const u8 sQuestDone_TypeElectric[] = _("Ten different Electric-type\nPokémon are registered as caught!");
+
+static const u8 sQuestName_TypePsychic[] = _("Psychic Collector");
+static const u8 sQuestDesc_TypePsychic[] = _("Register 10 different\nPsychic-type Pokémon as caught.");
+static const u8 sQuestDone_TypePsychic[] = _("Ten different Psychic-type\nPokémon are registered as caught!");
+
+static const u8 sQuestName_TypeIce[] = _("Ice Collector");
+static const u8 sQuestDesc_TypeIce[] = _("Register 10 different\nIce-type Pokémon as caught.");
+static const u8 sQuestDone_TypeIce[] = _("Ten different Ice-type\nPokémon are registered as caught!");
+
+static const u8 sQuestName_TypeDragon[] = _("Dragon Collector");
+static const u8 sQuestDesc_TypeDragon[] = _("Register 10 different\nDragon-type Pokémon as caught.");
+static const u8 sQuestDone_TypeDragon[] = _("Ten different Dragon-type\nPokémon are registered as caught!");
+
+static const u8 sQuestName_TypeDark[] = _("Dark Collector");
+static const u8 sQuestDesc_TypeDark[] = _("Register 10 different\nDark-type Pokémon as caught.");
+static const u8 sQuestDone_TypeDark[] = _("Ten different Dark-type\nPokémon are registered as caught!");
+
+static const u8 sQuestName_TypeFairy[] = _("Fairy Collector");
+static const u8 sQuestDesc_TypeFairy[] = _("Register 10 different\nFairy-type Pokémon as caught.");
+static const u8 sQuestDone_TypeFairy[] = _("Ten different Fairy-type\nPokémon are registered as caught!");
+
 #endif // GUARD_QUEST_DATA_H

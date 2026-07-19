@@ -55,6 +55,7 @@
 #define QUEST_SAVE_DATA_MAGIC 0x51554553
 #define QUEST_SAVE_EXTENSION_MAGIC 0x51554558
 #define QUEST_SAVE_CHARACTER_MAGIC 0x51434852
+#define QUEST_SAVE_TYPE_MAGIC 0x51545950
 #define QUEST_NAME_BUFFER_SIZE 64
 #define QUEST_ICON_SPRITE_SLOTS 2
 #define QUEST_CATEGORY_ICON_TAG_BASE 120
@@ -116,6 +117,7 @@ EWRAM_DATA static struct QuestMenuStaticResources sListMenuState = {0};
 EWRAM_DATA static u8 sItemMenuIconSpriteIds[12] = {0};        // from pokefirered src/item_menu_icons.c
 EWRAM_DATA static void *questNamePointer = NULL;
 EWRAM_DATA static u8 **questNameArray = NULL;
+EWRAM_DATA static bool8 sTypeQuestDataWasMigrated = FALSE;
 
 // This File's Functions
 void QuestMenu_Init(u8 a0, MainCallback callback);
@@ -691,6 +693,23 @@ static const struct SubQuest sSubQuests2[QUEST_2_SUB_COUNT] =
 ////////////////////////BEGIN QUEST CUSTOMIZATION//////////////////////////////
 
 //Declaration of side quest structures. Edits to quests are made here.
+#define TYPE_CATCH_QUEST(questName, questDesc, questDone, gemItem) \
+	{ \
+		.name = questName, \
+		.category = QUEST_CATEGORY_SIDE, \
+		.startmap = sQuestMap_TypeCollector, \
+		.startdesc = questDesc, \
+		.desc = {questDesc}, \
+		.donedesc = questDone, \
+		.map = {sQuestMap_TypeCollector}, \
+		.sprite = {gemItem}, \
+		.spritetype = {ITEM}, \
+		.availType = QUEST_AVAIL_FLAG_SET, \
+		.availFlag = FLAG_SYS_POKEDEX_GET, \
+		.rewardItem = gemItem, \
+		.rewardQty = 3, \
+	}
+
 static const struct SideQuest sSideQuests[QUEST_COUNT] =
 {
 	[QUEST_MEWTWO] =
@@ -1463,7 +1482,80 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 		.spritetype = {OBJECT},
 		.availType = QUEST_AVAIL_POSTGAME,
 	},
+	[QUEST_TYPE_NORMAL] = TYPE_CATCH_QUEST(sQuestName_TypeNormal,
+	                                      sQuestDesc_TypeNormal,
+	                                      sQuestDone_TypeNormal,
+	                                      ITEM_NORMAL_GEM),
+	[QUEST_TYPE_FIGHTING] = TYPE_CATCH_QUEST(sQuestName_TypeFighting,
+	                                        sQuestDesc_TypeFighting,
+	                                        sQuestDone_TypeFighting,
+	                                        ITEM_FIGHTING_GEM),
+	[QUEST_TYPE_FLYING] = TYPE_CATCH_QUEST(sQuestName_TypeFlying,
+	                                      sQuestDesc_TypeFlying,
+	                                      sQuestDone_TypeFlying,
+	                                      ITEM_FLYING_GEM),
+	[QUEST_TYPE_POISON] = TYPE_CATCH_QUEST(sQuestName_TypePoison,
+	                                      sQuestDesc_TypePoison,
+	                                      sQuestDone_TypePoison,
+	                                      ITEM_POISON_GEM),
+	[QUEST_TYPE_GROUND] = TYPE_CATCH_QUEST(sQuestName_TypeGround,
+	                                      sQuestDesc_TypeGround,
+	                                      sQuestDone_TypeGround,
+	                                      ITEM_GROUND_GEM),
+	[QUEST_TYPE_ROCK] = TYPE_CATCH_QUEST(sQuestName_TypeRock,
+	                                    sQuestDesc_TypeRock,
+	                                    sQuestDone_TypeRock,
+	                                    ITEM_ROCK_GEM),
+	[QUEST_TYPE_BUG] = TYPE_CATCH_QUEST(sQuestName_TypeBug,
+	                                   sQuestDesc_TypeBug,
+	                                   sQuestDone_TypeBug,
+	                                   ITEM_BUG_GEM),
+	[QUEST_TYPE_GHOST] = TYPE_CATCH_QUEST(sQuestName_TypeGhost,
+	                                     sQuestDesc_TypeGhost,
+	                                     sQuestDone_TypeGhost,
+	                                     ITEM_GHOST_GEM),
+	[QUEST_TYPE_STEEL] = TYPE_CATCH_QUEST(sQuestName_TypeSteel,
+	                                     sQuestDesc_TypeSteel,
+	                                     sQuestDone_TypeSteel,
+	                                     ITEM_STEEL_GEM),
+	[QUEST_TYPE_FIRE] = TYPE_CATCH_QUEST(sQuestName_TypeFire,
+	                                    sQuestDesc_TypeFire,
+	                                    sQuestDone_TypeFire,
+	                                    ITEM_FIRE_GEM),
+	[QUEST_TYPE_WATER] = TYPE_CATCH_QUEST(sQuestName_TypeWater,
+	                                     sQuestDesc_TypeWater,
+	                                     sQuestDone_TypeWater,
+	                                     ITEM_WATER_GEM),
+	[QUEST_TYPE_GRASS] = TYPE_CATCH_QUEST(sQuestName_TypeGrass,
+	                                     sQuestDesc_TypeGrass,
+	                                     sQuestDone_TypeGrass,
+	                                     ITEM_GRASS_GEM),
+	[QUEST_TYPE_ELECTRIC] = TYPE_CATCH_QUEST(sQuestName_TypeElectric,
+	                                        sQuestDesc_TypeElectric,
+	                                        sQuestDone_TypeElectric,
+	                                        ITEM_ELECTRIC_GEM),
+	[QUEST_TYPE_PSYCHIC] = TYPE_CATCH_QUEST(sQuestName_TypePsychic,
+	                                       sQuestDesc_TypePsychic,
+	                                       sQuestDone_TypePsychic,
+	                                       ITEM_PSYCHIC_GEM),
+	[QUEST_TYPE_ICE] = TYPE_CATCH_QUEST(sQuestName_TypeIce,
+	                                   sQuestDesc_TypeIce,
+	                                   sQuestDone_TypeIce,
+	                                   ITEM_ICE_GEM),
+	[QUEST_TYPE_DRAGON] = TYPE_CATCH_QUEST(sQuestName_TypeDragon,
+	                                      sQuestDesc_TypeDragon,
+	                                      sQuestDone_TypeDragon,
+	                                      ITEM_DRAGON_GEM),
+	[QUEST_TYPE_DARK] = TYPE_CATCH_QUEST(sQuestName_TypeDark,
+	                                    sQuestDesc_TypeDark,
+	                                    sQuestDone_TypeDark,
+	                                    ITEM_DARK_GEM),
+	[QUEST_TYPE_FAIRY] = TYPE_CATCH_QUEST(sQuestName_TypeFairy,
+	                                     sQuestDesc_TypeFairy,
+	                                     sQuestDone_TypeFairy,
+	                                     ITEM_FAIRY_GEM),
 };
+#undef TYPE_CATCH_QUEST
 ////////////////////////END QUEST CUSTOMIZATION////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -2698,6 +2790,16 @@ static void QuestMenu_ValidateSaveData(void)
 		       sizeof(gSaveBlock3Ptr->characterQuestData));
 		gSaveBlock3Ptr->characterQuestDataMagic = QUEST_SAVE_CHARACTER_MAGIC;
 	}
+
+	if (gSaveBlock3Ptr->typeQuestDataMagic != QUEST_SAVE_TYPE_MAGIC)
+	{
+		// Type-collection quests were appended after the character stories.
+		// Their own magic keeps existing character quest progress untouched.
+		memset(gSaveBlock3Ptr->typeQuestData, 0,
+		       sizeof(gSaveBlock3Ptr->typeQuestData));
+		gSaveBlock3Ptr->typeQuestDataMagic = QUEST_SAVE_TYPE_MAGIC;
+		sTypeQuestDataWasMigrated = TRUE;
+	}
 }
 
 u8 QuestMenu_GetSetSubquestState(u8 quest, u8 caseId, u8 childQuest)
@@ -2740,10 +2842,15 @@ u8 QuestMenu_GetSetQuestState(u8 quest, u8 caseId)
 		questData = gSaveBlock3Ptr->questDataExtension;
 		quest -= QUEST_LEGACY_COUNT;
 	}
-	else
+	else if (quest < QUEST_TYPE_START)
 	{
 		questData = gSaveBlock3Ptr->characterQuestData;
 		quest -= QUEST_CHARACTER_START;
+	}
+	else
+	{
+		questData = gSaveBlock3Ptr->typeQuestData;
+		quest -= QUEST_TYPE_START;
 	}
 
 	u8 unlockedIndex = quest * 5 / 8;
@@ -3472,6 +3579,10 @@ static void QuestMenu_CreateSprite(u16 itemId, u8 idx, u8 spriteType)
 
 		if (spriteId < MAX_SPRITES)
 		{
+			// Overworld object sprites default to priority 2, which places them
+			// behind the quest menu's BG0 detail panel. Quest icons of every type
+			// must render above that panel, matching the completion-popup path.
+			gSprites[spriteId].oam.priority = 0;
 			gSprites[spriteId].oam.objMode = ST_OAM_OBJ_BLEND;
 			ptr[idx] = spriteId;
 			sStateDataPtr->spriteIconTypes[idx] = spriteType;
@@ -4256,9 +4367,13 @@ void QuestMenu_ResetMenuSaveData(void)
 	       sizeof(gSaveBlock3Ptr->questDataExtension));
 	memset(gSaveBlock3Ptr->characterQuestData, 0,
 	       sizeof(gSaveBlock3Ptr->characterQuestData));
+	memset(gSaveBlock3Ptr->typeQuestData, 0,
+	       sizeof(gSaveBlock3Ptr->typeQuestData));
 	gSaveBlock3Ptr->questDataMagic = QUEST_SAVE_DATA_MAGIC;
 	gSaveBlock3Ptr->questDataExtensionMagic = QUEST_SAVE_EXTENSION_MAGIC;
 	gSaveBlock3Ptr->characterQuestDataMagic = QUEST_SAVE_CHARACTER_MAGIC;
+	gSaveBlock3Ptr->typeQuestDataMagic = QUEST_SAVE_TYPE_MAGIC;
+	sTypeQuestDataWasMigrated = FALSE;
 }
 
 u32 QuestMenu_GetQuestVariableId(u8 quest)
@@ -4329,6 +4444,29 @@ static const struct { u8 quest; u16 count; } sCatchGoals[] =
 	{QUEST_CATCH_800, 800},
 };
 
+#define TYPE_CATCH_GOAL 10
+static const struct { u8 quest; u8 type; } sTypeCatchGoals[] =
+{
+	{QUEST_TYPE_NORMAL,   TYPE_NORMAL},
+	{QUEST_TYPE_FIGHTING, TYPE_FIGHTING},
+	{QUEST_TYPE_FLYING,   TYPE_FLYING},
+	{QUEST_TYPE_POISON,   TYPE_POISON},
+	{QUEST_TYPE_GROUND,   TYPE_GROUND},
+	{QUEST_TYPE_ROCK,     TYPE_ROCK},
+	{QUEST_TYPE_BUG,      TYPE_BUG},
+	{QUEST_TYPE_GHOST,    TYPE_GHOST},
+	{QUEST_TYPE_STEEL,    TYPE_STEEL},
+	{QUEST_TYPE_FIRE,     TYPE_FIRE},
+	{QUEST_TYPE_WATER,    TYPE_WATER},
+	{QUEST_TYPE_GRASS,    TYPE_GRASS},
+	{QUEST_TYPE_ELECTRIC, TYPE_ELECTRIC},
+	{QUEST_TYPE_PSYCHIC,  TYPE_PSYCHIC},
+	{QUEST_TYPE_ICE,      TYPE_ICE},
+	{QUEST_TYPE_DRAGON,   TYPE_DRAGON},
+	{QUEST_TYPE_DARK,     TYPE_DARK},
+	{QUEST_TYPE_FAIRY,    TYPE_FAIRY},
+};
+
 // TRUE once the player owns a hatched (non-Egg) Pichu in the party or a PC Box.
 static bool8 QuestMenu_PlayerHasHatchedPichu(void)
 {
@@ -4356,6 +4494,67 @@ static bool8 QuestMenu_PlayerHasHatchedPichu(void)
 	return FALSE;
 }
 
+static void QuestMenu_CheckTypeCatchQuests(void)
+{
+	u16 typeCounts[NUMBER_OF_MON_TYPES] = {0};
+	u16 nationalDexNum;
+	u32 i;
+
+	if (!FlagGet(FLAG_SYS_POKEDEX_GET))
+		return;
+
+	// Count caught Pokédex entries rather than captures, so every species only
+	// contributes once. A dual-type species advances both matching goals.
+	for (nationalDexNum = 1; nationalDexNum <= NATIONAL_DEX_COUNT; nationalDexNum++)
+	{
+		enum Type type1, type2;
+		enum Species species;
+
+		if (!GetSetPokedexFlag(nationalDexNum, FLAG_GET_CAUGHT))
+			continue;
+
+		species = NationalPokedexNumToSpecies(nationalDexNum);
+		type1 = GetSpeciesType(species, 0);
+		type2 = GetSpeciesType(species, 1);
+
+		if (type1 < NUMBER_OF_MON_TYPES)
+			typeCounts[type1]++;
+		if (type2 < NUMBER_OF_MON_TYPES && type2 != type1)
+			typeCounts[type2]++;
+	}
+
+	for (i = 0; i < ARRAY_COUNT(sTypeCatchGoals); i++)
+	{
+		u8 quest = sTypeCatchGoals[i].quest;
+
+		if (QuestMenu_GetSetQuestState(quest, FLAG_GET_COMPLETED)
+		 || QuestMenu_GetSetQuestState(quest, FLAG_GET_REWARD))
+			continue;
+
+		// These are automatic Pokédex goals: obtaining the Pokédex reveals and
+		// activates all eighteen without requiring an NPC or manual acceptance.
+		QuestMenu_GetSetQuestState(quest, FLAG_SET_UNLOCKED);
+		QuestMenu_GetSetQuestState(quest, FLAG_SET_ACTIVE);
+
+		if (typeCounts[sTypeCatchGoals[i].type] >= TYPE_CATCH_GOAL)
+		{
+			if (sTypeQuestDataWasMigrated)
+			{
+				// Existing saves may already qualify for many goals. Preserve every
+				// reward without flooding the eight-slot popup queue on first load.
+				QuestMenu_GetSetQuestState(quest, FLAG_REMOVE_ACTIVE);
+				QuestMenu_GetSetQuestState(quest, FLAG_SET_REWARD);
+			}
+			else
+			{
+				QuestMenu_MarkQuestFinished(quest);
+			}
+		}
+	}
+
+	sTypeQuestDataWasMigrated = FALSE;
+}
+
 // Marks any catch-count goal whose threshold the player has now reached. Public
 // so it can also be polled the moment the player returns to the overworld (e.g.
 // right after catching the milestone Pokémon), not just when the menu is opened.
@@ -4369,6 +4568,8 @@ void QuestMenu_CheckCatchQuests(void)
 		if (caught >= sCatchGoals[i].count)
 			QuestMenu_MarkQuestFinished(sCatchGoals[i].quest);
 	}
+
+	QuestMenu_CheckTypeCatchQuests();
 }
 
 // New quest state lives in appended save data, but the encounter flags already

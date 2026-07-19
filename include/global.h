@@ -297,6 +297,8 @@ struct SaveBlock3
     u8 questDataExtension[(QUEST_HOENN_EXTENSION_COUNT * 5 + 7) / 8];
     u32 characterQuestDataMagic;
     u8 characterQuestData[(QUEST_CHARACTER_COUNT * 5 + 7) / 8];
+    u32 typeQuestDataMagic;
+    u8 typeQuestData[(QUEST_TYPE_COUNT * 5 + 7) / 8];
 }; /* max size 1624 bytes */
 
 extern struct SaveBlock3 *gSaveBlock3Ptr;

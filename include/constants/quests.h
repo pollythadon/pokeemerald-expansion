@@ -68,6 +68,24 @@
 #define QUEST_49        48
 #define QUEST_50        49
 #define QUEST_51        50
+#define QUEST_52        51
+#define QUEST_53        52
+#define QUEST_54        53
+#define QUEST_55        54
+#define QUEST_56        55
+#define QUEST_57        56
+#define QUEST_58        57
+#define QUEST_59        58
+#define QUEST_60        59
+#define QUEST_61        60
+#define QUEST_62        61
+#define QUEST_63        62
+#define QUEST_64        63
+#define QUEST_65        64
+#define QUEST_66        65
+#define QUEST_67        66
+#define QUEST_68        67
+#define QUEST_69        68
 
 // Post-game legendary quest aliases (custom framework tie-in)
 #define QUEST_MEWTWO     QUEST_1
@@ -143,11 +161,34 @@
 #define QUEST_TATE_AND_LIZA     QUEST_50
 #define QUEST_JUAN              QUEST_51
 
+// Pokédex type-collection goals. These are appended as a separate versioned
+// save block so every older quest ID and its stored state remain stable.
+#define QUEST_TYPE_NORMAL       QUEST_52
+#define QUEST_TYPE_FIGHTING     QUEST_53
+#define QUEST_TYPE_FLYING       QUEST_54
+#define QUEST_TYPE_POISON       QUEST_55
+#define QUEST_TYPE_GROUND       QUEST_56
+#define QUEST_TYPE_ROCK         QUEST_57
+#define QUEST_TYPE_BUG          QUEST_58
+#define QUEST_TYPE_GHOST        QUEST_59
+#define QUEST_TYPE_STEEL        QUEST_60
+#define QUEST_TYPE_FIRE         QUEST_61
+#define QUEST_TYPE_WATER        QUEST_62
+#define QUEST_TYPE_GRASS        QUEST_63
+#define QUEST_TYPE_ELECTRIC     QUEST_64
+#define QUEST_TYPE_PSYCHIC      QUEST_65
+#define QUEST_TYPE_ICE          QUEST_66
+#define QUEST_TYPE_DRAGON       QUEST_67
+#define QUEST_TYPE_DARK         QUEST_68
+#define QUEST_TYPE_FAIRY        QUEST_69
+
 #define QUEST_LEGACY_COUNT            33
 #define QUEST_HOENN_EXTENSION_COUNT    8
 #define QUEST_CHARACTER_START         QUEST_42
 #define QUEST_CHARACTER_COUNT         10
-#define QUEST_COUNT                   51
+#define QUEST_TYPE_START              QUEST_52
+#define QUEST_TYPE_COUNT              18
+#define QUEST_COUNT                   69
 
 #define SUB_QUEST_1          0
 #define SUB_QUEST_2          1
