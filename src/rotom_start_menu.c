@@ -75,6 +75,7 @@
 #define TAG_PHONE_RR_SHORTCUT_ICON          1238
 #define TAG_PHONE_RR_DAYCARE_ICON           1239
 #define TAG_ROTOM_FACE_ICON_PAL             0x4654 | BLEND_IMMUNE_FLAG
+#define TAG_PHONE_OW_HIGHLIGHT_PAL          0x4655 | BLEND_IMMUNE_FLAG
 #define ROTOM_REALITY_COLUMN_ONE_X          34
 #define ROTOM_REALITY_COLUMN_TWO_X          72
 #define ROTOM_REALITY_COLUMN_THREE_X        168
@@ -115,6 +116,7 @@ static void Task_RotomPhone_OverworldMenu_CloseForSafari(u8 taskId);
 
 static void RotomPhone_OverworldMenu_LoadSprites(void);
 static void RotomPhone_OverworldMenu_CreateAllIconSprites(void);
+static void RotomPhone_OverworldMenu_UpdateSelectedIconPalette(void);
 static void RotomPhone_OverworldMenu_LoadBgGfx(bool32 firstInit);
 static void RotomPhone_OverworldMenu_CreateSpeechWindows(void);
 static void RotomPhone_OverworldMenu_CreateFlipPhoneWindow(void);
@@ -423,7 +425,7 @@ static void RotomPhone_StartMenu_UpdateSpriteFadeColours(struct Sprite* sprite, 
         colour = RGB(r, g, b);
     }
     
-    LoadPalette(&colour, OBJ_PLTT_ID(IndexOfSpritePaletteTag(sprite->template->paletteTag)) + index, sizeof(colour));
+    LoadPalette(&colour, OBJ_PLTT_ID(sprite->oam.paletteNum) + index, sizeof(colour));
 }
 
 #define sFrameNumComfyAnimId sprite->data[0]
@@ -914,6 +916,12 @@ static const struct SpritePalette sSpritePal_RotomFaceIcons[] =
 {
     {sRotomPhone_StartMenuRotomFaceIconsPal, TAG_ROTOM_FACE_ICON_PAL},
     {NULL},
+};
+
+static const struct SpritePalette sSpritePal_OverworldHighlight =
+{
+    sRotomPhone_StartMenuRotomFaceIconsPal,
+    TAG_PHONE_OW_HIGHLIGHT_PAL,
 };
 
 static const struct SpritePalette sSpritePal_RotomRealityIcons_Two[] =
@@ -1520,6 +1528,8 @@ static void RotomPhone_OverworldMenu_ContinueInit(bool32 firstInit)
     if (!sRotomPhoneOptions[menuSelectedOverworld].unlockedFunc || !sRotomPhoneOptions[menuSelectedOverworld].unlockedFunc())
         menuSelectedOverworld = RotomPhone_StartMenu_SetFirstSelectedMenu();
 
+    RotomPhone_OverworldMenu_UpdateSelectedIconPalette();
+
     if (firstInit)
         gTasks[taskId].func = Task_RotomPhone_OverworldMenu_HandleMainInput;
     else
@@ -1573,14 +1583,18 @@ static void RotomPhone_OverworldMenu_LoadIconSpritePalette(bool32 firstLoad)
         }
     }
     LoadPalette(menuLoadedSpritePalette_One, OBJ_PLTT_ID(IndexOfSpritePaletteTag(TAG_ROTOM_FACE_ICON_PAL)), PLTT_SIZE_4BPP);
+    LoadPalette(menuLoadedSpritePalette_One, OBJ_PLTT_ID(IndexOfSpritePaletteTag(TAG_PHONE_OW_HIGHLIGHT_PAL)), PLTT_SIZE_4BPP);
 #else
-    u32 index = IndexOfSpritePaletteTag(TAG_ROTOM_FACE_ICON_PAL);
-    LoadPalette(sRotomPhone_StartMenuRotomFaceIconsPal, OBJ_PLTT_ID(index), PLTT_SIZE_4BPP); 
+    u32 baseIndex = IndexOfSpritePaletteTag(TAG_ROTOM_FACE_ICON_PAL);
+    u32 highlightIndex = IndexOfSpritePaletteTag(TAG_PHONE_OW_HIGHLIGHT_PAL);
+    LoadPalette(sRotomPhone_StartMenuRotomFaceIconsPal, OBJ_PLTT_ID(baseIndex), PLTT_SIZE_4BPP);
+    LoadPalette(sRotomPhone_StartMenuRotomFaceIconsPal, OBJ_PLTT_ID(highlightIndex), PLTT_SIZE_4BPP);
     if (!RP_CONFIG_USE_ROTOM_PHONE || RP_CONFIG_MONOCHROME_ICONS)
     {
         for (enum RotomPhone_Overworld_FaceIconPaletteIndex colour = PAL_FACE_ICON_TRANSPARENT + 1; colour < PAL_ICON_WHITE; colour++)
         {
-            LoadPalette(&sRotomPhone_StartMenuRotomFaceIconsPal[PAL_ICON_MONOCHROME], OBJ_PLTT_ID(index) + colour, sizeof(u16));
+            LoadPalette(&sRotomPhone_StartMenuRotomFaceIconsPal[PAL_ICON_MONOCHROME], OBJ_PLTT_ID(baseIndex) + colour, sizeof(u16));
+            LoadPalette(&sRotomPhone_StartMenuRotomFaceIconsPal[PAL_ICON_MONOCHROME], OBJ_PLTT_ID(highlightIndex) + colour, sizeof(u16));
         }
     }
 #endif
@@ -1589,6 +1603,7 @@ static void RotomPhone_OverworldMenu_LoadIconSpritePalette(bool32 firstLoad)
 static void RotomPhone_OverworldMenu_LoadSprites(void)
 {
     LoadSpritePalette(sSpritePal_RotomFaceIcons);
+    LoadSpritePalette(&sSpritePal_OverworldHighlight);
     LoadCompressedSpriteSheet(sSpriteSheet_OverworldIcons);
     RotomPhone_StartMenu_LoadRotomFaceSpritesheet();
 
@@ -1674,6 +1689,28 @@ static void RotomPhone_OverworldMenu_CreateAllIconSprites(void)
     for (; drawn < RP_OW_OPTION_COUNT; drawn++)
     {
         sRotomPhone_StartMenu->menuOverworldOptions[drawn] = RP_MENU_COUNT;
+    }
+}
+
+static void RotomPhone_OverworldMenu_UpdateSelectedIconPalette(void)
+{
+    u32 basePalette = IndexOfSpritePaletteTag(TAG_ROTOM_FACE_ICON_PAL);
+    u32 highlightPalette = IndexOfSpritePaletteTag(TAG_PHONE_OW_HIGHLIGHT_PAL);
+
+    if (basePalette == 0xFF || highlightPalette == 0xFF)
+        return;
+
+    for (enum RotomPhone_Overworld_Options optionSlot = RP_OW_OPTION_1; optionSlot < RP_OW_OPTION_COUNT; optionSlot++)
+    {
+        u32 spriteId = sRotomPhone_StartMenu->menuOverworldIconSpriteId[optionSlot];
+
+        if (spriteId == SPRITE_NONE)
+            continue;
+
+        if (sRotomPhone_StartMenu->menuOverworldOptions[optionSlot] == menuSelectedOverworld)
+            gSprites[spriteId].oam.paletteNum = highlightPalette;
+        else
+            gSprites[spriteId].oam.paletteNum = basePalette;
     }
 }
 
@@ -2340,6 +2377,7 @@ static void RotomPhone_OverworldMenu_HandleDPAD(u8 taskId)
     gComfyAnims[tPhoneHighlightComfyAnimId].config.data.spring.to = Q_24_8(FADE_COLOUR_MAX);
     gComfyAnims[tPhoneHighlightComfyAnimId].position = 0;
     menuSelectedOverworld = sRotomPhone_StartMenu->menuOverworldOptions[nextIndex];
+    RotomPhone_OverworldMenu_UpdateSelectedIconPalette();
     if (RP_CONFIG_USE_ROTOM_PHONE)
         tRotomMessageSoundEffect = SE_SELECT;
     else
@@ -2432,17 +2470,29 @@ static void RotomPhone_OverworldMenu_UpdateIconPaletteFade(u8 taskId)
 {
     if (gPaletteFade.active)
         return;
-    
+
+    u32 selectedSpriteId = SPRITE_NONE;
     u32 iconPal = sRotomPhoneOptions[menuSelectedOverworld].owIconPalSlot;
 
     if (menuSelectedOverworld == RP_MENU_SHORTCUT)
         iconPal = sRotomPhoneOptions[RP_GET_SHORTCUT_OPTION].owIconPalSlot;
+
+    for (enum RotomPhone_Overworld_Options optionSlot = RP_OW_OPTION_1; optionSlot < RP_OW_OPTION_COUNT; optionSlot++)
+    {
+        if (sRotomPhone_StartMenu->menuOverworldOptions[optionSlot] == menuSelectedOverworld)
+        {
+            selectedSpriteId = sRotomPhone_StartMenu->menuOverworldIconSpriteId[optionSlot];
+            break;
+        }
+    }
+
+    if (selectedSpriteId == SPRITE_NONE)
+        return;
     
     TryAdvanceComfyAnim(&gComfyAnims[tPhoneHighlightComfyAnimId]);
     u32 frameNum = ReadComfyAnimValueSmooth(&gComfyAnims[tPhoneHighlightComfyAnimId]);
     RotomPhone_StartMenu_UpdateSpriteFadeColours(
-        // Uses first option as all sprites will use the same palette
-        &gSprites[sRotomPhone_StartMenu->menuOverworldIconSpriteId[RP_MENU_FIRST_OPTION]],
+        &gSprites[selectedSpriteId],
         iconPal, 
         frameNum
     );
@@ -4656,6 +4706,7 @@ static void RotomPhone_StartMenu_SelectedFunc_Daycare(void)
 #undef TAG_PHONE_RR_SHORTCUT_ICON
 #undef TAG_PHONE_RR_DAYCARE_ICON
 #undef TAG_ROTOM_FACE_ICON_PAL
+#undef TAG_PHONE_OW_HIGHLIGHT_PAL
 #undef PHONE_BG_PAL_SLOT
 #undef PHONE_BASE_COLOUR_INDEX
 #undef ROTOM_REALITY_COLUMN_ONE_X
