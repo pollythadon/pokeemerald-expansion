@@ -11,6 +11,7 @@ SealedChamber_OuterRoom_OnResume:
 
 SealedChamber_OuterRoom_OnTransition:
 	setflag FLAG_LANDMARK_SEALED_CHAMBER
+	completequest QUEST_SEALED_CHAMBER
 	end
 
 SealedChamber_OuterRoom_OnLoad:
@@ -103,4 +104,3 @@ SealedChamber_OuterRoom_EventScript_BrailleDigHere::
 	braillemsgbox SealedChamber_OuterRoom_Braille_DigHere
 	releaseall
 	end
-

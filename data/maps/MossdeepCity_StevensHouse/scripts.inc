@@ -41,6 +41,7 @@ MossdeepCity_StevensHouse_EventScript_StevenGivesDive::
 	setflag FLAG_RECEIVED_HM_DIVE
 	setflag FLAG_OMIT_DIVE_FROM_STEVEN_LETTER
 	msgbox MossdeepCity_StevensHouse_Text_ExplainDive, MSGBOX_DEFAULT
+	startquest QUEST_SEALED_CHAMBER
 	closemessage
 	delay 20
 	applymovement LOCALID_STEVENS_HOUSE_STEVEN, MossdeepCity_StevensHouse_Movement_StevenReturn
@@ -211,4 +212,3 @@ MossdeepCity_StevensHouse_Text_LetterFromSteven:
 MossdeepCity_StevensHouse_Text_CollectionOfRareRocks:
 	.string "It's a collection of rare rocks and\n"
 	.string "stones assembled by STEVEN.$"
-
