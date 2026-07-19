@@ -107,7 +107,11 @@ enum Language
 #define UNION_ROOM_KB_ROW_COUNT 10
 #define SAVED_TRENDS_COUNT 5
 #define PYRAMID_BAG_ITEMS_COUNT 10
-#define ROAMER_COUNT 1 // Number of maximum concurrent active roamers
+// Keep the original SaveBlock1 slot fixed for save compatibility. Six appended
+// SaveBlock3 slots let the postgame bird/beast quests coexist with Latios/Latias.
+#define LEGACY_ROAMER_COUNT 1
+#define QUEST_ROAMER_COUNT  6
+#define ROAMER_COUNT        (LEGACY_ROAMER_COUNT + QUEST_ROAMER_COUNT)
 
 // Bag constants
 #define BAG_ITEMS_COUNT 30

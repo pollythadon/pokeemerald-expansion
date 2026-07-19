@@ -18,6 +18,7 @@ MossdeepCity_OnTransition:
 	clearflag FLAG_MOSSDEEP_GYM_SWITCH_4
 # 10 "data/maps/MossdeepCity/scripts.pory"
 	call_if_set FLAG_SYS_WEATHER_CTRL, Common_EventScript_SetAbnormalWeather
+	call RoamingLegendQuests_EventScript_SyncNpcVisibility
 # 11 "data/maps/MossdeepCity/scripts.pory"
 	end
 # 12 "data/maps/MossdeepCity/scripts.pory"

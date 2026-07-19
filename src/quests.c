@@ -1554,6 +1554,102 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	                                     sQuestDesc_TypeFairy,
 	                                     sQuestDone_TypeFairy,
 	                                     ITEM_FAIRY_GEM),
+	[QUEST_ARTICUNO] =
+	{
+		.name = sQuestName_Articuno,
+		.category = QUEST_CATEGORY_POKEMON,
+		.startmap = sQuestStartMap_Articuno,
+		.startdesc = sQuestStart_Articuno,
+		.desc = {sQuestDesc_Articuno},
+		.donedesc = sQuestDone_Articuno,
+		.map = {sQuestMap_Articuno},
+		.sprite = {SPECIES_ARTICUNO},
+		.spritetype = {PKMN},
+		.availType = QUEST_AVAIL_QUEST_COMPLETE,
+		.availFlag = QUEST_LUGIA,
+		.rewardItem = ITEM_GLALITITE,
+		.rewardQty = 1,
+	},
+	[QUEST_ZAPDOS] =
+	{
+		.name = sQuestName_Zapdos,
+		.category = QUEST_CATEGORY_POKEMON,
+		.startmap = sQuestStartMap_Zapdos,
+		.startdesc = sQuestStart_Zapdos,
+		.desc = {sQuestDesc_Zapdos},
+		.donedesc = sQuestDone_Zapdos,
+		.map = {sQuestMap_Zapdos},
+		.sprite = {SPECIES_ZAPDOS},
+		.spritetype = {PKMN},
+		.availType = QUEST_AVAIL_QUEST_COMPLETE,
+		.availFlag = QUEST_LUGIA,
+		.rewardItem = ITEM_AMPHAROSITE,
+		.rewardQty = 1,
+	},
+	[QUEST_MOLTRES] =
+	{
+		.name = sQuestName_Moltres,
+		.category = QUEST_CATEGORY_POKEMON,
+		.startmap = sQuestStartMap_Moltres,
+		.startdesc = sQuestStart_Moltres,
+		.desc = {sQuestDesc_Moltres},
+		.donedesc = sQuestDone_Moltres,
+		.map = {sQuestMap_Moltres},
+		.sprite = {SPECIES_MOLTRES},
+		.spritetype = {PKMN},
+		.availType = QUEST_AVAIL_QUEST_COMPLETE,
+		.availFlag = QUEST_LUGIA,
+		.rewardItem = ITEM_CHARIZARDITE_Y,
+		.rewardQty = 1,
+	},
+	[QUEST_RAIKOU] =
+	{
+		.name = sQuestName_Raikou,
+		.category = QUEST_CATEGORY_POKEMON,
+		.startmap = sQuestStartMap_Raikou,
+		.startdesc = sQuestStart_Raikou,
+		.desc = {sQuestDesc_Raikou},
+		.donedesc = sQuestDone_Raikou,
+		.map = {sQuestMap_Raikou},
+		.sprite = {SPECIES_RAIKOU},
+		.spritetype = {PKMN},
+		.availType = QUEST_AVAIL_QUEST_COMPLETE,
+		.availFlag = QUEST_LUGIA,
+		.rewardItem = ITEM_MANECTITE,
+		.rewardQty = 1,
+	},
+	[QUEST_ENTEI] =
+	{
+		.name = sQuestName_Entei,
+		.category = QUEST_CATEGORY_POKEMON,
+		.startmap = sQuestStartMap_Entei,
+		.startdesc = sQuestStart_Entei,
+		.desc = {sQuestDesc_Entei},
+		.donedesc = sQuestDone_Entei,
+		.map = {sQuestMap_Entei},
+		.sprite = {SPECIES_ENTEI},
+		.spritetype = {PKMN},
+		.availType = QUEST_AVAIL_QUEST_COMPLETE,
+		.availFlag = QUEST_LUGIA,
+		.rewardItem = ITEM_HOUNDOOMINITE,
+		.rewardQty = 1,
+	},
+	[QUEST_SUICUNE] =
+	{
+		.name = sQuestName_Suicune,
+		.category = QUEST_CATEGORY_POKEMON,
+		.startmap = sQuestStartMap_Suicune,
+		.startdesc = sQuestStart_Suicune,
+		.desc = {sQuestDesc_Suicune},
+		.donedesc = sQuestDone_Suicune,
+		.map = {sQuestMap_Suicune},
+		.sprite = {SPECIES_SUICUNE},
+		.spritetype = {PKMN},
+		.availType = QUEST_AVAIL_QUEST_COMPLETE,
+		.availFlag = QUEST_LUGIA,
+		.rewardItem = ITEM_BLASTOISINITE,
+		.rewardQty = 1,
+	},
 };
 #undef TYPE_CATCH_QUEST
 ////////////////////////END QUEST CUSTOMIZATION////////////////////////////////
@@ -2676,6 +2772,9 @@ bool8 QuestMenu_IsQuestAvailable(u8 questId)
 			return FlagGet(sSideQuests[questId].availFlag);
 		case QUEST_AVAIL_POSTGAME:
 			return !FlagGet(FLAG_LEGENDARY_BTL);
+		case QUEST_AVAIL_QUEST_COMPLETE:
+			return QuestMenu_GetSetQuestState(sSideQuests[questId].availFlag,
+			                                  FLAG_GET_COMPLETED);
 		case QUEST_AVAIL_ALWAYS:
 		default:
 			return TRUE;
@@ -2769,6 +2868,31 @@ static bool8 QuestMenu_IsSubquestIdValid(u8 quest, u8 childQuest)
 	return sSideQuests[quest].subquests[childQuest].id < SUB_QUEST_COUNT;
 }
 
+static void QuestMenu_MigrateGodsOfJohtoProgress(void)
+{
+	u32 stateBit = QUEST_LUGIA * 5;
+	u8 *questData = gSaveBlock3Ptr->questData;
+	u32 rewardBit = stateBit + 2;
+	u32 completedBit = stateBit + 3;
+	bool8 wasFinished;
+
+	// Older versions completed this quest after either Navel Rock battle. Reopen
+	// that saved quest unless the player genuinely caught both legends.
+	if (FlagGet(FLAG_CAUGHT_HO_OH) && FlagGet(FLAG_CAUGHT_LUGIA))
+		return;
+
+	wasFinished = (questData[rewardBit / 8] & (1 << (rewardBit % 8)))
+	           || (questData[completedBit / 8] & (1 << (completedBit % 8)));
+	if (!wasFinished)
+		return;
+
+	questData[rewardBit / 8] &= ~(1 << (rewardBit % 8));
+	questData[completedBit / 8] &= ~(1 << (completedBit % 8));
+	questData[stateBit / 8] |= 1 << (stateBit % 8); // unlocked
+	stateBit++;
+	questData[stateBit / 8] |= 1 << (stateBit % 8); // active
+}
+
 static void QuestMenu_ValidateSaveData(void)
 {
 	if (gSaveBlock3Ptr->questDataMagic != QUEST_SAVE_DATA_MAGIC)
@@ -2800,6 +2924,19 @@ static void QuestMenu_ValidateSaveData(void)
 		gSaveBlock3Ptr->typeQuestDataMagic = QUEST_SAVE_TYPE_MAGIC;
 		sTypeQuestDataWasMigrated = TRUE;
 	}
+
+	if (gSaveBlock3Ptr->roamingLegendDataMagic != ROAMING_LEGEND_SAVE_MAGIC)
+	{
+		// Quest state and the six extra roamer slots were added as one appended
+		// unit. Clear only that unit when migrating an older save.
+		memset(gSaveBlock3Ptr->roamingLegendQuestData, 0,
+		       sizeof(gSaveBlock3Ptr->roamingLegendQuestData));
+		memset(gSaveBlock3Ptr->roamingLegendRoamers, 0,
+		       sizeof(gSaveBlock3Ptr->roamingLegendRoamers));
+		gSaveBlock3Ptr->roamingLegendDataMagic = ROAMING_LEGEND_SAVE_MAGIC;
+	}
+
+	QuestMenu_MigrateGodsOfJohtoProgress();
 }
 
 u8 QuestMenu_GetSetSubquestState(u8 quest, u8 caseId, u8 childQuest)
@@ -2847,10 +2984,15 @@ u8 QuestMenu_GetSetQuestState(u8 quest, u8 caseId)
 		questData = gSaveBlock3Ptr->characterQuestData;
 		quest -= QUEST_CHARACTER_START;
 	}
-	else
+	else if (quest < QUEST_ROAMING_START)
 	{
 		questData = gSaveBlock3Ptr->typeQuestData;
 		quest -= QUEST_TYPE_START;
+	}
+	else
+	{
+		questData = gSaveBlock3Ptr->roamingLegendQuestData;
+		quest -= QUEST_ROAMING_START;
 	}
 
 	u8 unlockedIndex = quest * 5 / 8;
@@ -4369,10 +4511,15 @@ void QuestMenu_ResetMenuSaveData(void)
 	       sizeof(gSaveBlock3Ptr->characterQuestData));
 	memset(gSaveBlock3Ptr->typeQuestData, 0,
 	       sizeof(gSaveBlock3Ptr->typeQuestData));
+	memset(gSaveBlock3Ptr->roamingLegendQuestData, 0,
+	       sizeof(gSaveBlock3Ptr->roamingLegendQuestData));
+	memset(gSaveBlock3Ptr->roamingLegendRoamers, 0,
+	       sizeof(gSaveBlock3Ptr->roamingLegendRoamers));
 	gSaveBlock3Ptr->questDataMagic = QUEST_SAVE_DATA_MAGIC;
 	gSaveBlock3Ptr->questDataExtensionMagic = QUEST_SAVE_EXTENSION_MAGIC;
 	gSaveBlock3Ptr->characterQuestDataMagic = QUEST_SAVE_CHARACTER_MAGIC;
 	gSaveBlock3Ptr->typeQuestDataMagic = QUEST_SAVE_TYPE_MAGIC;
+	gSaveBlock3Ptr->roamingLegendDataMagic = ROAMING_LEGEND_SAVE_MAGIC;
 	sTypeQuestDataWasMigrated = FALSE;
 }
 
@@ -4431,6 +4578,36 @@ void QuestMenu_MarkQuestFinished(u8 questId)
 	// itself and waits for the field to be idle, so completions detected from
 	// inside the menu still show once the player is back outside.
 	ShowQuestCompletePopup(questId);
+}
+
+static u16 QuestMenu_GetRoamingLegendQuest(enum Species species)
+{
+	switch (species)
+	{
+		case SPECIES_ARTICUNO: return QUEST_ARTICUNO;
+		case SPECIES_ZAPDOS:   return QUEST_ZAPDOS;
+		case SPECIES_MOLTRES:  return QUEST_MOLTRES;
+		case SPECIES_RAIKOU:   return QUEST_RAIKOU;
+		case SPECIES_ENTEI:    return QUEST_ENTEI;
+		case SPECIES_SUICUNE:  return QUEST_SUICUNE;
+		default:               return QUEST_NONE;
+	}
+}
+
+bool8 QuestMenu_IsRoamingLegendSpecies(enum Species species)
+{
+	return QuestMenu_GetRoamingLegendQuest(species) != QUEST_NONE;
+}
+
+// Roaming quests complete only from catching the actual quest roamer. A traded
+// or previously owned Pokédex entry therefore cannot skip the hunt.
+void QuestMenu_TryCompleteRoamingLegendQuest(enum Species species)
+{
+	u16 questId = QuestMenu_GetRoamingLegendQuest(species);
+
+	if (questId != QUEST_NONE
+	 && QuestMenu_GetSetQuestState(questId, FLAG_GET_ACTIVE))
+		QuestMenu_MarkQuestFinished(questId);
 }
 
 // Catch-count and Pokédex-completion quests have no scripted trigger, so we poll

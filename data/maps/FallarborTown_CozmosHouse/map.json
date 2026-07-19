@@ -53,6 +53,20 @@
       "script": "PALKIA_quest_starter",
       "flag": "FLAG_LEGENDARY_BTL",
       "quest_id": "QUEST_PALKIA"
+    },
+    {
+      "graphics_id": "OBJ_EVENT_GFX_SCIENTIST_1",
+      "x": 2,
+      "y": 5,
+      "elevation": 3,
+      "movement_type": "MOVEMENT_TYPE_FACE_RIGHT",
+      "movement_range_x": 0,
+      "movement_range_y": 0,
+      "trainer_type": "TRAINER_TYPE_QUEST_GIVER",
+      "trainer_sight_or_berry_tree_id": "0",
+      "script": "RoamingLegendQuests_EventScript_Entei",
+      "flag": "FLAG_HIDE_ROAMING_LEGEND_QUEST_GIVERS",
+      "quest_id": "QUEST_ENTEI"
     }
   ],
   "warp_events": [

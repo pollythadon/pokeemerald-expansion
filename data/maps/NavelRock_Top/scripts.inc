@@ -15,7 +15,7 @@ NavelRock_Top_EventScript_HideHoOh::
 
 NavelRock_Top_EventScript_TryShowHoOh::
 	setvar VAR_TEMP_1, 1
-	goto_if_set FLAG_DEFEATED_HO_OH, Common_EventScript_NopReturn
+	clearflag FLAG_DEFEATED_HO_OH
 	setvar VAR_TEMP_1, 0
 	clearflag FLAG_HIDE_HO_OH
 	return
@@ -60,14 +60,16 @@ NavelRock_Top_EventScript_HoOh::
 	special BattleSetup_StartLegendaryBattle
 	clearflag FLAG_SYS_CTRL_OBJ_DELETE
 	setvar VAR_LAST_TALKED, LOCALID_NAVEL_ROCK_HO_OH
-	goto_if_quest_complete QUEST_LUGIA, NavelRock_Top_EventScript_TowerDuoQuestDone
-	completequest QUEST_LUGIA
-NavelRock_Top_EventScript_TowerDuoQuestDone:
 	specialvar VAR_RESULT, GetBattleOutcome
 	goto_if_eq VAR_RESULT, B_OUTCOME_WON, NavelRock_Top_EventScript_DefeatedHoOh
 	goto_if_eq VAR_RESULT, B_OUTCOME_RAN, NavelRock_Top_EventScript_RanFromHoOh
 	goto_if_eq VAR_RESULT, B_OUTCOME_PLAYER_TELEPORTED, NavelRock_Top_EventScript_RanFromHoOh
+	goto_if_ne VAR_RESULT, B_OUTCOME_CAUGHT, NavelRock_Top_EventScript_TowerQuestDone
 	setflag FLAG_CAUGHT_HO_OH
+	goto_if_unset FLAG_CAUGHT_LUGIA, NavelRock_Top_EventScript_TowerQuestDone
+	goto_if_quest_complete QUEST_LUGIA, NavelRock_Top_EventScript_TowerQuestDone
+	completequest QUEST_LUGIA
+NavelRock_Top_EventScript_TowerQuestDone:
 	releaseall
 	end
 

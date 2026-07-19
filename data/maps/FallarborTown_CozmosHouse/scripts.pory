@@ -1,5 +1,10 @@
 raw `FallarborTown_CozmosHouse_MapScripts::
+	map_script MAP_SCRIPT_ON_TRANSITION, FallarborTown_CozmosHouse_OnTransition
 	.byte 0
+
+FallarborTown_CozmosHouse_OnTransition:
+	call RoamingLegendQuests_EventScript_SyncNpcVisibility
+	end
 
 FallarborTown_CozmosHouse_EventScript_ProfCozmo::
 	lock

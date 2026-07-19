@@ -47,6 +47,7 @@
 #include "random.h"
 #include "recorded_battle.h"
 #include "roamer.h"
+#include "quests.h"
 #include "safari_zone.h"
 #include "scanline_effect.h"
 #include "script.h"
@@ -5684,18 +5685,37 @@ static void ReturnFromBattleToOverworld(void)
 
     if (gBattleTypeFlags & BATTLE_TYPE_ROAMER)
     {
+        enum Species roamerSpecies = GetMonData(&gParties[B_TRAINER_OPPONENT_A][0],
+                                                MON_DATA_SPECIES);
+        bool8 shouldDeactivate;
+
         UpdateRoamerHPStatus(&gParties[B_TRAINER_OPPONENT_A][0]);
         ZeroEnemyPartyMons();
 
 #ifndef BUGFIX
         // Bug: When Roar is used by a roamer, gBattleOutcome is B_OUTCOME_PLAYER_TELEPORTED (5),
         // which deactivates the roamer.
-        if ((gBattleOutcome & B_OUTCOME_WON) || gBattleOutcome == B_OUTCOME_CAUGHT)
+        shouldDeactivate = (gBattleOutcome & B_OUTCOME_WON)
+                        || gBattleOutcome == B_OUTCOME_CAUGHT;
 #else
-        if ((gBattleOutcome == B_OUTCOME_WON) || gBattleOutcome == B_OUTCOME_CAUGHT ||
-            gBattleOutcome == B_OUTCOME_DREW)
+        shouldDeactivate = gBattleOutcome == B_OUTCOME_WON
+                        || gBattleOutcome == B_OUTCOME_CAUGHT
+                        || gBattleOutcome == B_OUTCOME_DREW;
 #endif
+        if (gBattleOutcome == B_OUTCOME_CAUGHT)
+        {
+            QuestMenu_TryCompleteRoamingLegendQuest(roamerSpecies);
             SetRoamerInactive(gEncounteredRoamerIndex);
+        }
+        else if (shouldDeactivate)
+        {
+            // The six quest roamers return after a knockout so their catch-only
+            // objectives can never become permanently unwinnable.
+            if (QuestMenu_IsRoamingLegendSpecies(roamerSpecies))
+                RespawnRoamerAfterDefeat(gEncounteredRoamerIndex);
+            else
+                SetRoamerInactive(gEncounteredRoamerIndex);
+        }
     }
 
     m4aSongNumStop(SE_LOW_HEALTH);

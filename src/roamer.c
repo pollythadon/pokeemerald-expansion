@@ -15,7 +15,27 @@ enum
     MAP_NUM, // map number
 };
 
-#define ROAMER(index) (&gSaveBlock1Ptr->roamer[index])
+struct Roamer *GetRoamer(u32 index)
+{
+    if (index < LEGACY_ROAMER_COUNT)
+        return &gSaveBlock1Ptr->roamer[index];
+
+    // The extra slots were appended after the original save layout shipped.
+    // Initialize them lazily so loading an older save can never interpret stale
+    // bytes as active roamers before the Quest Log is opened.
+    if (gSaveBlock3Ptr->roamingLegendDataMagic != ROAMING_LEGEND_SAVE_MAGIC)
+    {
+        memset(gSaveBlock3Ptr->roamingLegendQuestData, 0,
+               sizeof(gSaveBlock3Ptr->roamingLegendQuestData));
+        memset(gSaveBlock3Ptr->roamingLegendRoamers, 0,
+               sizeof(gSaveBlock3Ptr->roamingLegendRoamers));
+        gSaveBlock3Ptr->roamingLegendDataMagic = ROAMING_LEGEND_SAVE_MAGIC;
+    }
+
+    return &gSaveBlock3Ptr->roamingLegendRoamers[index - LEGACY_ROAMER_COUNT];
+}
+
+#define ROAMER(index) GetRoamer(index)
 EWRAM_DATA static u8 sLocationHistory[ROAMER_COUNT][3][2] = {0};
 EWRAM_DATA static u8 sRoamerLocation[ROAMER_COUNT][2] = {0};
 EWRAM_DATA u8 gEncounteredRoamerIndex = 0;
@@ -139,7 +159,15 @@ static u8 GetFirstInactiveRoamerIndex(void)
 
 bool8 TryAddRoamer(enum Species species, u8 level)
 {
+    u32 i;
     u8 index = GetFirstInactiveRoamerIndex();
+
+    // Script retries must not create a second copy of the same legend.
+    for (i = 0; i < ROAMER_COUNT; i++)
+    {
+        if (ROAMER(i)->active && ROAMER(i)->species == species)
+            return TRUE;
+    }
 
     if (index < ROAMER_COUNT)
     {
@@ -150,6 +178,12 @@ bool8 TryAddRoamer(enum Species species, u8 level)
 
     // Maximum active roamers found: do nothing and let the calling function know
     return FALSE;
+}
+
+void TryAddRoamerFromScript(void)
+{
+    gSpecialVar_Result = TryAddRoamer(gSpecialVar_0x8004,
+                                      gSpecialVar_0x8005);
 }
 
 // gSpecialVar_0x8004 here corresponds to the options in the multichoice MULTI_TV_LATI (0 for 'Red', 1 for 'Blue')
@@ -262,17 +296,25 @@ void CreateRoamerMonInstance(u32 roamerIndex)
 
 bool8 TryStartRoamerEncounter(void)
 {
-    u32 i;
+    u8 nearbyRoamers[ROAMER_COUNT];
+    u32 i, count = 0;
 
     for (i = 0; i < ROAMER_COUNT; i++)
     {
-        if (IsRoamerAt(i, gSaveBlock1Ptr->location.mapGroup, gSaveBlock1Ptr->location.mapNum) == TRUE && (Random() % 4) == 0)
-        {
-            CreateRoamerMonInstance(i);
-            gEncounteredRoamerIndex = i;
-            return TRUE;
-        }
+        if (IsRoamerAt(i, gSaveBlock1Ptr->location.mapGroup,
+                      gSaveBlock1Ptr->location.mapNum))
+            nearbyRoamers[count++] = i;
     }
+
+    // Keep the vanilla one-in-four encounter check even when several roamers
+    // share a route, then choose fairly among every legend present there.
+    if (count != 0 && (Random() % 4) == 0)
+    {
+        gEncounteredRoamerIndex = nearbyRoamers[Random() % count];
+        CreateRoamerMonInstance(gEncounteredRoamerIndex);
+        return TRUE;
+    }
+
     return FALSE;
 }
 
@@ -290,6 +332,14 @@ void UpdateRoamerHPStatus(struct Pokemon *mon)
 void SetRoamerInactive(u32 roamerIndex)
 {
     ROAMER(roamerIndex)->active = FALSE;
+}
+
+void RespawnRoamerAfterDefeat(u32 roamerIndex)
+{
+    enum Species species = ROAMER(roamerIndex)->species;
+    u8 level = ROAMER(roamerIndex)->level;
+
+    CreateInitialRoamerMon(roamerIndex, species, level);
 }
 
 void GetRoamerLocation(u32 roamerIndex, u8 *mapGroup, u8 *mapNum)

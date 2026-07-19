@@ -13,7 +13,7 @@ NavelRock_Bottom_EventScript_HideLugia::
 	return
 
 NavelRock_Bottom_EventScript_TryShowLugia::
-	goto_if_set FLAG_DEFEATED_LUGIA, Common_EventScript_NopReturn
+	clearflag FLAG_DEFEATED_LUGIA
 	clearflag FLAG_HIDE_LUGIA
 	return
 
@@ -55,14 +55,16 @@ NavelRock_Bottom_EventScript_Lugia::
 	setflag FLAG_SYS_CTRL_OBJ_DELETE
 	special BattleSetup_StartLegendaryBattle
 	clearflag FLAG_SYS_CTRL_OBJ_DELETE
-	goto_if_quest_complete QUEST_LUGIA, NavelRock_Bottom_EventScript_TowerDuoQuestDone
-	completequest QUEST_LUGIA
-NavelRock_Bottom_EventScript_TowerDuoQuestDone:
 	specialvar VAR_RESULT, GetBattleOutcome
 	goto_if_eq VAR_RESULT, B_OUTCOME_WON, NavelRock_Bottom_EventScript_DefeatedLugia
 	goto_if_eq VAR_RESULT, B_OUTCOME_RAN, NavelRock_Bottom_EventScript_RanFromLugia
 	goto_if_eq VAR_RESULT, B_OUTCOME_PLAYER_TELEPORTED, NavelRock_Bottom_EventScript_RanFromLugia
+	goto_if_ne VAR_RESULT, B_OUTCOME_CAUGHT, NavelRock_Bottom_EventScript_TowerQuestDone
 	setflag FLAG_CAUGHT_LUGIA
+	goto_if_unset FLAG_CAUGHT_HO_OH, NavelRock_Bottom_EventScript_TowerQuestDone
+	goto_if_quest_complete QUEST_LUGIA, NavelRock_Bottom_EventScript_TowerQuestDone
+	completequest QUEST_LUGIA
+NavelRock_Bottom_EventScript_TowerQuestDone:
 	release
 	end
 

@@ -261,6 +261,28 @@ struct PACKED Usm_SavedItems {
 };
 
 #define ROTOM_REALITY_SAVED_APP_CAPACITY 32
+#define ROAMING_LEGEND_SAVE_MAGIC 0x51524F4D
+
+// Defined before SaveBlock3 because the six appended quest-roamer slots live
+// there, while the legacy slot remains in SaveBlock1 at its original offset.
+struct Roamer
+{
+    /*0x00*/ u32 ivs;
+    /*0x04*/ u32 personality;
+    /*0x08*/ enum Species species;
+    /*0x0A*/ u16 hp;
+    /*0x0C*/ u8 level;
+    /*0x0D*/ u8 statusA;
+    /*0x0E*/ u8 cool;
+    /*0x0F*/ u8 beauty;
+    /*0x10*/ u8 cute;
+    /*0x11*/ u8 smart;
+    /*0x12*/ u8 tough;
+    /*0x13*/ bool8 active;
+    /*0x14*/ u8 statusB; // Stores frostbite
+    /*0x15*/ bool8 shiny;
+    /*0x16*/ u8 filler[0x6];
+};
 
 struct SaveBlock3
 {
@@ -299,6 +321,11 @@ struct SaveBlock3
     u8 characterQuestData[(QUEST_CHARACTER_COUNT * 5 + 7) / 8];
     u32 typeQuestDataMagic;
     u8 typeQuestData[(QUEST_TYPE_COUNT * 5 + 7) / 8];
+    // Appended together so old saves can initialize the six quest states and
+    // extra roamers without shifting any existing save fields.
+    u32 roamingLegendDataMagic;
+    u8 roamingLegendQuestData[(QUEST_ROAMING_COUNT * 5 + 7) / 8];
+    struct Roamer roamingLegendRoamers[QUEST_ROAMER_COUNT];
 }; /* max size 1624 bytes */
 
 extern struct SaveBlock3 *gSaveBlock3Ptr;
@@ -715,25 +742,6 @@ struct Pokeblock
     u8 bitter;
     u8 sour;
     u8 feel;
-};
-
-struct Roamer
-{
-    /*0x00*/ u32 ivs;
-    /*0x04*/ u32 personality;
-    /*0x08*/ enum Species species;
-    /*0x0A*/ u16 hp;
-    /*0x0C*/ u8 level;
-    /*0x0D*/ u8 statusA;
-    /*0x0E*/ u8 cool;
-    /*0x0F*/ u8 beauty;
-    /*0x10*/ u8 cute;
-    /*0x11*/ u8 smart;
-    /*0x12*/ u8 tough;
-    /*0x13*/ bool8 active;
-    /*0x14*/ u8 statusB; // Stores frostbite
-    /*0x15*/ bool8 shiny;
-    /*0x16*/ u8 filler[0x6];
 };
 
 struct RamScriptData
@@ -1204,7 +1212,7 @@ struct SaveBlock1
                u8 padding[4];
     /*0x31B3*/ struct ExternalEventData externalEventData;
     /*0x31C7*/ struct ExternalEventFlags externalEventFlags;
-    /*0x31DC*/ struct Roamer roamer[ROAMER_COUNT];
+    /*0x31DC*/ struct Roamer roamer[LEGACY_ROAMER_COUNT];
 #if FREE_ENIGMA_BERRY == FALSE
     /*0x31F8*/ struct EnigmaBerry enigmaBerry;
 #endif //FREE_ENIGMA_BERRY

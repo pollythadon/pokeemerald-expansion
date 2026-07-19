@@ -6,6 +6,7 @@ PacifidlogTown_MapScripts::
 
 PacifidlogTown_OnTransition:
 	setflag FLAG_VISITED_PACIFIDLOG_TOWN
+	call RoamingLegendQuests_EventScript_SyncNpcVisibility
 	end
 
 PacifidlogTown_OnResume:

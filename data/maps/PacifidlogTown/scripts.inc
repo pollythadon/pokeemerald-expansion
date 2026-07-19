@@ -14,6 +14,7 @@ PacifidlogTown_MapScripts::
 PacifidlogTown_OnTransition:
 # 8 "data/maps/PacifidlogTown/scripts.pory"
 	setflag FLAG_VISITED_PACIFIDLOG_TOWN
+	call RoamingLegendQuests_EventScript_SyncNpcVisibility
 # 9 "data/maps/PacifidlogTown/scripts.pory"
 	end
 # 10 "data/maps/PacifidlogTown/scripts.pory"

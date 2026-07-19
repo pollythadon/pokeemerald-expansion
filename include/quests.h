@@ -30,6 +30,7 @@
 #define QUEST_AVAIL_ALWAYS    0  // shown from the start
 #define QUEST_AVAIL_FLAG_SET  1  // shown once availFlag is set
 #define QUEST_AVAIL_POSTGAME  2  // shown once Champion (FLAG_LEGENDARY_BTL cleared)
+#define QUEST_AVAIL_QUEST_COMPLETE 3 // shown once quest in availFlag is complete
 
 // Top-level Quest Log categories.
 #define QUEST_CATEGORY_STORY    0
@@ -66,7 +67,7 @@ struct SideQuest
 	const u16 questVariable;
 	const u8 category;                  // QUEST_CATEGORY_* — dashboard/list grouping
 	const u8 availType;                 // QUEST_AVAIL_* — when the quest appears in the menu
-	const u16 availFlag;                // flag checked when availType == QUEST_AVAIL_FLAG_SET
+	const u16 availFlag;                // flag or quest ID selected by availType
 	const u16 rewardItem;               // item handed out on claim (ITEM_NONE = none)
 	const u8 rewardQty;                 // quantity of rewardItem
 	const u32 rewardMoney;              // money handed out on claim (0 = none)
@@ -97,6 +98,8 @@ void QuestMenu_Init(u8 a0, MainCallback callback);
 u8 QuestMenu_GetSetSubquestState(u8 quest, u8 caseId, u8 childQuest);
 u8 QuestMenu_GetSetQuestState(u8 quest, u8 caseId);
 void QuestMenu_MarkQuestFinished(u8 quest);
+void QuestMenu_TryCompleteRoamingLegendQuest(enum Species species);
+bool8 QuestMenu_IsRoamingLegendSpecies(enum Species species);
 void QuestMenu_CheckCatchQuests(void);
 void QuestMenu_InitNewGameQuests(void);
 u32 QuestMenu_GetQuestVariableId(u8 quest);

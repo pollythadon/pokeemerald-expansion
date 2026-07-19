@@ -1,0 +1,240 @@
+// Six roaming-legend quests unlocked by completing The Gods of Johto. The NPCs are
+// hidden with one shared flag; every giver map calls this on transition so both
+// new and existing saves always derive visibility from the Lugia/Ho-Oh quest.
+script RoamingLegendQuests_EventScript_SyncNpcVisibility {
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_LUGIA)
+    if (var(VAR_RESULT) == TRUE) {
+        clearflag(FLAG_HIDE_ROAMING_LEGEND_QUEST_GIVERS)
+    } else {
+        setflag(FLAG_HIDE_ROAMING_LEGEND_QUEST_GIVERS)
+    }
+    return
+}
+
+script RoamingLegendQuests_EventScript_Articuno {
+    lock
+    faceplayer
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_ARTICUNO)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("Winter crossed a tropical sea and found a Trainer it would follow.\pArticuno is no tame thing--but when the air turns still, I think it is listening for you."))
+        release
+        end
+    }
+    questmenu(QUEST_MENU_CHECK_REWARD, QUEST_ARTICUNO)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("The Glalitite is waiting in your Quest Log.\pIt formed inside our frost gauge the instant Articuno accepted your Poké Ball."))
+        release
+        end
+    }
+    questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_ARTICUNO)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("Follow the places where the air turns glass-clear and wild Pokémon fall silent.\pYour Pokédex can track Articuno's changing route. Its wounds will carry from one encounter to the next."))
+        release
+        end
+    }
+    msgbox(format("When the guardians of Navel Rock cried across the sea, every needle in my polar instruments turned toward Hoenn."))
+    msgbox(format("Then came a silence colder than snow. Kanto's mountain rescuers know that silence: Articuno, the white wing of winter."))
+    msgbox(format("Stories say it appears before travelers lost on icy peaks. A sweep of its wings freezes the moisture in the air, and snow falls from a clear sky."))
+    msgbox(format("It has begun circling Hoenn's cold fronts. It will not roost for a cage or a camera--but it may answer a Champion."))
+    setvar(VAR_0x8004, SPECIES_ARTICUNO)
+    setvar(VAR_0x8005, 60)
+    special(TryAddRoamerFromScript)
+    if (var(VAR_RESULT) == FALSE) {
+        goto(RoamingLegendQuests_EventScript_NoRoamerRoom)
+    }
+    startquest(QUEST_ARTICUNO)
+    msgbox(format("Articuno is now roaming Hoenn. Track the moving habitat in your Pokédex, then catch the winter bird."))
+    release
+    end
+}
+
+script RoamingLegendQuests_EventScript_Zapdos {
+    lock
+    faceplayer
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_ZAPDOS)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("The harbor lamps still flicker when Zapdos crosses the mainland.\pNow the pattern bends toward wherever you happen to be. Funny thing about living thunder--it remembers."))
+        release
+        end
+    }
+    questmenu(QUEST_MENU_CHECK_REWARD, QUEST_ZAPDOS)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("The Ampharosite is waiting in your Quest Log.\pIts crystal lattice holds the same clean frequency I recorded from Zapdos's wings."))
+        release
+        end
+    }
+    questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_ZAPDOS)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("Do not chase the loudest thunder. Watch for a storm moving against the wind.\pYour Pokédex can track Zapdos's route, and every encounter will leave it a little easier to catch."))
+        release
+        end
+    }
+    msgbox(format("I maintain Slateport's lightning rods. Yesterday, every rod discharged upward--from the harbor into one black cloud."))
+    msgbox(format("Old Kanto power-station logs describe the same impossible current. Zapdos is said to live inside thunderclouds and grow stronger when lightning strikes it."))
+    msgbox(format("Its wings do not merely ride a storm. Their crackle can summon one. Sailors once mistook that jagged silhouette for the storm itself."))
+    msgbox(format("Navel Rock's awakening drew it across the ocean. If you are willing, give all that wild power a reason to land."))
+    setvar(VAR_0x8004, SPECIES_ZAPDOS)
+    setvar(VAR_0x8005, 60)
+    special(TryAddRoamerFromScript)
+    if (var(VAR_RESULT) == FALSE) {
+        goto(RoamingLegendQuests_EventScript_NoRoamerRoom)
+    }
+    startquest(QUEST_ZAPDOS)
+    msgbox(format("Zapdos is now roaming Hoenn. Track the moving storm in your Pokédex, then catch the thunder bird."))
+    release
+    end
+}
+
+script RoamingLegendQuests_EventScript_Moltres {
+    lock
+    faceplayer
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_MOLTRES)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("The crater has settled, yet one golden feather still burns without turning to ash.\pMoltres brought Hoenn a new spring--and chose you to carry its first flame."))
+        release
+        end
+    }
+    questmenu(QUEST_MENU_CHECK_REWARD, QUEST_MOLTRES)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("The Charizardite Y is waiting in your Quest Log.\pIt has been warm since the moment Moltres entered your Poké Ball."))
+        release
+        end
+    }
+    questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_MOLTRES)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("Look for ash that rises instead of falling and warm rain on a cloudless route.\pYour Pokédex can track Moltres's flight. It will remember any wounds when it escapes."))
+        release
+        end
+    }
+    msgbox(format("Before dawn, a wounded bird plunged into Mt. Chimney. I feared the magma had taken it--until the whole crater opened like a sunrise."))
+    msgbox(format("The oldest fire pilgrimages tell of Moltres restoring itself in a volcano's molten heart. Every flap scatters embers bright enough to turn night red."))
+    msgbox(format("In cold countries, its return is celebrated as the promise of spring. It does not end winter by force. It reminds the world that winter ends."))
+    msgbox(format("Now that living flame is crossing Hoenn. Follow it, and prove that even an undying fire can choose companionship."))
+    setvar(VAR_0x8004, SPECIES_MOLTRES)
+    setvar(VAR_0x8005, 60)
+    special(TryAddRoamerFromScript)
+    if (var(VAR_RESULT) == FALSE) {
+        goto(RoamingLegendQuests_EventScript_NoRoamerRoom)
+    }
+    startquest(QUEST_MOLTRES)
+    msgbox(format("Moltres is now roaming Hoenn. Track the wandering flame in your Pokédex, then catch the herald of spring."))
+    release
+    end
+}
+
+script RoamingLegendQuests_EventScript_Raikou {
+    lock
+    faceplayer
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_RAIKOU)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("Our sensors cannot predict Raikou anymore. They predict you--and then thunder arrives.\pPerhaps being understood was the one race it never expected to lose."))
+        release
+        end
+    }
+    questmenu(QUEST_MENU_CHECK_REWARD, QUEST_RAIKOU)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("The Manectite is waiting in your Quest Log.\pIt hums at the exact frequency of the thunder that follows Raikou."))
+        release
+        end
+    }
+    questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_RAIKOU)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("Raikou carries rain clouds on its back and crosses a route faster than our instruments can refresh.\pUse your Pokédex to track it. Any damage or status will remain when it flees."))
+        release
+        end
+    }
+    msgbox(format("Ho-Oh and Lugia's return woke something in our storm records: thunder with a pulse, racing from route to route."))
+    msgbox(format("Ecruteak remembers a tower struck by lightning, consumed by fire, then silenced by rain. Three Pokémon perished there, and Ho-Oh restored them."))
+    msgbox(format("Raikou bears the terror of the bolt that struck the tower. Its roar crashes like thunder, and storm clouds seem to ride upon its back."))
+    msgbox(format("It has answered Ho-Oh across the sea. No machine can keep pace with it. Maybe a Champion can."))
+    setvar(VAR_0x8004, SPECIES_RAIKOU)
+    setvar(VAR_0x8005, 60)
+    special(TryAddRoamerFromScript)
+    if (var(VAR_RESULT) == FALSE) {
+        goto(RoamingLegendQuests_EventScript_NoRoamerRoom)
+    }
+    startquest(QUEST_RAIKOU)
+    msgbox(format("Raikou is now roaming Hoenn. Track the thunder's heartbeat in your Pokédex, then catch it."))
+    release
+    end
+}
+
+script RoamingLegendQuests_EventScript_Entei {
+    lock
+    faceplayer
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_ENTEI)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("Seismographs still jump when Entei barks, but the readings no longer resemble an eruption.\pThey resemble a greeting--an extremely loud one."))
+        release
+        end
+    }
+    questmenu(QUEST_MENU_CHECK_REWARD, QUEST_ENTEI)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("The Houndoominite is waiting in your Quest Log.\pCozmo says its inner fire stabilized the instant Entei accepted you."))
+        release
+        end
+    }
+    questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_ENTEI)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("Watch the seismographs, not the crater. Entei never remains where the earth first answers.\pTrack it with your Pokédex. Its injuries will persist between encounters."))
+        release
+        end
+    }
+    msgbox(format("I came from Ecruteak to compare Mt. Chimney's tremors with the oldest account in our archives."))
+    msgbox(format("Lightning struck a sacred tower. Fire took it. Rain ended the blaze. Ho-Oh descended afterward and returned three lost lives to the world."))
+    msgbox(format("Entei carries the fire's fury. Legends say it is born with a volcano, and that a single bark can make another volcano erupt."))
+    msgbox(format("When Ho-Oh called from Navel Rock, Mt. Chimney answered. Entei is running now--too powerful to corner, but not too proud to test you."))
+    setvar(VAR_0x8004, SPECIES_ENTEI)
+    setvar(VAR_0x8005, 60)
+    special(TryAddRoamerFromScript)
+    if (var(VAR_RESULT) == FALSE) {
+        goto(RoamingLegendQuests_EventScript_NoRoamerRoom)
+    }
+    startquest(QUEST_ENTEI)
+    msgbox(format("Entei is now roaming Hoenn. Track the moving tremors in your Pokédex, then catch the volcano beast."))
+    release
+    end
+}
+
+script RoamingLegendQuests_EventScript_Suicune {
+    lock
+    faceplayer
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_SUICUNE)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("Where Suicune ran, the sea stayed clear for seven mornings.\pThe north wind has moved on--yet each dawn it circles back toward you."))
+        release
+        end
+    }
+    questmenu(QUEST_MENU_CHECK_REWARD, QUEST_SUICUNE)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("The Blastoisinite is waiting in your Quest Log.\pIt became perfectly clear after touching the water Suicune purified."))
+        release
+        end
+    }
+    questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_SUICUNE)
+    if (var(VAR_RESULT) == TRUE) {
+        msgbox(format("Follow clean water where no current should have reached. The north wind will be just ahead.\pYour Pokédex can track Suicune, and it will carry wounds between encounters."))
+        release
+        end
+    }
+    msgbox(format("At sunrise, something ran across the ocean without sinking. Beneath each step, salt and silt vanished until the water shone like glass."))
+    msgbox(format("Johto calls Suicune the north wind reborn. It crosses the world searching for pure reservoirs--and can cleanse fouled water with a touch."))
+    msgbox(format("Ecruteak's legend says rain quenched the burning tower before Ho-Oh restored the lives lost inside. Suicune carries that mercy forward."))
+    msgbox(format("Ho-Oh's cry brought it to Hoenn. It will never yield to a trap. Follow the clear water, and earn the trust of the aurora beast."))
+    setvar(VAR_0x8004, SPECIES_SUICUNE)
+    setvar(VAR_0x8005, 60)
+    special(TryAddRoamerFromScript)
+    if (var(VAR_RESULT) == FALSE) {
+        goto(RoamingLegendQuests_EventScript_NoRoamerRoom)
+    }
+    startquest(QUEST_SUICUNE)
+    msgbox(format("Suicune is now roaming Hoenn. Track the north wind in your Pokédex, then catch the aurora beast."))
+    release
+    end
+}
+
+script RoamingLegendQuests_EventScript_NoRoamerRoom {
+    msgbox(format("Too many legendary Pokémon are already roaming Hoenn for this trail to begin safely. Catch one, then return."))
+    release
+    end
+}

@@ -10,6 +10,7 @@ Route119_WeatherInstitute_1F_MapScripts::
 Route119_WeatherInstitute_1F_OnTransition:
 # 6 "data/maps/Route119_WeatherInstitute_1F/scripts.pory"
 	call_if_eq VAR_WEATHER_INSTITUTE_STATE, 0, Route119_WeatherInstitute_1F_EventScript_SetLittleBoyPos
+	call RoamingLegendQuests_EventScript_SyncNpcVisibility
 # 7 "data/maps/Route119_WeatherInstitute_1F/scripts.pory"
 	end
 # 8 "data/maps/Route119_WeatherInstitute_1F/scripts.pory"

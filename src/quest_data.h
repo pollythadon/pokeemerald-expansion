@@ -101,12 +101,12 @@ static const u8 sQuestDesc_Mew[] = _("Sail from Lilycove Harbor to\ndistant Fara
 static const u8 sQuestDone_Mew[] = _("On Faraway Island you met the\nancestor of all, Mew.");
 static const u8 sQuestMap_Mew[] = _("Lilycove Harbor");
 
-// QUEST_LUGIA (Mystic Ticket -> Navel Rock: Lugia + Ho-Oh)
-static const u8 sQuestName_Lugia[] = _("The Tower Duo");
+// QUEST_LUGIA (Mystic Ticket -> Navel Rock: catch Lugia + Ho-Oh)
+static const u8 sQuestName_Lugia[] = _("The Gods of Johto");
 static const u8 sQuestStartMap_Lugia[] = _("Lavaridge Town");
 static const u8 sQuestStart_Lugia[] = _("Someone in Lavaridge is parting\nwith a Mystic Ticket.");
-static const u8 sQuestDesc_Lugia[] = _("Sail from Lilycove Harbor to\nNavel Rock's peak and depths.");
-static const u8 sQuestDone_Lugia[] = _("Atop and beneath Navel Rock you\nfaced Ho-Oh and Lugia.");
+static const u8 sQuestDesc_Lugia[] = _("Catch Ho-Oh atop Navel Rock and\nLugia in its deepest chamber.");
+static const u8 sQuestDone_Lugia[] = _("The gods of Johto, Ho-Oh and\nLugia, were both caught.");
 static const u8 sQuestMap_Lugia[] = _("Lilycove Harbor");
 
 // QUEST_DEOXYS (Aurora Ticket -> Birth Island)
@@ -448,5 +448,49 @@ static const u8 sQuestDone_TypeDark[] = _("Ten different Dark-type\nPokémon are
 static const u8 sQuestName_TypeFairy[] = _("Fairy Collector");
 static const u8 sQuestDesc_TypeFairy[] = _("Register 10 different\nFairy-type Pokémon as caught.");
 static const u8 sQuestDone_TypeFairy[] = _("Ten different Fairy-type\nPokémon are registered as caught!");
+
+// ========================= Roaming legends =============================
+
+static const u8 sQuestName_Articuno[] = _("Winter's White Wing");
+static const u8 sQuestStartMap_Articuno[] = _("Mossdeep City");
+static const u8 sQuestStart_Articuno[] = _("A polar researcher in Mossdeep heard\nwinter singing over Hoenn.");
+static const u8 sQuestDesc_Articuno[] = _("Articuno is roaming Hoenn. Track the\nblizzard bird and catch it.");
+static const u8 sQuestDone_Articuno[] = _("The white wing of winter chose to\ntravel beside you.");
+static const u8 sQuestMap_Articuno[] = _("Roaming Hoenn");
+
+static const u8 sQuestName_Zapdos[] = _("The Living Thunder");
+static const u8 sQuestStartMap_Zapdos[] = _("Slateport City");
+static const u8 sQuestStart_Zapdos[] = _("A harbor engineer is measuring a storm\nthat refuses to follow the wind.");
+static const u8 sQuestDesc_Zapdos[] = _("Zapdos is roaming Hoenn. Track the\nthunder bird and catch it.");
+static const u8 sQuestDone_Zapdos[] = _("The living thunder was caught without\never truly being tamed.");
+static const u8 sQuestMap_Zapdos[] = _("Roaming Hoenn");
+
+static const u8 sQuestName_Moltres[] = _("Herald of Spring");
+static const u8 sQuestStartMap_Moltres[] = _("Lavaridge Town");
+static const u8 sQuestStart_Moltres[] = _("A fire pilgrim in Lavaridge saw a\nburning bird rise from the crater.");
+static const u8 sQuestDesc_Moltres[] = _("Moltres is roaming Hoenn. Track the\nflame bird and catch it.");
+static const u8 sQuestDone_Moltres[] = _("Moltres's undying flame now welcomes\nevery new road with you.");
+static const u8 sQuestMap_Moltres[] = _("Roaming Hoenn");
+
+static const u8 sQuestName_Raikou[] = _("Thunder Given Form");
+static const u8 sQuestStartMap_Raikou[] = _("Weather Institute");
+static const u8 sQuestStart_Raikou[] = _("A storm chaser at the Weather Institute\nrecorded thunder with a heartbeat.");
+static const u8 sQuestDesc_Raikou[] = _("Raikou is roaming Hoenn. Track the\nthunder beast and catch it.");
+static const u8 sQuestDone_Raikou[] = _("The bolt reborn at Ecruteak's tower\nfinally let you run beside it.");
+static const u8 sQuestMap_Raikou[] = _("Roaming Hoenn");
+
+static const u8 sQuestName_Entei[] = _("The Tower's Flame");
+static const u8 sQuestStartMap_Entei[] = _("Fallarbor Town");
+static const u8 sQuestStart_Entei[] = _("A visiting volcanologist brought an\nEcruteak legend to Professor Cozmo.");
+static const u8 sQuestDesc_Entei[] = _("Entei is roaming Hoenn. Track the\nvolcano beast and catch it.");
+static const u8 sQuestDone_Entei[] = _("The fire reborn at Ecruteak's tower\naccepted a bond stronger than fear.");
+static const u8 sQuestMap_Entei[] = _("Roaming Hoenn");
+
+static const u8 sQuestName_Suicune[] = _("The North Wind");
+static const u8 sQuestStartMap_Suicune[] = _("Pacifidlog Town");
+static const u8 sQuestStart_Suicune[] = _("A water keeper in Pacifidlog saw the\nsea become pure beneath running paws.");
+static const u8 sQuestDesc_Suicune[] = _("Suicune is roaming Hoenn. Track the\naurora beast and catch it.");
+static const u8 sQuestDone_Suicune[] = _("The rain reborn at Ecruteak's tower\nnow carries the north wind with you.");
+static const u8 sQuestMap_Suicune[] = _("Roaming Hoenn");
 
 #endif // GUARD_QUEST_DATA_H

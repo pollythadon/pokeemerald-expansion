@@ -24,6 +24,7 @@ LavaridgeTown_OnTransition:
 	call_if_eq VAR_LAVARIDGE_TOWN_STATE, 1, LavaridgeTown_EventScript_CheckSetRivalPos
 # 13 "data/maps/LavaridgeTown/scripts.pory"
 	call_if_eq VAR_LAVARIDGE_TOWN_STATE, 1, LavaridgeTown_EventScript_HideMapNamePopup
+	call RoamingLegendQuests_EventScript_SyncNpcVisibility
 # 14 "data/maps/LavaridgeTown/scripts.pory"
 	end
 # 15 "data/maps/LavaridgeTown/scripts.pory"

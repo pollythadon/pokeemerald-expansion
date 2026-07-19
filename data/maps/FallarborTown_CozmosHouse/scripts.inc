@@ -1,7 +1,12 @@
 # 1 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
 FallarborTown_CozmosHouse_MapScripts::
 # 2 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
+	map_script MAP_SCRIPT_ON_TRANSITION, FallarborTown_CozmosHouse_OnTransition
 	.byte 0
+
+FallarborTown_CozmosHouse_OnTransition:
+	call RoamingLegendQuests_EventScript_SyncNpcVisibility
+	end
 # 3 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
 
 # 4 "data/maps/FallarborTown_CozmosHouse/scripts.pory"
