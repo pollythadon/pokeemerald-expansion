@@ -1038,7 +1038,7 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 	[QUEST_DEXNAV] =
 	{
 		.name = sQuestName_DexNav,
-		.category = QUEST_CATEGORY_STORY,
+		.category = QUEST_CATEGORY_SIDE,
 		.startmap = sQuestStartMap_DexNav,
 		.startdesc = sQuestStart_DexNav,
 		.desc = {sQuestDesc_DexNav},
