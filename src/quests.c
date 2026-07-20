@@ -56,6 +56,7 @@
 #define QUEST_SAVE_EXTENSION_MAGIC 0x51554558
 #define QUEST_SAVE_CHARACTER_MAGIC 0x51434852
 #define QUEST_SAVE_TYPE_MAGIC 0x51545950
+#define QUEST_SAVE_MEGA_MAGIC 0x514D4547
 #define QUEST_NAME_BUFFER_SIZE 64
 #define QUEST_ICON_SPRITE_SLOTS 2
 #define QUEST_CATEGORY_ICON_TAG_BASE 120
@@ -1650,6 +1651,35 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 		.rewardItem = ITEM_BLASTOISINITE,
 		.rewardQty = 1,
 	},
+	[QUEST_MEGA_RING] =
+	{
+		.name = sQuestName_MegaRing,
+		.category = QUEST_CATEGORY_STORY,
+		.startmap = sQuestStartMap_MegaRing,
+		.startdesc = sQuestStart_MegaRing,
+		.desc = {sQuestDesc_MegaRing},
+		.donedesc = sQuestDone_MegaRing,
+		.map = {sQuestMap_MegaRing},
+		.sprite = {ITEM_MEGA_RING},
+		.spritetype = {ITEM},
+		.availType = QUEST_AVAIL_FLAG_SET,
+		.availFlag = FLAG_STARTED_MEGA_RING_QUEST,
+	},
+	[QUEST_MEGA_EGG] =
+	{
+		.name = sQuestName_MegaEgg,
+		.category = QUEST_CATEGORY_SIDE,
+		.startmap = sQuestStartMap_MegaEgg,
+		.startdesc = sQuestStart_MegaEgg,
+		.desc = {sQuestDesc_MegaEgg},
+		.donedesc = sQuestDone_MegaEgg,
+		.map = {sQuestMap_MegaEgg},
+		.sprite = {SPECIES_EGG},
+		.spritetype = {PKMN},
+		.questVariable = VAR_MEGA_EGG_CHOICE,
+		.availType = QUEST_AVAIL_QUEST_COMPLETE,
+		.availFlag = QUEST_MEGA_RING,
+	},
 };
 #undef TYPE_CATCH_QUEST
 ////////////////////////END QUEST CUSTOMIZATION////////////////////////////////
@@ -2936,6 +2966,15 @@ static void QuestMenu_ValidateSaveData(void)
 		gSaveBlock3Ptr->roamingLegendDataMagic = ROAMING_LEGEND_SAVE_MAGIC;
 	}
 
+	if (gSaveBlock3Ptr->megaQuestDataMagic != QUEST_SAVE_MEGA_MAGIC)
+	{
+		// The midgame Mega quests were appended after the roaming legends.
+		// Initialize only their state so every older save remains intact.
+		memset(gSaveBlock3Ptr->megaQuestData, 0,
+		       sizeof(gSaveBlock3Ptr->megaQuestData));
+		gSaveBlock3Ptr->megaQuestDataMagic = QUEST_SAVE_MEGA_MAGIC;
+	}
+
 	QuestMenu_MigrateGodsOfJohtoProgress();
 }
 
@@ -2989,10 +3028,15 @@ u8 QuestMenu_GetSetQuestState(u8 quest, u8 caseId)
 		questData = gSaveBlock3Ptr->typeQuestData;
 		quest -= QUEST_TYPE_START;
 	}
-	else
+	else if (quest < QUEST_MEGA_START)
 	{
 		questData = gSaveBlock3Ptr->roamingLegendQuestData;
 		quest -= QUEST_ROAMING_START;
+	}
+	else
+	{
+		questData = gSaveBlock3Ptr->megaQuestData;
+		quest -= QUEST_MEGA_START;
 	}
 
 	u8 unlockedIndex = quest * 5 / 8;
@@ -4515,11 +4559,14 @@ void QuestMenu_ResetMenuSaveData(void)
 	       sizeof(gSaveBlock3Ptr->roamingLegendQuestData));
 	memset(gSaveBlock3Ptr->roamingLegendRoamers, 0,
 	       sizeof(gSaveBlock3Ptr->roamingLegendRoamers));
+	memset(gSaveBlock3Ptr->megaQuestData, 0,
+	       sizeof(gSaveBlock3Ptr->megaQuestData));
 	gSaveBlock3Ptr->questDataMagic = QUEST_SAVE_DATA_MAGIC;
 	gSaveBlock3Ptr->questDataExtensionMagic = QUEST_SAVE_EXTENSION_MAGIC;
 	gSaveBlock3Ptr->characterQuestDataMagic = QUEST_SAVE_CHARACTER_MAGIC;
 	gSaveBlock3Ptr->typeQuestDataMagic = QUEST_SAVE_TYPE_MAGIC;
 	gSaveBlock3Ptr->roamingLegendDataMagic = ROAMING_LEGEND_SAVE_MAGIC;
+	gSaveBlock3Ptr->megaQuestDataMagic = QUEST_SAVE_MEGA_MAGIC;
 	sTypeQuestDataWasMigrated = FALSE;
 }
 

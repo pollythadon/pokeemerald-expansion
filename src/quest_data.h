@@ -493,4 +493,20 @@ static const u8 sQuestDesc_Suicune[] = _("Suicune is roaming Hoenn. Track the\na
 static const u8 sQuestDone_Suicune[] = _("The rain reborn at Ecruteak's tower\nnow carries the north wind with you.");
 static const u8 sQuestMap_Suicune[] = _("Roaming Hoenn");
 
+// ======================= Mega Evolution introduction ======================
+
+static const u8 sQuestName_MegaRing[] = _("A Bond Beyond");
+static const u8 sQuestStartMap_MegaRing[] = _("Route 118");
+static const u8 sQuestStart_MegaRing[] = _("Steven believes your bond may awaken\na power beyond ordinary Evolution.");
+static const u8 sQuestDesc_MegaRing[] = _("Lead with a Pokémon that trusts you\ndeeply. Meet Steven where you first met.");
+static const u8 sQuestDone_MegaRing[] = _("Your bond answered Steven's test. He\nentrusted you with a Mega Ring.");
+static const u8 sQuestMap_MegaRing[] = _("Granite Cave");
+
+static const u8 sQuestName_MegaEgg[] = _("Three New Bonds");
+static const u8 sQuestStartMap_MegaEgg[] = _("Verdanturf Town");
+static const u8 sQuestStart_MegaEgg[] = _("A Kalos visitor in Verdanturf wants\nto discuss a Mega-capable partner.");
+static const u8 sQuestDesc_MegaEgg[] = _("Choose one of three shining Eggs from\nthe Kalos Mega Evolution expert.");
+static const u8 sQuestDone_MegaEgg[] = _("A shining new partner and its Mega\nStone are ready to grow beside you.");
+static const u8 sQuestMap_MegaEgg[] = _("Friendship Rater's House");
+
 #endif // GUARD_QUEST_DATA_H

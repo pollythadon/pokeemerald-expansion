@@ -92,6 +92,8 @@
 #define QUEST_73        72
 #define QUEST_74        73
 #define QUEST_75        74
+#define QUEST_76        75
+#define QUEST_77        76
 
 // Post-game legendary quest aliases (custom framework tie-in)
 #define QUEST_MEWTWO     QUEST_1
@@ -197,6 +199,11 @@
 #define QUEST_ENTEI             QUEST_74
 #define QUEST_SUICUNE           QUEST_75
 
+// Midgame Mega Evolution introduction and its optional partner-Egg follow-up.
+// Appended in a separate save block so every existing quest ID remains stable.
+#define QUEST_MEGA_RING         QUEST_76
+#define QUEST_MEGA_EGG          QUEST_77
+
 #define QUEST_LEGACY_COUNT            33
 #define QUEST_HOENN_EXTENSION_COUNT    8
 #define QUEST_CHARACTER_START         QUEST_42
@@ -205,7 +212,9 @@
 #define QUEST_TYPE_COUNT              18
 #define QUEST_ROAMING_START           QUEST_70
 #define QUEST_ROAMING_COUNT            6
-#define QUEST_COUNT                   75
+#define QUEST_MEGA_START              QUEST_76
+#define QUEST_MEGA_COUNT               2
+#define QUEST_COUNT                   77
 
 #define SUB_QUEST_1          0
 #define SUB_QUEST_2          1

@@ -326,6 +326,10 @@ struct SaveBlock3
     u32 roamingLegendDataMagic;
     u8 roamingLegendQuestData[(QUEST_ROAMING_COUNT * 5 + 7) / 8];
     struct Roamer roamingLegendRoamers[QUEST_ROAMER_COUNT];
+    // Kept separate from the roaming block so old saves that already carry its
+    // magic value never reinterpret uninitialized bytes as quest progress.
+    u32 megaQuestDataMagic;
+    u8 megaQuestData[(QUEST_MEGA_COUNT * 5 + 7) / 8];
 }; /* max size 1624 bytes */
 
 extern struct SaveBlock3 *gSaveBlock3Ptr;

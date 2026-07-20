@@ -1,0 +1,219 @@
+// Optional midgame Mega Evolution quest chain.
+
+script MegaEvolutionQuest_EventScript_StevenIntro {
+    if (flag(FLAG_STARTED_MEGA_RING_QUEST)) {
+        return
+    }
+
+    msgbox(format("Before I go, may I ask you one more question?\pHave you ever heard of Mega Evolution?"))
+    msgbox(format("In Kalos, that name describes a transformation beyond ordinary Evolution. It temporarily reveals power hidden within certain Pokémon."))
+    msgbox(format("A Key Stone carried by a Trainer must resonate with the matching Mega Stone held by the Pokémon.\pThe stones are only a bridge. A strong bond is what lets them answer each other."))
+    msgbox(format("I get the feeling you may be worthy of carrying a Mega Ring.\pA feeling is not proof, though, and raw strength would prove the wrong thing."))
+    msgbox(format("Show me a Pokémon that chooses to trust you. Put a deeply trusted partner at the head of your party, then meet me in the chamber where we first met."))
+    setflag(FLAG_STARTED_MEGA_RING_QUEST)
+    startquest(QUEST_MEGA_RING)
+    msgbox(format("There is no deadline. A true bond is worth recognizing, not rushing."))
+    return
+}
+
+script MegaEvolutionQuest_MapScript_GraniteCave {
+    if (!flag(FLAG_DELIVERED_STEVEN_LETTER)) {
+        clearflag(FLAG_HIDE_GRANITE_CAVE_STEVEN)
+        end
+    }
+
+    questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_MEGA_RING)
+    if (var(VAR_RESULT) == TRUE) {
+        clearflag(FLAG_HIDE_GRANITE_CAVE_STEVEN)
+    } else {
+        setflag(FLAG_HIDE_GRANITE_CAVE_STEVEN)
+    }
+    end
+}
+
+script MegaEvolutionQuest_EventScript_GraniteCaveSteven {
+    questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_MEGA_RING)
+    if (var(VAR_RESULT) == TRUE) {
+        goto(MegaEvolutionQuest_EventScript_StevenTest)
+    }
+
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_MEGA_RING)
+    if (var(VAR_RESULT) == TRUE) {
+        lock
+        faceplayer
+        msgbox(format("That Mega Ring suits you. Remember: the stone does not command your partner. It lets your bond be heard."))
+        release
+        end
+    }
+
+    goto(GraniteCave_StevensRoom_EventScript_Steven)
+}
+
+script MegaEvolutionQuest_EventScript_StevenTest {
+    lock
+    faceplayer
+    msgbox(format("You returned... and you brought a partner whose answer matters more than yours. Let me see."))
+    specialvar(VAR_RESULT, GetLeadMonFriendshipScore)
+    if (var(VAR_RESULT) == FRIENDSHIP_200_TO_254) {
+        goto(MegaEvolutionQuest_EventScript_StevenTestPassed)
+    }
+    if (var(VAR_RESULT) == FRIENDSHIP_MAX) {
+        goto(MegaEvolutionQuest_EventScript_StevenTestPassed)
+    }
+
+    msgbox(format("There is trust here, but the resonance is still faint. Travel together. Battle together. Care for this Pokémon when there is nothing to gain."))
+    msgbox(format("When it is truly happy simply to stand beside you, bring it back at the head of your party."))
+    release
+    end
+}
+
+script MegaEvolutionQuest_EventScript_StevenTestPassed {
+    msgbox(format("There it is. Not obedience--choice. Your Pokémon watches you because it wants to know what the two of you will do together."))
+    msgbox(format("That is the bond Mega Evolution asks for. I would be proud to entrust this to you."))
+    if (!checkitem(ITEM_MEGA_RING)) {
+        giveitem(ITEM_MEGA_RING)
+        if (var(VAR_RESULT) == FALSE) {
+            msgbox(format("Your Bag is full. Make room for the Mega Ring, then speak with me again. Your proof will not expire."))
+            release
+            end
+        }
+    }
+    msgbox(format("A Key Stone is set into that ring. Give a compatible partner its Mega Stone, then press START before choosing its move in battle."))
+    msgbox(format("Mega Evolution is temporary. The responsibility behind it is not."))
+    completequest(QUEST_MEGA_RING)
+    release
+    end
+}
+
+script MegaEvolutionQuest_EventScript_EggExpert {
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_MEGA_RING)
+    if (var(VAR_RESULT) == FALSE) {
+        lock
+        faceplayer
+        msgbox(format("Verdanturf's gentle air is perfect for studying friendship. Some discoveries need quieter instruments than a laboratory."))
+        release
+        end
+    }
+
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_MEGA_EGG)
+    if (var(VAR_RESULT) == TRUE) {
+        lock
+        faceplayer
+        msgbox(format("Raise that little one patiently. A Mega Stone may open the door, but only your shared journey can decide what passes through it."))
+        release
+        end
+    }
+
+    lock
+    faceplayer
+    questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_MEGA_EGG)
+    if (var(VAR_RESULT) == FALSE) {
+        msgbox(format("That Mega Ring... Steven found the Trainer he was looking for after all."))
+        msgbox(format("I once assisted Professor Sycamore in Kalos. He studies Mega Evolution, but his finest lesson began with a choice of partners, not a lecture."))
+        msgbox(format("Bulbasaur, Charmander, and Squirtle can each grow into a Pokémon capable of Mega Evolution. I brought one Egg from each species to Hoenn."))
+        msgbox(format("Their rare coloration will make them shine when they hatch, but color is not what awakens their hidden power. The bond comes first."))
+        startquest(QUEST_MEGA_EGG)
+    }
+
+    switch (var(VAR_MEGA_EGG_CHOICE)) {
+        case 1:
+            goto(MegaEvolutionQuest_EventScript_GiveBulbasaurEgg)
+        case 2:
+            goto(MegaEvolutionQuest_EventScript_GiveCharmanderEgg)
+        case 3:
+            goto(MegaEvolutionQuest_EventScript_GiveSquirtleEgg)
+    }
+
+    msgbox(format("Bulbasaur grows into the steadfast Mega Venusaur. Will you choose its Egg and the Venusaurite?"), MSGBOX_YESNO)
+    if (var(VAR_RESULT) == YES) {
+        goto(MegaEvolutionQuest_EventScript_ChooseBulbasaur)
+    }
+
+    msgbox(format("Charmander grows into Charizard. Charizardite X can reveal its Fire- and Dragon-type form. Will you choose it?"), MSGBOX_YESNO)
+    if (var(VAR_RESULT) == YES) {
+        goto(MegaEvolutionQuest_EventScript_ChooseCharmander)
+    }
+
+    msgbox(format("Squirtle grows into Mega Blastoise, whose great cannon focuses overwhelming blasts. Will you choose it?"), MSGBOX_YESNO)
+    if (var(VAR_RESULT) == YES) {
+        goto(MegaEvolutionQuest_EventScript_ChooseSquirtle)
+    }
+
+    msgbox(format("A lifelong partnership deserves a considered answer. Return whenever you are ready to choose."))
+    release
+    end
+}
+
+script MegaEvolutionQuest_EventScript_ChooseBulbasaur {
+    giveitem(ITEM_VENUSAURITE)
+    if (var(VAR_RESULT) == FALSE) {
+        goto(MegaEvolutionQuest_EventScript_MegaStoneBagFull)
+    }
+    setvar(VAR_MEGA_EGG_CHOICE, 1)
+    goto(MegaEvolutionQuest_EventScript_GiveBulbasaurEgg)
+}
+
+script MegaEvolutionQuest_EventScript_ChooseCharmander {
+    giveitem(ITEM_CHARIZARDITE_X)
+    if (var(VAR_RESULT) == FALSE) {
+        goto(MegaEvolutionQuest_EventScript_MegaStoneBagFull)
+    }
+    setvar(VAR_MEGA_EGG_CHOICE, 2)
+    goto(MegaEvolutionQuest_EventScript_GiveCharmanderEgg)
+}
+
+script MegaEvolutionQuest_EventScript_ChooseSquirtle {
+    giveitem(ITEM_BLASTOISINITE)
+    if (var(VAR_RESULT) == FALSE) {
+        goto(MegaEvolutionQuest_EventScript_MegaStoneBagFull)
+    }
+    setvar(VAR_MEGA_EGG_CHOICE, 3)
+    goto(MegaEvolutionQuest_EventScript_GiveSquirtleEgg)
+}
+
+script MegaEvolutionQuest_EventScript_GiveBulbasaurEgg {
+    setvar(VAR_GIFT_EGG_SPECIES, SPECIES_BULBASAUR)
+    goto(MegaEvolutionQuest_EventScript_GiveChosenEgg)
+}
+
+script MegaEvolutionQuest_EventScript_GiveCharmanderEgg {
+    setvar(VAR_GIFT_EGG_SPECIES, SPECIES_CHARMANDER)
+    goto(MegaEvolutionQuest_EventScript_GiveChosenEgg)
+}
+
+script MegaEvolutionQuest_EventScript_GiveSquirtleEgg {
+    setvar(VAR_GIFT_EGG_SPECIES, SPECIES_SQUIRTLE)
+    goto(MegaEvolutionQuest_EventScript_GiveChosenEgg)
+}
+
+script MegaEvolutionQuest_EventScript_GiveChosenEgg {
+    setvar(VAR_GIFT_EGG_SHINY, TRUE)
+    setvar(VAR_GIFT_EGG_MOVE1, MOVE_NONE)
+    setvar(VAR_GIFT_EGG_MOVE2, MOVE_NONE)
+    setvar(VAR_GIFT_EGG_MOVE3, MOVE_NONE)
+    setvar(VAR_GIFT_EGG_MOVE4, MOVE_NONE)
+    special(GiveCustomEgg)
+    if (var(VAR_RESULT) == MON_CANT_GIVE) {
+        msgbox(format("Your party and every PC Box are full. I will keep the Egg safe; make room, then return."))
+        release
+        end
+    }
+
+    playfanfare(MUS_OBTAIN_ITEM)
+    waitfanfare
+    if (var(VAR_RESULT) == MON_GIVEN_TO_PC) {
+        msgbox(format("Your party was full, so the shining Egg was sent to a Box in your PC."))
+    } else {
+        msgbox(format("{PLAYER} received the shining Egg!"))
+    }
+    msgbox(format("The matching Mega Stone is yours as well. Raise your new partner with patience, and let the ring answer when both of you are ready."))
+    completequest(QUEST_MEGA_EGG)
+    release
+    end
+}
+
+script MegaEvolutionQuest_EventScript_MegaStoneBagFull {
+    msgbox(format("Your Bag has no room for the Mega Stone. Make space, then return; I will keep all three Eggs safe."))
+    release
+    end
+}
