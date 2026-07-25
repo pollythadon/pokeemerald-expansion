@@ -237,6 +237,8 @@ void NewGameInitData(void)
     ResetDexNav();
     ClearFollowerNPCData();
     gSaveBlock3Ptr->followerIndex = OW_FOLLOWER_NOT_SET;
+    FlagSet(FLAG_SYS_POKEDEX_GET);
+    EnableNationalPokedex();
 }
 
 static void ResetMiniGamesRecords(void)
