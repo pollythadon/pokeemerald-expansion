@@ -1680,6 +1680,22 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 		.availType = QUEST_AVAIL_QUEST_COMPLETE,
 		.availFlag = QUEST_MEGA_RING,
 	},
+	[QUEST_SHINY_BUDEW] =
+	{
+		.name = sQuestName_ShinyBudew,
+		.category = QUEST_CATEGORY_POKEMON,
+		.startmap = sQuestStartMap_ShinyBudew,
+		.startdesc = sQuestStart_ShinyBudew,
+		.desc = {sQuestDesc_ShinyBudew},
+		.donedesc = sQuestDone_ShinyBudew,
+		.map = {sQuestMap_ShinyBudew},
+		.sprite = {SPECIES_BUDEW},
+		.spritetype = {PKMN},
+		.subquests = NULL,
+		.numSubquests = 0,
+		.questVariable = 0,
+		.availType = QUEST_AVAIL_ON_ACCEPT, // hidden from the menu until accepted; giver still shows a start icon
+	},
 };
 #undef TYPE_CATCH_QUEST
 ////////////////////////END QUEST CUSTOMIZATION////////////////////////////////
@@ -2805,6 +2821,9 @@ bool8 QuestMenu_IsQuestAvailable(u8 questId)
 		case QUEST_AVAIL_QUEST_COMPLETE:
 			return QuestMenu_GetSetQuestState(sSideQuests[questId].availFlag,
 			                                  FLAG_GET_COMPLETED);
+		case QUEST_AVAIL_ON_ACCEPT:
+			// Not listed in the menu until the giver hands it over (unlocks it).
+			return QuestMenu_GetSetQuestState(questId, FLAG_GET_UNLOCKED);
 		case QUEST_AVAIL_ALWAYS:
 		default:
 			return TRUE;
@@ -4958,8 +4977,12 @@ void HandleQuestIconForSingleObjectEvent(struct ObjectEvent *objectEvent, u32 ob
 	if (questId == QUEST_NONE)
 		return;
 
-	// No marker until the quest is actually available in the menu.
-	if (!QuestMenu_IsQuestAvailable(questId))
+	// No marker until the quest is actually available in the menu -- except for
+	// QUEST_AVAIL_ON_ACCEPT quests, which are hidden from the menu until accepted
+	// yet still advertise their start point here (the unlocked check below hides
+	// the marker the moment the player accepts).
+	if (sSideQuests[questId].availType != QUEST_AVAIL_ON_ACCEPT
+	    && !QuestMenu_IsQuestAvailable(questId))
 		return;
 
 	// Only unaccepted quests get a marker. Once the quest is unlocked (accepted),

@@ -93,10 +93,10 @@
 #define FLAG_REGIGIGAS_BATTLE 0x46 // Regigigas statue hide flag; set when Regigigas is caught/defeated.
 #define FLAG_REGIGIGAS_DFTD   0x47 // Set when Regigigas is caught/defeated, so it doesn't reappear.
 #define FLAG_RECEIVED_EON_TICKET 0x48 // Fortree navigator gave the Eon Ticket.
-#define FLAG_UNUSED_0x049    0x49 // Unused Flag
-#define FLAG_UNUSED_0x04A    0x4A // Unused Flag
-#define FLAG_UNUSED_0x04B    0x4B // Unused Flag
-#define FLAG_UNUSED_0x04C    0x4C // Unused Flag
+#define FLAG_BUDEW_HIDE      0x49 // Odd-colored Budew sprite hide flag; set at new game and after catch, cleared when the quest is accepted.
+#define FLAG_BUDEW_CAUGHT    0x4A // Set when the shiny Budew is caught; the flower-shop girl rewards on this.
+#define FLAG_BUDEW_QUEST_DONE 0x4B // Set after she hands over the Revival Herbs, so the quest stays finished.
+#define FLAG_BUDEW_ACCEPTED  0x4C // Set when the girl gives the quest; gates the quest-menu entry and keeps the woods Budew hidden until then.
 #define FLAG_UNUSED_0x04D    0x4D // Unused Flag
 #define FLAG_UNUSED_0x04E    0x4E // Unused Flag
 #define FLAG_UNUSED_0x04F    0x4F // Unused Flag

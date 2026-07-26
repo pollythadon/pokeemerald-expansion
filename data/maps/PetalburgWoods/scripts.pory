@@ -1,5 +1,12 @@
 raw `PetalburgWoods_MapScripts::
+	map_script MAP_SCRIPT_ON_TRANSITION, PetalburgWoods_OnTransition
 	.byte 0
+
+PetalburgWoods_OnTransition:
+	goto_if_set FLAG_BUDEW_ACCEPTED, PetalburgWoods_EventScript_TransitionDone
+	setflag FLAG_BUDEW_HIDE
+PetalburgWoods_EventScript_TransitionDone:
+	end
 
 PetalburgWoods_EventScript_DevonResearcherLeft::
 	lockall
@@ -555,4 +562,31 @@ script CELEBIRanAway {
 movement Celebi_Descend {
     walk_down * 9 // Move down 5 steps to simulate descending from the top
     face_player // Face the player before the battle
+}
+
+// The odd-colored (shiny) Budew the Route 104 flower-shop girl asks about.
+// Hidden by FLAG_BUDEW_HIDE until the quest is accepted. A guaranteed-shiny
+// static encounter: the player must CATCH it -- fleeing or KO'ing it lets it
+// respawn from its template on the next map load.
+script PetalburgWoods_EventScript_ShinyBudew {
+    lock
+    faceplayer
+    setwildbattle(SPECIES_BUDEW, 5)
+    special(ForceScriptedWildShiny)
+    waitse
+    playmoncry(SPECIES_BUDEW, CRY_MODE_ENCOUNTER)
+    delay(40)
+    waitmoncry
+    dowildbattle
+    specialvar(VAR_RESULT, GetBattleOutcome)
+    if (var(VAR_RESULT) == B_OUTCOME_CAUGHT) {
+        setflag(FLAG_BUDEW_CAUGHT)
+        removeobject(LOCALID_PETALBURG_WOODS_SHINY_BUDEW) // auto-sets FLAG_BUDEW_HIDE -> gone for good
+        msgbox(format("The shining Budew was caught!\pThe flower-shop girl back on Route 104\nwill want to see this."))
+    } else {
+        // WON / RAN / TELEPORTED -> hide for this session only; it respawns for a retry.
+        hideobjectat(LOCALID_PETALBURG_WOODS_SHINY_BUDEW, MAP_PETALBURG_WOODS)
+    }
+    release
+    end
 }

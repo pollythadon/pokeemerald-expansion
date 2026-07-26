@@ -509,4 +509,13 @@ static const u8 sQuestDesc_MegaEgg[] = _("Choose one of three shining Eggs from\
 static const u8 sQuestDone_MegaEgg[] = _("A shining new partner and its Mega\nStone are ready to grow beside you.");
 static const u8 sQuestMap_MegaEgg[] = _("Friendship Rater's House");
 
+// ========================= Odd-Colored Budew =============================
+
+static const u8 sQuestName_ShinyBudew[] = _("Odd-Colored Budew");
+static const u8 sQuestStartMap_ShinyBudew[] = _("Route 104");
+static const u8 sQuestStart_ShinyBudew[] = _("A girl at the Pretty Petal Flower\nShop saw a strange-colored Budew.");
+static const u8 sQuestDesc_ShinyBudew[] = _("Catch the odd-colored Budew in\nPetalburg Woods and show the girl.");
+static const u8 sQuestDone_ShinyBudew[] = _("The girl marveled at the shining\nBudew and shared her Revival Herbs.");
+static const u8 sQuestMap_ShinyBudew[] = _("Petalburg Woods");
+
 #endif // GUARD_QUEST_DATA_H

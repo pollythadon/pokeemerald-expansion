@@ -94,6 +94,7 @@
 #define QUEST_75        74
 #define QUEST_76        75
 #define QUEST_77        76
+#define QUEST_78        77
 
 // Post-game legendary quest aliases (custom framework tie-in)
 #define QUEST_MEWTWO     QUEST_1
@@ -204,6 +205,10 @@
 #define QUEST_MEGA_RING         QUEST_76
 #define QUEST_MEGA_EGG          QUEST_77
 
+// Early-game side quest: catch the odd-colored (shiny) Budew for the Route 104
+// flower-shop girl. Appended so every existing quest ID stays save-stable.
+#define QUEST_SHINY_BUDEW       QUEST_78
+
 #define QUEST_LEGACY_COUNT            33
 #define QUEST_HOENN_EXTENSION_COUNT    8
 #define QUEST_CHARACTER_START         QUEST_42
@@ -214,7 +219,7 @@
 #define QUEST_ROAMING_COUNT            6
 #define QUEST_MEGA_START              QUEST_76
 #define QUEST_MEGA_COUNT               2
-#define QUEST_COUNT                   77
+#define QUEST_COUNT                   78
 
 #define SUB_QUEST_1          0
 #define SUB_QUEST_2          1

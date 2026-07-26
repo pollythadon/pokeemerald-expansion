@@ -176,6 +176,16 @@ void CreateScriptedWildMon(enum Species species, u8 level, enum Item item)
         SetMonData(&gParties[B_TRAINER_OPPONENT_A][0], MON_DATA_HELD_ITEM, heldItem);
     }
 }
+
+// Forces the mon just built by setwildbattle to be Shiny. Call after
+// setwildbattle and before dowildbattle for a guaranteed-shiny static encounter.
+void ForceScriptedWildShiny(void)
+{
+    u32 isShiny = TRUE;
+
+    SetMonData(&gParties[B_TRAINER_OPPONENT_A][0], MON_DATA_IS_SHINY, &isShiny);
+}
+
 void CreateScriptedDoubleWildMon(enum Species species1, u8 level1, enum Item item1, enum Species species2, u8 level2, enum Item item2)
 {
     u8 heldItem1[2];

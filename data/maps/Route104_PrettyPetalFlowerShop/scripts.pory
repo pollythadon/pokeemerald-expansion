@@ -120,3 +120,45 @@ script SHAYMIN_quest_starter {
     releaseall
     end
 }
+
+// Early-game side quest: the girl saw an odd-colored (shiny) Budew in Petalburg
+// Woods and wants the player to catch it and bring it back to her.
+// States: not started -> accepted (Budew revealed) -> caught -> rewarded/done.
+// DONE and CAUGHT are checked before the "in progress" (!FLAG_BUDEW_HIDE) test,
+// because catching the Budew re-sets FLAG_BUDEW_HIDE via removeobject.
+script BUDEW_quest_starter {
+    lock
+    faceplayer
+    if (flag(FLAG_BUDEW_QUEST_DONE)) {
+        msgbox(format("That little Budew was shining like a jewel.\nThank you again for showing me!"))
+        release
+        end
+    }
+    if (flag(FLAG_BUDEW_CAUGHT)) {
+        msgbox(format("Oh! You actually caught it!\pIt really is a strange, lovely color...\nI could look at it all day.\pHere -- please take these as my thanks.\nThey're Revival Herbs, five of them!"))
+        giveitem(ITEM_REVIVAL_HERB, 5)
+        goto_if_eq(VAR_RESULT, FALSE, Common_EventScript_ShowBagIsFull)
+        setflag(FLAG_BUDEW_QUEST_DONE)
+        completequest(QUEST_SHINY_BUDEW)
+        msgbox(format("They taste bitter, but they'll revive\na fainted Pokémon in a pinch."))
+        release
+        end
+    }
+    if (!flag(FLAG_BUDEW_HIDE)) {
+        msgbox(format("Have you found that odd Budew yet?\pIt was up in the northern part of\nPetalburg Woods. Do be gentle with it!"))
+        release
+        end
+    }
+    msgbox(format("You know Petalburg Woods, just south\nof here?\pI saw the most peculiar Budew there...\nquite the wrong color, but beautiful!\pI'd love a closer look. Could you catch\nit and bring it back to show me?"), MSGBOX_YESNO)
+    switch (var(VAR_RESULT)) {
+        case YES:
+            setflag(FLAG_BUDEW_ACCEPTED)
+            startquest(QUEST_SHINY_BUDEW)
+            clearflag(FLAG_BUDEW_HIDE)
+            msgbox(format("Wonderful! Look for it in the northern\npart of the woods.\pOh, I do hope it's still there!"))
+        case NO:
+            msgbox(format("Oh... Well, if you change your mind,\nyou know where to find me."))
+    }
+    release
+    end
+}

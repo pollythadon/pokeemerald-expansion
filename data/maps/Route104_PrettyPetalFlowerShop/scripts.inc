@@ -235,6 +235,78 @@ SHAYMIN_quest_starter_7:
 	goto SHAYMIN_quest_starter_4
 
 
+BUDEW_quest_starter::
+# 130 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	lock
+# 131 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	faceplayer
+# 132 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	goto_if_set FLAG_BUDEW_QUEST_DONE, BUDEW_quest_starter_2
+# 137 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	goto_if_set FLAG_BUDEW_CAUGHT, BUDEW_quest_starter_5
+# 147 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	goto_if_unset FLAG_BUDEW_HIDE, BUDEW_quest_starter_8
+# 152 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	msgbox BUDEW_quest_starter_Text_4, MSGBOX_YESNO
+# 153 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	switch VAR_RESULT
+# 154 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	case YES, BUDEW_quest_starter_12
+# 159 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	case NO, BUDEW_quest_starter_13
+BUDEW_quest_starter_10:
+# 162 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	release
+	end
+
+BUDEW_quest_starter_2:
+# 133 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	msgbox BUDEW_quest_starter_Text_0
+# 134 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	release
+	end
+
+BUDEW_quest_starter_5:
+# 138 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	msgbox BUDEW_quest_starter_Text_1
+# 139 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	giveitem ITEM_REVIVAL_HERB, 5
+# 140 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	goto_if_eq VAR_RESULT, FALSE, Common_EventScript_ShowBagIsFull
+# 141 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	setflag FLAG_BUDEW_QUEST_DONE
+# 142 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	completequest QUEST_SHINY_BUDEW
+# 143 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	msgbox BUDEW_quest_starter_Text_2
+# 144 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	release
+	end
+
+BUDEW_quest_starter_8:
+# 148 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	msgbox BUDEW_quest_starter_Text_3
+# 149 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	release
+	end
+
+BUDEW_quest_starter_12:
+# 155 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	setflag FLAG_BUDEW_ACCEPTED
+# 156 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	startquest QUEST_SHINY_BUDEW
+# 157 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	clearflag FLAG_BUDEW_HIDE
+# 158 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	msgbox BUDEW_quest_starter_Text_5
+	goto BUDEW_quest_starter_10
+
+BUDEW_quest_starter_13:
+# 160 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	msgbox BUDEW_quest_starter_Text_6
+	goto BUDEW_quest_starter_10
+
+
 SHAYMIN_quest_starter_Text_0:
 # 102 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
 	.string "Carry that Gracidea somewhere the air\n"
@@ -265,3 +337,48 @@ SHAYMIN_quest_starter_Text_3:
 # 118 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
 	.string "The flowers will keep. And so will the\n"
 	.string "little one hiding in them.$"
+
+BUDEW_quest_starter_Text_0:
+# 133 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	.string "That little Budew was shining like a\n"
+	.string "jewel.\n"
+	.string "Thank you again for showing me!$"
+
+BUDEW_quest_starter_Text_1:
+# 138 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	.string "Oh! You actually caught it!\p"
+	.string "It really is a strange, lovely color...\n"
+	.string "I could look at it all day.\p"
+	.string "Here -- please take these as my thanks.\n"
+	.string "They're Revival Herbs, five of them!$"
+
+BUDEW_quest_starter_Text_2:
+# 143 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	.string "They taste bitter, but they'll revive\n"
+	.string "a fainted Pokémon in a pinch.$"
+
+BUDEW_quest_starter_Text_3:
+# 148 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	.string "Have you found that odd Budew yet?\p"
+	.string "It was up in the northern part of\n"
+	.string "Petalburg Woods. Do be gentle with it!$"
+
+BUDEW_quest_starter_Text_4:
+# 152 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	.string "You know Petalburg Woods, just west\n"
+	.string "of here?\p"
+	.string "I saw the most peculiar Budew there...\n"
+	.string "quite the wrong color, but beautiful!\p"
+	.string "I'd love a closer look. Could you catch\n"
+	.string "it and bring it back to show me?$"
+
+BUDEW_quest_starter_Text_5:
+# 158 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	.string "Wonderful! Look for it in the northern\n"
+	.string "part of the woods.\p"
+	.string "Oh, I do hope it's still there!$"
+
+BUDEW_quest_starter_Text_6:
+# 160 "data/maps/Route104_PrettyPetalFlowerShop/scripts.pory"
+	.string "Oh... Well, if you change your mind,\n"
+	.string "you know where to find me.$"

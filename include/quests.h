@@ -31,6 +31,7 @@
 #define QUEST_AVAIL_FLAG_SET  1  // shown once availFlag is set
 #define QUEST_AVAIL_POSTGAME  2  // shown once Champion (FLAG_LEGENDARY_BTL cleared)
 #define QUEST_AVAIL_QUEST_COMPLETE 3 // shown once quest in availFlag is complete
+#define QUEST_AVAIL_ON_ACCEPT 4 // hidden from the menu until accepted, but the giver still shows a start icon
 
 // Top-level Quest Log categories.
 #define QUEST_CATEGORY_STORY    0
