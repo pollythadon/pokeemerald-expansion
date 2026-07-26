@@ -95,6 +95,7 @@
 #define QUEST_76        75
 #define QUEST_77        76
 #define QUEST_78        77
+#define QUEST_79        78
 
 // Post-game legendary quest aliases (custom framework tie-in)
 #define QUEST_MEWTWO     QUEST_1
@@ -209,6 +210,10 @@
 // flower-shop girl. Appended so every existing quest ID stays save-stable.
 #define QUEST_SHINY_BUDEW       QUEST_78
 
+// Midgame story favor: Wattson's New Mauville generator errand. Appended in its
+// own save block so every existing quest ID stays save-stable.
+#define QUEST_NEW_MAUVILLE      QUEST_79
+
 #define QUEST_LEGACY_COUNT            33
 #define QUEST_HOENN_EXTENSION_COUNT    8
 #define QUEST_CHARACTER_START         QUEST_42
@@ -219,7 +224,9 @@
 #define QUEST_ROAMING_COUNT            6
 #define QUEST_MEGA_START              QUEST_76
 #define QUEST_MEGA_COUNT               2
-#define QUEST_COUNT                   78
+#define QUEST_STORY_START             QUEST_79
+#define QUEST_STORY_COUNT              1
+#define QUEST_COUNT                   79
 
 #define SUB_QUEST_1          0
 #define SUB_QUEST_2          1

@@ -330,6 +330,10 @@ struct SaveBlock3
     // magic value never reinterpret uninitialized bytes as quest progress.
     u32 megaQuestDataMagic;
     u8 megaQuestData[(QUEST_MEGA_COUNT * 5 + 7) / 8];
+    // The New Mauville story favor was appended after the Mega quests. Its own
+    // magic keeps every older save's quest progress untouched on migration.
+    u32 storyQuestDataMagic;
+    u8 storyQuestData[(QUEST_STORY_COUNT * 5 + 7) / 8];
 }; /* max size 1624 bytes */
 
 extern struct SaveBlock3 *gSaveBlock3Ptr;

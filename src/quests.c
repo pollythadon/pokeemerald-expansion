@@ -57,6 +57,7 @@
 #define QUEST_SAVE_CHARACTER_MAGIC 0x51434852
 #define QUEST_SAVE_TYPE_MAGIC 0x51545950
 #define QUEST_SAVE_MEGA_MAGIC 0x514D4547
+#define QUEST_SAVE_STORY_MAGIC 0x51535452
 #define QUEST_NAME_BUFFER_SIZE 64
 #define QUEST_ICON_SPRITE_SLOTS 2
 #define QUEST_CATEGORY_ICON_TAG_BASE 120
@@ -1696,6 +1697,19 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 		.questVariable = 0,
 		.availType = QUEST_AVAIL_ON_ACCEPT, // hidden from the menu until accepted; giver still shows a start icon
 	},
+	[QUEST_NEW_MAUVILLE] =
+	{
+		.name = sQuestName_NewMauville,
+		.category = QUEST_CATEGORY_STORY,
+		.startmap = sQuestStartMap_NewMauville,
+		.startdesc = sQuestStart_NewMauville,
+		.desc = {sQuestDesc_NewMauville},
+		.donedesc = sQuestDone_NewMauville,
+		.map = {sQuestMap_NewMauville},
+		.sprite = {OBJ_EVENT_GFX_WATTSON},
+		.spritetype = {OBJECT},
+		.availType = QUEST_AVAIL_ON_ACCEPT, // hidden from the menu until accepted; Wattson still shows a start icon
+	},
 };
 #undef TYPE_CATCH_QUEST
 ////////////////////////END QUEST CUSTOMIZATION////////////////////////////////
@@ -2994,6 +3008,15 @@ static void QuestMenu_ValidateSaveData(void)
 		gSaveBlock3Ptr->megaQuestDataMagic = QUEST_SAVE_MEGA_MAGIC;
 	}
 
+	if (gSaveBlock3Ptr->storyQuestDataMagic != QUEST_SAVE_STORY_MAGIC)
+	{
+		// The New Mauville story favor was appended after the Mega quests.
+		// Initialize only its state so every older save remains intact.
+		memset(gSaveBlock3Ptr->storyQuestData, 0,
+		       sizeof(gSaveBlock3Ptr->storyQuestData));
+		gSaveBlock3Ptr->storyQuestDataMagic = QUEST_SAVE_STORY_MAGIC;
+	}
+
 	QuestMenu_MigrateGodsOfJohtoProgress();
 }
 
@@ -3052,10 +3075,15 @@ u8 QuestMenu_GetSetQuestState(u8 quest, u8 caseId)
 		questData = gSaveBlock3Ptr->roamingLegendQuestData;
 		quest -= QUEST_ROAMING_START;
 	}
-	else
+	else if (quest < QUEST_STORY_START)
 	{
 		questData = gSaveBlock3Ptr->megaQuestData;
 		quest -= QUEST_MEGA_START;
+	}
+	else
+	{
+		questData = gSaveBlock3Ptr->storyQuestData;
+		quest -= QUEST_STORY_START;
 	}
 
 	u8 unlockedIndex = quest * 5 / 8;
@@ -4580,12 +4608,15 @@ void QuestMenu_ResetMenuSaveData(void)
 	       sizeof(gSaveBlock3Ptr->roamingLegendRoamers));
 	memset(gSaveBlock3Ptr->megaQuestData, 0,
 	       sizeof(gSaveBlock3Ptr->megaQuestData));
+	memset(gSaveBlock3Ptr->storyQuestData, 0,
+	       sizeof(gSaveBlock3Ptr->storyQuestData));
 	gSaveBlock3Ptr->questDataMagic = QUEST_SAVE_DATA_MAGIC;
 	gSaveBlock3Ptr->questDataExtensionMagic = QUEST_SAVE_EXTENSION_MAGIC;
 	gSaveBlock3Ptr->characterQuestDataMagic = QUEST_SAVE_CHARACTER_MAGIC;
 	gSaveBlock3Ptr->typeQuestDataMagic = QUEST_SAVE_TYPE_MAGIC;
 	gSaveBlock3Ptr->roamingLegendDataMagic = ROAMING_LEGEND_SAVE_MAGIC;
 	gSaveBlock3Ptr->megaQuestDataMagic = QUEST_SAVE_MEGA_MAGIC;
+	gSaveBlock3Ptr->storyQuestDataMagic = QUEST_SAVE_STORY_MAGIC;
 	sTypeQuestDataWasMigrated = FALSE;
 }
 

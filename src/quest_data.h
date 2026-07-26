@@ -518,4 +518,11 @@ static const u8 sQuestDesc_ShinyBudew[] = _("Catch the odd-colored Budew in\nPet
 static const u8 sQuestDone_ShinyBudew[] = _("The girl marveled at the shining\nBudew and shared her Revival Herbs.");
 static const u8 sQuestMap_ShinyBudew[] = _("Petalburg Woods");
 
+static const u8 sQuestName_NewMauville[] = _("New Mauville");
+static const u8 sQuestStartMap_NewMauville[] = _("Mauville City");
+static const u8 sQuestStart_NewMauville[] = _("Wattson needs a favor dealt with\nat the New Mauville generator.");
+static const u8 sQuestDesc_NewMauville[] = _("Take the Basement Key to New\nMauville off Route 110 and shut\nthe runaway generator down.");
+static const u8 sQuestDone_NewMauville[] = _("The generator was shut down, and\na grateful Wattson handed over\nTM24 Thunderbolt.");
+static const u8 sQuestMap_NewMauville[] = _("New Mauville");
+
 #endif // GUARD_QUEST_DATA_H
