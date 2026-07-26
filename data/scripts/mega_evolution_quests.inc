@@ -243,111 +243,111 @@ MegaEvolutionQuest_EventScript_EggExpert_8:
 
 MegaEvolutionQuest_EventScript_EggExpert_12:
 # 120 "data/scripts/mega_evolution_quests.pory"
-	goto MegaEvolutionQuest_EventScript_GiveBulbasaurEgg
+	goto MegaEvolutionQuest_EventScript_GiveChespinEgg
 	goto MegaEvolutionQuest_EventScript_EggExpert_10
 
 MegaEvolutionQuest_EventScript_EggExpert_13:
 # 122 "data/scripts/mega_evolution_quests.pory"
-	goto MegaEvolutionQuest_EventScript_GiveCharmanderEgg
+	goto MegaEvolutionQuest_EventScript_GiveFennekinEgg
 	goto MegaEvolutionQuest_EventScript_EggExpert_10
 
 MegaEvolutionQuest_EventScript_EggExpert_14:
 # 124 "data/scripts/mega_evolution_quests.pory"
-	goto MegaEvolutionQuest_EventScript_GiveSquirtleEgg
+	goto MegaEvolutionQuest_EventScript_GiveFroakieEgg
 	goto MegaEvolutionQuest_EventScript_EggExpert_10
 
 MegaEvolutionQuest_EventScript_EggExpert_16:
 # 129 "data/scripts/mega_evolution_quests.pory"
-	goto MegaEvolutionQuest_EventScript_ChooseBulbasaur
+	goto MegaEvolutionQuest_EventScript_ChooseChespin
 	goto MegaEvolutionQuest_EventScript_EggExpert_15
 
 MegaEvolutionQuest_EventScript_EggExpert_19:
 # 134 "data/scripts/mega_evolution_quests.pory"
-	goto MegaEvolutionQuest_EventScript_ChooseCharmander
+	goto MegaEvolutionQuest_EventScript_ChooseFennekin
 	goto MegaEvolutionQuest_EventScript_EggExpert_18
 
 MegaEvolutionQuest_EventScript_EggExpert_22:
 # 139 "data/scripts/mega_evolution_quests.pory"
-	goto MegaEvolutionQuest_EventScript_ChooseSquirtle
+	goto MegaEvolutionQuest_EventScript_ChooseFroakie
 	goto MegaEvolutionQuest_EventScript_EggExpert_21
 
 
-MegaEvolutionQuest_EventScript_ChooseBulbasaur::
+MegaEvolutionQuest_EventScript_ChooseChespin::
 # 148 "data/scripts/mega_evolution_quests.pory"
-	giveitem ITEM_VENUSAURITE
+	giveitem ITEM_CHESNAUGHTITE
 # 149 "data/scripts/mega_evolution_quests.pory"
 	compare VAR_RESULT, FALSE
-	goto_if_eq MegaEvolutionQuest_EventScript_ChooseBulbasaur_2
-MegaEvolutionQuest_EventScript_ChooseBulbasaur_1:
+	goto_if_eq MegaEvolutionQuest_EventScript_ChooseChespin_2
+MegaEvolutionQuest_EventScript_ChooseChespin_1:
 # 152 "data/scripts/mega_evolution_quests.pory"
 	setvar VAR_MEGA_EGG_CHOICE, 1
 # 153 "data/scripts/mega_evolution_quests.pory"
-	goto MegaEvolutionQuest_EventScript_GiveBulbasaurEgg
+	goto MegaEvolutionQuest_EventScript_GiveChespinEgg
 	return
 
-MegaEvolutionQuest_EventScript_ChooseBulbasaur_2:
+MegaEvolutionQuest_EventScript_ChooseChespin_2:
 # 150 "data/scripts/mega_evolution_quests.pory"
 	goto MegaEvolutionQuest_EventScript_MegaStoneBagFull
-	goto MegaEvolutionQuest_EventScript_ChooseBulbasaur_1
+	goto MegaEvolutionQuest_EventScript_ChooseChespin_1
 
 
-MegaEvolutionQuest_EventScript_ChooseCharmander::
+MegaEvolutionQuest_EventScript_ChooseFennekin::
 # 157 "data/scripts/mega_evolution_quests.pory"
-	giveitem ITEM_CHARIZARDITE_X
+	giveitem ITEM_DELPHOXITE
 # 158 "data/scripts/mega_evolution_quests.pory"
 	compare VAR_RESULT, FALSE
-	goto_if_eq MegaEvolutionQuest_EventScript_ChooseCharmander_2
-MegaEvolutionQuest_EventScript_ChooseCharmander_1:
+	goto_if_eq MegaEvolutionQuest_EventScript_ChooseFennekin_2
+MegaEvolutionQuest_EventScript_ChooseFennekin_1:
 # 161 "data/scripts/mega_evolution_quests.pory"
 	setvar VAR_MEGA_EGG_CHOICE, 2
 # 162 "data/scripts/mega_evolution_quests.pory"
-	goto MegaEvolutionQuest_EventScript_GiveCharmanderEgg
+	goto MegaEvolutionQuest_EventScript_GiveFennekinEgg
 	return
 
-MegaEvolutionQuest_EventScript_ChooseCharmander_2:
+MegaEvolutionQuest_EventScript_ChooseFennekin_2:
 # 159 "data/scripts/mega_evolution_quests.pory"
 	goto MegaEvolutionQuest_EventScript_MegaStoneBagFull
-	goto MegaEvolutionQuest_EventScript_ChooseCharmander_1
+	goto MegaEvolutionQuest_EventScript_ChooseFennekin_1
 
 
-MegaEvolutionQuest_EventScript_ChooseSquirtle::
+MegaEvolutionQuest_EventScript_ChooseFroakie::
 # 166 "data/scripts/mega_evolution_quests.pory"
-	giveitem ITEM_BLASTOISINITE
+	giveitem ITEM_GRENINJITE
 # 167 "data/scripts/mega_evolution_quests.pory"
 	compare VAR_RESULT, FALSE
-	goto_if_eq MegaEvolutionQuest_EventScript_ChooseSquirtle_2
-MegaEvolutionQuest_EventScript_ChooseSquirtle_1:
+	goto_if_eq MegaEvolutionQuest_EventScript_ChooseFroakie_2
+MegaEvolutionQuest_EventScript_ChooseFroakie_1:
 # 170 "data/scripts/mega_evolution_quests.pory"
 	setvar VAR_MEGA_EGG_CHOICE, 3
 # 171 "data/scripts/mega_evolution_quests.pory"
-	goto MegaEvolutionQuest_EventScript_GiveSquirtleEgg
+	goto MegaEvolutionQuest_EventScript_GiveFroakieEgg
 	return
 
-MegaEvolutionQuest_EventScript_ChooseSquirtle_2:
+MegaEvolutionQuest_EventScript_ChooseFroakie_2:
 # 168 "data/scripts/mega_evolution_quests.pory"
 	goto MegaEvolutionQuest_EventScript_MegaStoneBagFull
-	goto MegaEvolutionQuest_EventScript_ChooseSquirtle_1
+	goto MegaEvolutionQuest_EventScript_ChooseFroakie_1
 
 
-MegaEvolutionQuest_EventScript_GiveBulbasaurEgg::
+MegaEvolutionQuest_EventScript_GiveChespinEgg::
 # 175 "data/scripts/mega_evolution_quests.pory"
-	setvar VAR_GIFT_EGG_SPECIES, SPECIES_BULBASAUR
+	setvar VAR_GIFT_EGG_SPECIES, SPECIES_CHESPIN
 # 176 "data/scripts/mega_evolution_quests.pory"
 	goto MegaEvolutionQuest_EventScript_GiveChosenEgg
 	return
 
 
-MegaEvolutionQuest_EventScript_GiveCharmanderEgg::
+MegaEvolutionQuest_EventScript_GiveFennekinEgg::
 # 180 "data/scripts/mega_evolution_quests.pory"
-	setvar VAR_GIFT_EGG_SPECIES, SPECIES_CHARMANDER
+	setvar VAR_GIFT_EGG_SPECIES, SPECIES_FENNEKIN
 # 181 "data/scripts/mega_evolution_quests.pory"
 	goto MegaEvolutionQuest_EventScript_GiveChosenEgg
 	return
 
 
-MegaEvolutionQuest_EventScript_GiveSquirtleEgg::
+MegaEvolutionQuest_EventScript_GiveFroakieEgg::
 # 185 "data/scripts/mega_evolution_quests.pory"
-	setvar VAR_GIFT_EGG_SPECIES, SPECIES_SQUIRTLE
+	setvar VAR_GIFT_EGG_SPECIES, SPECIES_FROAKIE
 # 186 "data/scripts/mega_evolution_quests.pory"
 	goto MegaEvolutionQuest_EventScript_GiveChosenEgg
 	return
@@ -457,7 +457,7 @@ MegaEvolutionQuest_EventScript_GraniteCaveSteven_Text_0:
 
 MegaEvolutionQuest_EventScript_StevenTest_Text_0:
 # 55 "data/scripts/mega_evolution_quests.pory"
-	.string "You returned--and you brought a\n"
+	.string "You returned... and you brought a\n"
 	.string "partner whose answer matters more than\l"
 	.string "yours. Let me see.$"
 
@@ -521,7 +521,7 @@ MegaEvolutionQuest_EventScript_EggExpert_Text_1:
 
 MegaEvolutionQuest_EventScript_EggExpert_Text_2:
 # 111 "data/scripts/mega_evolution_quests.pory"
-	.string "That Mega Ring--Steven found the\n"
+	.string "That Mega Ring... Steven found the\n"
 	.string "Trainer he was looking for after all.$"
 
 MegaEvolutionQuest_EventScript_EggExpert_Text_3:
@@ -533,10 +533,10 @@ MegaEvolutionQuest_EventScript_EggExpert_Text_3:
 
 MegaEvolutionQuest_EventScript_EggExpert_Text_4:
 # 113 "data/scripts/mega_evolution_quests.pory"
-	.string "Bulbasaur, Charmander, and Squirtle can\n"
-	.string "each grow into a Pokémon capable of\l"
-	.string "Mega Evolution. I brought one Egg from\l"
-	.string "each species to Hoenn.$"
+	.string "Chespin, Fennekin, and Froakie can each\n"
+	.string "grow into a Pokémon capable of Mega\l"
+	.string "Evolution. I brought one Egg from each\l"
+	.string "species to Hoenn.$"
 
 MegaEvolutionQuest_EventScript_EggExpert_Text_5:
 # 114 "data/scripts/mega_evolution_quests.pory"
@@ -547,21 +547,22 @@ MegaEvolutionQuest_EventScript_EggExpert_Text_5:
 
 MegaEvolutionQuest_EventScript_EggExpert_Text_6:
 # 127 "data/scripts/mega_evolution_quests.pory"
-	.string "Bulbasaur grows into the steadfast\n"
-	.string "Mega Venusaur. Will you choose its Egg\l"
-	.string "and the Venusaurite?$"
+	.string "Chespin grows into the stalwart Mega\n"
+	.string "Chesnaught. Will you choose its Egg and\l"
+	.string "the Chesnaughtite?$"
 
 MegaEvolutionQuest_EventScript_EggExpert_Text_7:
 # 132 "data/scripts/mega_evolution_quests.pory"
-	.string "Charmander grows into Charizard.\n"
-	.string "Charizardite X can reveal its Fire- and\l"
-	.string "Dragon-type form. Will you choose it?$"
+	.string "Fennekin grows into Mega Delphox, a\n"
+	.string "master of Fire and Psychic power. Will\l"
+	.string "you choose its Egg and the Delphoxite?$"
 
 MegaEvolutionQuest_EventScript_EggExpert_Text_8:
 # 137 "data/scripts/mega_evolution_quests.pory"
-	.string "Squirtle grows into Mega Blastoise,\n"
-	.string "whose great cannon focuses\l"
-	.string "overwhelming blasts. Will you choose it?$"
+	.string "Froakie grows into the swift Mega\n"
+	.string "Greninja. The Greninjite unlocks its\l"
+	.string "hidden Water- and Dark-type power. Will\l"
+	.string "you choose it?$"
 
 MegaEvolutionQuest_EventScript_EggExpert_Text_9:
 # 142 "data/scripts/mega_evolution_quests.pory"
