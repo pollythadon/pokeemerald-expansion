@@ -124,19 +124,15 @@ script MegaEvolutionQuest_EventScript_EggExpert {
             goto(MegaEvolutionQuest_EventScript_GiveFroakieEgg)
     }
 
-    msgbox(format("Chespin grows into the stalwart Mega Chesnaught. Will you choose its Egg and the Chesnaughtite?"), MSGBOX_YESNO)
-    if (var(VAR_RESULT) == YES) {
-        goto(MegaEvolutionQuest_EventScript_ChooseChespin)
-    }
-
-    msgbox(format("Fennekin grows into Mega Delphox, a master of Fire and Psychic power. Will you choose its Egg and the Delphoxite?"), MSGBOX_YESNO)
-    if (var(VAR_RESULT) == YES) {
-        goto(MegaEvolutionQuest_EventScript_ChooseFennekin)
-    }
-
-    msgbox(format("Froakie grows into the swift Mega Greninja. The Greninjite unlocks its hidden Water- and Dark-type power. Will you choose it?"), MSGBOX_YESNO)
-    if (var(VAR_RESULT) == YES) {
-        goto(MegaEvolutionQuest_EventScript_ChooseFroakie)
+    msgbox(format("Chespin becomes the stalwart Mega Chesnaught; Fennekin, the clever Mega Delphox; and Froakie, the swift Mega Greninja.\pEach Egg comes with its matching Mega Stone. Which partner calls to you?"))
+    multichoice(17, 0, MULTI_MEGA_EGG_CHOICE, FALSE)
+    switch (var(VAR_RESULT)) {
+        case 0:
+            goto(MegaEvolutionQuest_EventScript_ChooseChespin)
+        case 1:
+            goto(MegaEvolutionQuest_EventScript_ChooseFennekin)
+        case 2:
+            goto(MegaEvolutionQuest_EventScript_ChooseFroakie)
     }
 
     msgbox(format("A lifelong partnership deserves a considered answer. Return whenever you are ready to choose."))

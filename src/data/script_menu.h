@@ -6,6 +6,14 @@ static const struct MenuAction MultichoiceList_BrineyOnDewford[] =
     {gText_Exit},
 };
 
+static const struct MenuAction MultichoiceList_MegaEggChoice[] =
+{
+    {COMPOUND_STRING("Chespin")},
+    {COMPOUND_STRING("Fennekin")},
+    {COMPOUND_STRING("Froakie")},
+    {gText_Exit},
+};
+
 const u8 gText_Info2[] = _("INFO");
 
 static const struct MenuAction MultichoiceList_EnterInfo[] =
@@ -1294,6 +1302,7 @@ static const struct MultichoiceListStruct sMultichoiceLists[] =
     [MULTI_HOF_VICTORIES_QUIT]                         = MULTICHOICE(sMultichoiceList_HOF_Victories_Quit),
     [MULTI_EGGS_VICTORIES_QUIT]                        = MULTICHOICE(sMultichoiceList_Eggs_Victories_Quit),
     [MULTI_HOF_EGGS_VICTORIES_QUIT]                    = MULTICHOICE(sMultichoiceList_HOF_Eggs_Victories_Quit),
+    [MULTI_MEGA_EGG_CHOICE]                            = MULTICHOICE(MultichoiceList_MegaEggChoice),
 };
 
 const u8 *const gStdStrings[] =

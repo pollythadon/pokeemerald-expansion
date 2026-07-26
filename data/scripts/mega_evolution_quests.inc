@@ -183,26 +183,21 @@ MegaEvolutionQuest_EventScript_EggExpert_7:
 	case 3, MegaEvolutionQuest_EventScript_EggExpert_14
 MegaEvolutionQuest_EventScript_EggExpert_10:
 # 127 "data/scripts/mega_evolution_quests.pory"
-	msgbox MegaEvolutionQuest_EventScript_EggExpert_Text_6, MSGBOX_YESNO
+	msgbox MegaEvolutionQuest_EventScript_EggExpert_Text_6
 # 128 "data/scripts/mega_evolution_quests.pory"
-	compare VAR_RESULT, YES
-	goto_if_eq MegaEvolutionQuest_EventScript_EggExpert_16
-MegaEvolutionQuest_EventScript_EggExpert_15:
+	multichoice 17, 0, MULTI_MEGA_EGG_CHOICE, FALSE
+# 129 "data/scripts/mega_evolution_quests.pory"
+	switch VAR_RESULT
+# 130 "data/scripts/mega_evolution_quests.pory"
+	case 0, MegaEvolutionQuest_EventScript_EggExpert_17
 # 132 "data/scripts/mega_evolution_quests.pory"
-	msgbox MegaEvolutionQuest_EventScript_EggExpert_Text_7, MSGBOX_YESNO
-# 133 "data/scripts/mega_evolution_quests.pory"
-	compare VAR_RESULT, YES
-	goto_if_eq MegaEvolutionQuest_EventScript_EggExpert_19
-MegaEvolutionQuest_EventScript_EggExpert_18:
-# 137 "data/scripts/mega_evolution_quests.pory"
-	msgbox MegaEvolutionQuest_EventScript_EggExpert_Text_8, MSGBOX_YESNO
+	case 1, MegaEvolutionQuest_EventScript_EggExpert_18
+# 134 "data/scripts/mega_evolution_quests.pory"
+	case 2, MegaEvolutionQuest_EventScript_EggExpert_19
+MegaEvolutionQuest_EventScript_EggExpert_15:
 # 138 "data/scripts/mega_evolution_quests.pory"
-	compare VAR_RESULT, YES
-	goto_if_eq MegaEvolutionQuest_EventScript_EggExpert_22
-MegaEvolutionQuest_EventScript_EggExpert_21:
-# 142 "data/scripts/mega_evolution_quests.pory"
-	msgbox MegaEvolutionQuest_EventScript_EggExpert_Text_9
-# 143 "data/scripts/mega_evolution_quests.pory"
+	msgbox MegaEvolutionQuest_EventScript_EggExpert_Text_7
+# 139 "data/scripts/mega_evolution_quests.pory"
 	release
 	end
 
@@ -256,154 +251,154 @@ MegaEvolutionQuest_EventScript_EggExpert_14:
 	goto MegaEvolutionQuest_EventScript_GiveFroakieEgg
 	goto MegaEvolutionQuest_EventScript_EggExpert_10
 
-MegaEvolutionQuest_EventScript_EggExpert_16:
-# 129 "data/scripts/mega_evolution_quests.pory"
+MegaEvolutionQuest_EventScript_EggExpert_17:
+# 131 "data/scripts/mega_evolution_quests.pory"
 	goto MegaEvolutionQuest_EventScript_ChooseChespin
 	goto MegaEvolutionQuest_EventScript_EggExpert_15
 
-MegaEvolutionQuest_EventScript_EggExpert_19:
-# 134 "data/scripts/mega_evolution_quests.pory"
+MegaEvolutionQuest_EventScript_EggExpert_18:
+# 133 "data/scripts/mega_evolution_quests.pory"
 	goto MegaEvolutionQuest_EventScript_ChooseFennekin
-	goto MegaEvolutionQuest_EventScript_EggExpert_18
+	goto MegaEvolutionQuest_EventScript_EggExpert_15
 
-MegaEvolutionQuest_EventScript_EggExpert_22:
-# 139 "data/scripts/mega_evolution_quests.pory"
+MegaEvolutionQuest_EventScript_EggExpert_19:
+# 135 "data/scripts/mega_evolution_quests.pory"
 	goto MegaEvolutionQuest_EventScript_ChooseFroakie
-	goto MegaEvolutionQuest_EventScript_EggExpert_21
+	goto MegaEvolutionQuest_EventScript_EggExpert_15
 
 
 MegaEvolutionQuest_EventScript_ChooseChespin::
-# 148 "data/scripts/mega_evolution_quests.pory"
+# 144 "data/scripts/mega_evolution_quests.pory"
 	giveitem ITEM_CHESNAUGHTITE
-# 149 "data/scripts/mega_evolution_quests.pory"
+# 145 "data/scripts/mega_evolution_quests.pory"
 	compare VAR_RESULT, FALSE
 	goto_if_eq MegaEvolutionQuest_EventScript_ChooseChespin_2
 MegaEvolutionQuest_EventScript_ChooseChespin_1:
-# 152 "data/scripts/mega_evolution_quests.pory"
+# 148 "data/scripts/mega_evolution_quests.pory"
 	setvar VAR_MEGA_EGG_CHOICE, 1
-# 153 "data/scripts/mega_evolution_quests.pory"
+# 149 "data/scripts/mega_evolution_quests.pory"
 	goto MegaEvolutionQuest_EventScript_GiveChespinEgg
 	return
 
 MegaEvolutionQuest_EventScript_ChooseChespin_2:
-# 150 "data/scripts/mega_evolution_quests.pory"
+# 146 "data/scripts/mega_evolution_quests.pory"
 	goto MegaEvolutionQuest_EventScript_MegaStoneBagFull
 	goto MegaEvolutionQuest_EventScript_ChooseChespin_1
 
 
 MegaEvolutionQuest_EventScript_ChooseFennekin::
-# 157 "data/scripts/mega_evolution_quests.pory"
+# 153 "data/scripts/mega_evolution_quests.pory"
 	giveitem ITEM_DELPHOXITE
-# 158 "data/scripts/mega_evolution_quests.pory"
+# 154 "data/scripts/mega_evolution_quests.pory"
 	compare VAR_RESULT, FALSE
 	goto_if_eq MegaEvolutionQuest_EventScript_ChooseFennekin_2
 MegaEvolutionQuest_EventScript_ChooseFennekin_1:
-# 161 "data/scripts/mega_evolution_quests.pory"
+# 157 "data/scripts/mega_evolution_quests.pory"
 	setvar VAR_MEGA_EGG_CHOICE, 2
-# 162 "data/scripts/mega_evolution_quests.pory"
+# 158 "data/scripts/mega_evolution_quests.pory"
 	goto MegaEvolutionQuest_EventScript_GiveFennekinEgg
 	return
 
 MegaEvolutionQuest_EventScript_ChooseFennekin_2:
-# 159 "data/scripts/mega_evolution_quests.pory"
+# 155 "data/scripts/mega_evolution_quests.pory"
 	goto MegaEvolutionQuest_EventScript_MegaStoneBagFull
 	goto MegaEvolutionQuest_EventScript_ChooseFennekin_1
 
 
 MegaEvolutionQuest_EventScript_ChooseFroakie::
-# 166 "data/scripts/mega_evolution_quests.pory"
+# 162 "data/scripts/mega_evolution_quests.pory"
 	giveitem ITEM_GRENINJITE
-# 167 "data/scripts/mega_evolution_quests.pory"
+# 163 "data/scripts/mega_evolution_quests.pory"
 	compare VAR_RESULT, FALSE
 	goto_if_eq MegaEvolutionQuest_EventScript_ChooseFroakie_2
 MegaEvolutionQuest_EventScript_ChooseFroakie_1:
-# 170 "data/scripts/mega_evolution_quests.pory"
+# 166 "data/scripts/mega_evolution_quests.pory"
 	setvar VAR_MEGA_EGG_CHOICE, 3
-# 171 "data/scripts/mega_evolution_quests.pory"
+# 167 "data/scripts/mega_evolution_quests.pory"
 	goto MegaEvolutionQuest_EventScript_GiveFroakieEgg
 	return
 
 MegaEvolutionQuest_EventScript_ChooseFroakie_2:
-# 168 "data/scripts/mega_evolution_quests.pory"
+# 164 "data/scripts/mega_evolution_quests.pory"
 	goto MegaEvolutionQuest_EventScript_MegaStoneBagFull
 	goto MegaEvolutionQuest_EventScript_ChooseFroakie_1
 
 
 MegaEvolutionQuest_EventScript_GiveChespinEgg::
-# 175 "data/scripts/mega_evolution_quests.pory"
+# 171 "data/scripts/mega_evolution_quests.pory"
 	setvar VAR_GIFT_EGG_SPECIES, SPECIES_CHESPIN
-# 176 "data/scripts/mega_evolution_quests.pory"
+# 172 "data/scripts/mega_evolution_quests.pory"
 	goto MegaEvolutionQuest_EventScript_GiveChosenEgg
 	return
 
 
 MegaEvolutionQuest_EventScript_GiveFennekinEgg::
-# 180 "data/scripts/mega_evolution_quests.pory"
+# 176 "data/scripts/mega_evolution_quests.pory"
 	setvar VAR_GIFT_EGG_SPECIES, SPECIES_FENNEKIN
-# 181 "data/scripts/mega_evolution_quests.pory"
+# 177 "data/scripts/mega_evolution_quests.pory"
 	goto MegaEvolutionQuest_EventScript_GiveChosenEgg
 	return
 
 
 MegaEvolutionQuest_EventScript_GiveFroakieEgg::
-# 185 "data/scripts/mega_evolution_quests.pory"
+# 181 "data/scripts/mega_evolution_quests.pory"
 	setvar VAR_GIFT_EGG_SPECIES, SPECIES_FROAKIE
-# 186 "data/scripts/mega_evolution_quests.pory"
+# 182 "data/scripts/mega_evolution_quests.pory"
 	goto MegaEvolutionQuest_EventScript_GiveChosenEgg
 	return
 
 
 MegaEvolutionQuest_EventScript_GiveChosenEgg::
-# 190 "data/scripts/mega_evolution_quests.pory"
+# 186 "data/scripts/mega_evolution_quests.pory"
 	setvar VAR_GIFT_EGG_SHINY, TRUE
-# 191 "data/scripts/mega_evolution_quests.pory"
+# 187 "data/scripts/mega_evolution_quests.pory"
 	setvar VAR_GIFT_EGG_MOVE1, MOVE_NONE
-# 192 "data/scripts/mega_evolution_quests.pory"
+# 188 "data/scripts/mega_evolution_quests.pory"
 	setvar VAR_GIFT_EGG_MOVE2, MOVE_NONE
-# 193 "data/scripts/mega_evolution_quests.pory"
+# 189 "data/scripts/mega_evolution_quests.pory"
 	setvar VAR_GIFT_EGG_MOVE3, MOVE_NONE
-# 194 "data/scripts/mega_evolution_quests.pory"
+# 190 "data/scripts/mega_evolution_quests.pory"
 	setvar VAR_GIFT_EGG_MOVE4, MOVE_NONE
-# 195 "data/scripts/mega_evolution_quests.pory"
+# 191 "data/scripts/mega_evolution_quests.pory"
 	special GiveCustomEgg
-# 196 "data/scripts/mega_evolution_quests.pory"
+# 192 "data/scripts/mega_evolution_quests.pory"
 	compare VAR_RESULT, MON_CANT_GIVE
 	goto_if_eq MegaEvolutionQuest_EventScript_GiveChosenEgg_2
-# 202 "data/scripts/mega_evolution_quests.pory"
+# 198 "data/scripts/mega_evolution_quests.pory"
 	playfanfare MUS_OBTAIN_ITEM
-# 203 "data/scripts/mega_evolution_quests.pory"
+# 199 "data/scripts/mega_evolution_quests.pory"
 	waitfanfare
-# 204 "data/scripts/mega_evolution_quests.pory"
+# 200 "data/scripts/mega_evolution_quests.pory"
 	compare VAR_RESULT, MON_GIVEN_TO_PC
 	goto_if_eq MegaEvolutionQuest_EventScript_GiveChosenEgg_5
-# 207 "data/scripts/mega_evolution_quests.pory"
+# 203 "data/scripts/mega_evolution_quests.pory"
 	msgbox MegaEvolutionQuest_EventScript_GiveChosenEgg_Text_2
 MegaEvolutionQuest_EventScript_GiveChosenEgg_4:
-# 209 "data/scripts/mega_evolution_quests.pory"
+# 205 "data/scripts/mega_evolution_quests.pory"
 	msgbox MegaEvolutionQuest_EventScript_GiveChosenEgg_Text_3
-# 210 "data/scripts/mega_evolution_quests.pory"
+# 206 "data/scripts/mega_evolution_quests.pory"
 	completequest QUEST_MEGA_EGG
-# 211 "data/scripts/mega_evolution_quests.pory"
+# 207 "data/scripts/mega_evolution_quests.pory"
 	release
 	end
 
 MegaEvolutionQuest_EventScript_GiveChosenEgg_2:
-# 197 "data/scripts/mega_evolution_quests.pory"
+# 193 "data/scripts/mega_evolution_quests.pory"
 	msgbox MegaEvolutionQuest_EventScript_GiveChosenEgg_Text_0
-# 198 "data/scripts/mega_evolution_quests.pory"
+# 194 "data/scripts/mega_evolution_quests.pory"
 	release
 	end
 
 MegaEvolutionQuest_EventScript_GiveChosenEgg_5:
-# 205 "data/scripts/mega_evolution_quests.pory"
+# 201 "data/scripts/mega_evolution_quests.pory"
 	msgbox MegaEvolutionQuest_EventScript_GiveChosenEgg_Text_1
 	goto MegaEvolutionQuest_EventScript_GiveChosenEgg_4
 
 
 MegaEvolutionQuest_EventScript_MegaStoneBagFull::
-# 216 "data/scripts/mega_evolution_quests.pory"
+# 212 "data/scripts/mega_evolution_quests.pory"
 	msgbox MegaEvolutionQuest_EventScript_MegaStoneBagFull_Text_0
-# 217 "data/scripts/mega_evolution_quests.pory"
+# 213 "data/scripts/mega_evolution_quests.pory"
 	release
 	end
 
@@ -547,53 +542,43 @@ MegaEvolutionQuest_EventScript_EggExpert_Text_5:
 
 MegaEvolutionQuest_EventScript_EggExpert_Text_6:
 # 127 "data/scripts/mega_evolution_quests.pory"
-	.string "Chespin grows into the stalwart Mega\n"
-	.string "Chesnaught. Will you choose its Egg and\l"
-	.string "the Chesnaughtite?$"
+	.string "Chespin becomes the stalwart Mega\n"
+	.string "Chesnaught; Fennekin, the clever Mega\l"
+	.string "Delphox; and Froakie, the swift Mega\l"
+	.string "Greninja.\p"
+	.string "Each Egg comes with its matching Mega\n"
+	.string "Stone. Which partner calls to you?$"
 
 MegaEvolutionQuest_EventScript_EggExpert_Text_7:
-# 132 "data/scripts/mega_evolution_quests.pory"
-	.string "Fennekin grows into Mega Delphox, a\n"
-	.string "master of Fire and Psychic power. Will\l"
-	.string "you choose its Egg and the Delphoxite?$"
-
-MegaEvolutionQuest_EventScript_EggExpert_Text_8:
-# 137 "data/scripts/mega_evolution_quests.pory"
-	.string "Froakie grows into the swift Mega\n"
-	.string "Greninja. The Greninjite unlocks its\l"
-	.string "hidden Water- and Dark-type power. Will\l"
-	.string "you choose it?$"
-
-MegaEvolutionQuest_EventScript_EggExpert_Text_9:
-# 142 "data/scripts/mega_evolution_quests.pory"
+# 138 "data/scripts/mega_evolution_quests.pory"
 	.string "A lifelong partnership deserves a\n"
 	.string "considered answer. Return whenever you\l"
 	.string "are ready to choose.$"
 
 MegaEvolutionQuest_EventScript_GiveChosenEgg_Text_0:
-# 197 "data/scripts/mega_evolution_quests.pory"
+# 193 "data/scripts/mega_evolution_quests.pory"
 	.string "Your party and every PC Box are full. I\n"
 	.string "will keep the Egg safe; make room, then\l"
 	.string "return.$"
 
 MegaEvolutionQuest_EventScript_GiveChosenEgg_Text_1:
-# 205 "data/scripts/mega_evolution_quests.pory"
+# 201 "data/scripts/mega_evolution_quests.pory"
 	.string "Your party was full, so the shining Egg\n"
 	.string "was sent to a Box in your PC.$"
 
 MegaEvolutionQuest_EventScript_GiveChosenEgg_Text_2:
-# 207 "data/scripts/mega_evolution_quests.pory"
+# 203 "data/scripts/mega_evolution_quests.pory"
 	.string "{PLAYER} received the shining Egg!$"
 
 MegaEvolutionQuest_EventScript_GiveChosenEgg_Text_3:
-# 209 "data/scripts/mega_evolution_quests.pory"
+# 205 "data/scripts/mega_evolution_quests.pory"
 	.string "The matching Mega Stone is yours as\n"
 	.string "well. Raise your new partner with\l"
 	.string "patience, and let the ring answer when\l"
 	.string "both of you are ready.$"
 
 MegaEvolutionQuest_EventScript_MegaStoneBagFull_Text_0:
-# 216 "data/scripts/mega_evolution_quests.pory"
+# 212 "data/scripts/mega_evolution_quests.pory"
 	.string "Your Bag has no room for the Mega\n"
 	.string "Stone. Make space, then return; I will\l"
 	.string "keep all three Eggs safe.$"
