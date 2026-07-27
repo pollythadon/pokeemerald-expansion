@@ -451,6 +451,34 @@ bool32 ShouldDoScottFortreeCall(void)
     return TRUE;
 }
 
+// Mom rings the player a little while after the Balance Badge to report the
+// spooky sound from the bedroom, arming the Rotom quest. Keyed straight off the
+// badge flag; her call sets FLAG_MOM_ROTOM_QUEST_AVAILABLE, which stops it here.
+bool32 ShouldDoMomRotomCall(void)
+{
+    if (FlagGet(FLAG_BADGE05_GET) && !FlagGet(FLAG_MOM_ROTOM_QUEST_AVAILABLE))
+    {
+        switch (gMapHeader.mapType)
+        {
+        case MAP_TYPE_TOWN:
+        case MAP_TYPE_CITY:
+        case MAP_TYPE_ROUTE:
+        case MAP_TYPE_OCEAN_ROUTE:
+            if (++(*GetVarPointer(VAR_MOM_ROTOM_CALL_STEPS)) < 10)
+                return FALSE;
+            break;
+        default:
+            return FALSE;
+        }
+    }
+    else
+    {
+        return FALSE;
+    }
+
+    return TRUE;
+}
+
 bool32 ShouldDoScottBattleFrontierCall(void)
 {
     if (FlagGet(FLAG_SCOTT_CALL_BATTLE_FRONTIER))

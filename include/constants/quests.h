@@ -96,6 +96,7 @@
 #define QUEST_77        76
 #define QUEST_78        77
 #define QUEST_79        78
+#define QUEST_80        79
 
 // Post-game legendary quest aliases (custom framework tie-in)
 #define QUEST_MEWTWO     QUEST_1
@@ -214,6 +215,10 @@
 // own save block so every existing quest ID stays save-stable.
 #define QUEST_NEW_MAUVILLE      QUEST_79
 
+// Midgame story favor: the Rotom haunting the TV in the player's bedroom, given
+// by Mom after the Balance Badge. Shares the story save block with New Mauville.
+#define QUEST_ROTOM             QUEST_80
+
 #define QUEST_LEGACY_COUNT            33
 #define QUEST_HOENN_EXTENSION_COUNT    8
 #define QUEST_CHARACTER_START         QUEST_42
@@ -225,8 +230,8 @@
 #define QUEST_MEGA_START              QUEST_76
 #define QUEST_MEGA_COUNT               2
 #define QUEST_STORY_START             QUEST_79
-#define QUEST_STORY_COUNT              1
-#define QUEST_COUNT                   79
+#define QUEST_STORY_COUNT              2
+#define QUEST_COUNT                   80
 
 #define SUB_QUEST_1          0
 #define SUB_QUEST_2          1

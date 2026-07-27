@@ -1754,6 +1754,7 @@ EventScript_PalletTown_PlayersHouse_2F_TurnOnPC::
 	.include "data/scripts/character_quests.inc"
 	.include "data/scripts/roaming_legend_quests.inc"
 	.include "data/scripts/mega_evolution_quests.inc"
+	.include "data/scripts/rotom_quest.inc"
 
 	.include "data/maps/Star_Island/scripts.inc"
 

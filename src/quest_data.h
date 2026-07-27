@@ -525,4 +525,11 @@ static const u8 sQuestDesc_NewMauville[] = _("Take the Basement Key to New\nMauv
 static const u8 sQuestDone_NewMauville[] = _("The generator was shut down, and\na grateful Wattson handed over\nTM24 Thunderbolt.");
 static const u8 sQuestMap_NewMauville[] = _("New Mauville");
 
+static const u8 sQuestName_Rotom[] = _("The Haunted TV");
+static const u8 sQuestStartMap_Rotom[] = _("Littleroot Town");
+static const u8 sQuestStart_Rotom[] = _("Mom called about a spooky sound\ncoming from your room. Go home\nand talk to her.");
+static const u8 sQuestDesc_Rotom[] = _("Something is haunting the TV in\nyour room. Investigate it, then\ntell Mom what you find.");
+static const u8 sQuestDone_Rotom[] = _("The 'ghost' was a Rotom hiding in\nthe TV. You caught it and set\nMom's mind at ease.");
+static const u8 sQuestMap_Rotom[] = _("Your Room");
+
 #endif // GUARD_QUEST_DATA_H

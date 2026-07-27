@@ -1710,6 +1710,22 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 		.spritetype = {OBJECT},
 		.availType = QUEST_AVAIL_ON_ACCEPT, // hidden from the menu until accepted; Wattson still shows a start icon
 	},
+	[QUEST_ROTOM] =
+	{
+		.name = sQuestName_Rotom,
+		.category = QUEST_CATEGORY_POKEMON,
+		.startmap = sQuestStartMap_Rotom,
+		.startdesc = sQuestStart_Rotom,
+		.desc = {sQuestDesc_Rotom},
+		.donedesc = sQuestDone_Rotom,
+		.map = {sQuestMap_Rotom},
+		.sprite = {SPECIES_ROTOM},
+		.spritetype = {PKMN},
+		.availType = QUEST_AVAIL_FLAG_SET, // appears once Mom's PokeNav call sets the flag
+		.availFlag = FLAG_MOM_ROTOM_QUEST_AVAILABLE,
+		.rewardItem = ITEM_ROTOM_CATALOG,
+		.rewardQty = 1,
+	},
 };
 #undef TYPE_CATCH_QUEST
 ////////////////////////END QUEST CUSTOMIZATION////////////////////////////////

@@ -801,6 +801,11 @@ static bool8 TryStartStepCountScript(u16 metatileBehavior)
             ScriptContext_SetupScript(Route119_EventScript_ScottWonAtFortreeGymCall);
             return TRUE;
         }
+        if (ShouldDoMomRotomCall() == TRUE)
+        {
+            ScriptContext_SetupScript(RotomQuest_EventScript_MomCall);
+            return TRUE;
+        }
         if (ShouldDoScottBattleFrontierCall() == TRUE)
         {
             ScriptContext_SetupScript(LittlerootTown_ProfessorBirchsLab_EventScript_ScottAboardSSTidalCall);

@@ -1,0 +1,125 @@
+// The Rotom haunting the TV in the player's bedroom. Mom offers the quest after
+// the Balance Badge; the player's own-room TV spawns a catchable wild Rotom.
+// Shared logic lives here; the two 2F bedrooms only pass in their Rotom's local
+// id and route to RotomQuest_EventScript_RotomTVCutscene.
+
+movement RotomQuest_Movement_PlayerStepBack {
+    lock_facing_direction
+    walk_down
+    unlock_facing_direction
+}
+
+movement RotomQuest_Movement_RotomJumpOut {
+    jump_down
+    walk_in_place_down
+}
+
+text RotomQuest_Text_MomCall {
+    "MOM: {PLAYER}? It's Mom.\p"
+    "I don't want to worry you, but…\p"
+    "there's a strange noise coming from\n"
+    "your room upstairs. It won't stop.\p"
+    "Would you come home when you get\n"
+    "the chance, dear?"
+}
+
+// Fired from field_control_avatar.c a little while after the Balance Badge.
+script RotomQuest_EventScript_MomCall {
+    lockall
+    pokenavcall(RotomQuest_Text_MomCall)
+    waitmessage
+    setflag(FLAG_MOM_ROTOM_QUEST_AVAILABLE)
+    releaseall
+    end
+}
+
+// Both players' 1F Mom objects point here. Handles the Rotom quest, otherwise
+// falls through to the ordinary shared Mom script.
+script RotomQuest_EventScript_Mom {
+    questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_ROTOM)
+    if (var(VAR_RESULT) == TRUE) {
+        lock
+        faceplayer
+        if (flag(FLAG_ROTOM_CAUGHT_FROM_TV)) {
+            msgbox(format("MOM: Oh! So THAT'S what was rattling\naround up there--a Rotom!\pAnd here I was ready to call in a\nghost exorcist. Ha ha!\pThank you, {PLAYER}. I've sent a\nlittle something to your Quest app."))
+            completequest(QUEST_ROTOM)
+            release
+            end
+        }
+        msgbox(format("MOM: You can still hear it, can't you?\nThat awful noise from your room…\pDo have a proper look at that TV\nfor me, dear."))
+        release
+        end
+    }
+    questmenu(QUEST_MENU_CHECK_REWARD, QUEST_ROTOM)
+    if (var(VAR_RESULT) == TRUE) {
+        lock
+        faceplayer
+        msgbox(format("MOM: Don't forget the little thank-you\nI left in your Quest app!"))
+        release
+        end
+    }
+    if (flag(FLAG_MOM_ROTOM_QUEST_AVAILABLE)) {
+        questmenu(QUEST_MENU_CHECK_UNLOCKED, QUEST_ROTOM)
+        if (var(VAR_RESULT) == FALSE) {
+            lock
+            faceplayer
+            msgbox(format("MOM: There you are! Listen…\pThat noise is coming from the TV in\nyour room. A groaning, buzzing sound.\pI switched it off at the wall and it\nSTILL won't stop.\pYou don't suppose it's… a g-ghost?\pOh, would you go up and check? I can't\nbear to look myself."))
+            startquest(QUEST_ROTOM)
+            release
+            end
+        }
+    }
+    goto(PlayersHouse_1F_EventScript_Mom)
+}
+
+// Shared TV cutscene. Caller sets VAR_0x8004 to the room's Rotom local id.
+script RotomQuest_EventScript_RotomTVCutscene {
+    lockall
+    if (flag(FLAG_ROTOM_CAUGHT_FROM_TV)) {
+        goto(RotomQuest_EventScript_TVNothing)
+    }
+    questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_ROTOM)
+    if (var(VAR_RESULT) == FALSE) {
+        goto(RotomQuest_EventScript_TVNothing)
+    }
+    hidefollower(1)
+    fadescreenswapbuffers(FADE_TO_BLACK)
+    delay(30)
+    fadescreenswapbuffers(FADE_FROM_BLACK)
+    applymovement(LOCALID_PLAYER, RotomQuest_Movement_PlayerStepBack)
+    waitmovement(0)
+    fadescreenswapbuffers(FADE_TO_WHITE)
+    delay(20)
+    clearflag(FLAG_HIDE_PLAYERS_HOUSE_ROTOM)
+    addobject(VAR_0x8004)
+    fadescreenswapbuffers(FADE_FROM_WHITE)
+    applymovement(VAR_0x8004, RotomQuest_Movement_RotomJumpOut)
+    waitmovement(0)
+    playmoncry(SPECIES_ROTOM, CRY_MODE_ENCOUNTER)
+    delay(40)
+    waitmoncry
+    setwildbattle(SPECIES_ROTOM, 25)
+    dowildbattle
+    specialvar(VAR_RESULT, GetBattleOutcome)
+    if (var(VAR_RESULT) == B_OUTCOME_CAUGHT) {
+        setflag(FLAG_ROTOM_CAUGHT_FROM_TV)
+        removeobject(VAR_0x8004)
+        setflag(FLAG_HIDE_PLAYERS_HOUSE_ROTOM)
+        msgbox(format("So the 'ghost' was a Rotom living\ninside the TV!\pYou'd better go show Mom."))
+        releaseall
+        end
+    }
+    // Fainted or fled: it slips back into the TV so the player can try again.
+    removeobject(VAR_0x8004)
+    setflag(FLAG_HIDE_PLAYERS_HOUSE_ROTOM)
+    msgbox(format("The Rotom slipped back into the TV\nwith a crackle of static…"))
+    releaseall
+    end
+}
+
+script RotomQuest_EventScript_TVNothing {
+    lockall
+    msgbox(format("There's nothing but static on the\nscreen right now."))
+    releaseall
+    end
+}

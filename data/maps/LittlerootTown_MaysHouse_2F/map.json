@@ -3,7 +3,6 @@
   "name": "LittlerootTown_MaysHouse_2F",
   "layout": "LAYOUT_LITTLEROOT_TOWN_MAYS_HOUSE_2F",
   "music": "MUS_LITTLEROOT",
-  "region": "REGION_HOENN",
   "region_map_section": "MAPSEC_LITTLEROOT_TOWN",
   "requires_flash": false,
   "weather": "WEATHER_NONE",
@@ -224,6 +223,20 @@
       "trainer_sight_or_berry_tree_id": "0",
       "script": "LittlerootTown_MaysHouse_2F_EventScript_RivalsPokeBall",
       "flag": "FLAG_HIDE_LITTLEROOT_TOWN_MAYS_HOUSE_2F_POKE_BALL"
+    },
+    {
+      "local_id": "LOCALID_MAYS_HOUSE_2F_ROTOM",
+      "graphics_id": "OBJ_EVENT_GFX_SPECIES(ROTOM)",
+      "x": 4,
+      "y": 1,
+      "elevation": 3,
+      "movement_type": "MOVEMENT_TYPE_WALK_IN_PLACE_DOWN",
+      "movement_range_x": 0,
+      "movement_range_y": 0,
+      "trainer_type": "TRAINER_TYPE_NONE",
+      "trainer_sight_or_berry_tree_id": "0",
+      "script": "NULL",
+      "flag": "FLAG_HIDE_PLAYERS_HOUSE_ROTOM"
     }
   ],
   "warp_events": [
@@ -268,6 +281,15 @@
       "elevation": 0,
       "player_facing_dir": "BG_EVENT_PLAYER_FACING_ANY",
       "script": "LittlerootTown_MaysHouse_2F_EventScript_PC"
+    },
+    {
+      "type": "sign",
+      "x": 4,
+      "y": 1,
+      "elevation": 0,
+      "player_facing_dir": "BG_EVENT_PLAYER_FACING_ANY",
+      "script": "LittlerootTown_MaysHouse_2F_EventScript_RotomTV"
     }
-  ]
+  ],
+  "region": "REGION_HOENN"
 }

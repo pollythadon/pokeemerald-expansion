@@ -669,9 +669,9 @@
 #define FLAG_DEXNAV_GET    0x265 // Dexnav stuff
 #define FLAG_DETECTOR_MODE 0x266 // Dexnav stuff
 #define FLAG_DEXNAV_SHOW_ALL 0x267 // Dexnav upgrade: reveal every encounter on the route
-#define FLAG_UNUSED_0x268  0x268 // Unused Flag
-#define FLAG_UNUSED_0x269  0x269 // Unused Flag
-#define FLAG_UNUSED_0x26A  0x26A // Unused Flag
+#define FLAG_MOM_ROTOM_QUEST_AVAILABLE  0x268 // Mom's Rotom quest offered (set by her PokeNav call)
+#define FLAG_ROTOM_CAUGHT_FROM_TV       0x269 // Player caught the Rotom that burst from the TV
+#define FLAG_HIDE_PLAYERS_HOUSE_ROTOM   0x26A // Hides the bedroom TV Rotom object until the cutscene
 #define FLAG_UNUSED_0x26B  0x26B // Unused Flag
 #define FLAG_UNUSED_0x26C  0x26C // Unused Flag
 #define FLAG_UNUSED_0x26D  0x26D // Unused Flag
