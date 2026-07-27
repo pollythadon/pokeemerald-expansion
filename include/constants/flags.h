@@ -672,13 +672,13 @@
 #define FLAG_MOM_ROTOM_QUEST_AVAILABLE  0x268 // Mom's Rotom quest offered (set by her PokeNav call)
 #define FLAG_ROTOM_CAUGHT_FROM_TV       0x269 // Player caught the Rotom that burst from the TV
 #define FLAG_HIDE_PLAYERS_HOUSE_ROTOM   0x26A // Hides the bedroom TV Rotom object until the cutscene
-#define FLAG_UNUSED_0x26B  0x26B // Unused Flag
-#define FLAG_UNUSED_0x26C  0x26C // Unused Flag
-#define FLAG_UNUSED_0x26D  0x26D // Unused Flag
-#define FLAG_UNUSED_0x26E  0x26E // Unused Flag
-#define FLAG_UNUSED_0x26F  0x26F // Unused Flag
-#define FLAG_UNUSED_0x270  0x270 // Unused Flag
-#define FLAG_UNUSED_0x271  0x271 // Unused Flag
+#define FLAG_DNA_SPLICERS_RECEIVED  0x26B // Sootopolis researcher gave the DNA Splicers and started the Zekrom + Reshiram quests
+#define FLAG_ZEKROM_BATTLE          0x26C // Zekrom sprite hide flag; set once Zekrom is caught
+#define FLAG_ZEKROM_CAUGHT          0x26D // Set when Zekrom is caught (must-catch; blocks the re-arm)
+#define FLAG_RESHIRAM_BATTLE        0x26E // Reshiram sprite hide flag; kept set until the descend cutscene reveals it
+#define FLAG_RESHIRAM_CAUGHT        0x26F // Set when Reshiram is caught (must-catch)
+#define FLAG_HIDE_KYUREM            0x270 // Hides the Shoal Cave Kyurem until the duo is caught and its quest activates
+#define FLAG_KYUREM_CAUGHT          0x271 // Set when Kyurem is caught
 #define FLAG_UNUSED_0x272  0x272 // Unused Flag
 #define FLAG_UNUSED_0x273  0x273 // Unused Flag
 #define FLAG_UNUSED_0x274  0x274 // Unused Flag

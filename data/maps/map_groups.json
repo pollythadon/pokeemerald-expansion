@@ -629,7 +629,8 @@
     "DIstortionWorld",
     "SpaceMeteor",
     "Flower_Paradise",
-    "HeatranCave"
+    "HeatranCave",
+    "ZekromCave"
   ],
   "gMapGroup_IndoorRoute104Prototype": [
     "Route104_Prototype",

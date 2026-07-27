@@ -1,0 +1,42 @@
+// Post-game Tao trio quests (Zekrom / Reshiram / Kyurem). The Sootopolis
+// researcher gifts the DNA Splicers and starts the Zekrom + Reshiram quests;
+// catching both draws out Kyurem. The per-encounter battle scripts live in each
+// host map (ZekromCave, MtChimney, ShoalCave_LowTideIceRoom) and call the shared
+// TaoTrio_EventScript_TryUnlockKyurem below when a dragon is caught.
+
+script TaoTrio_EventScript_DnaGiver {
+    lock
+    faceplayer
+    if (flag(FLAG_DNA_SPLICERS_RECEIVED)) {
+        msgbox(format("The two dragons still slumber out there.\pLet the DNA Splicers draw them into the light -- one at Rusturf Tunnel, one at Mt. Chimney."))
+        release
+        end
+    }
+    msgbox(format("Hoenn is alot hotter than Unova!I have chased an old legend across the seas... two dragons born when one great dragon was split in two."))
+    msgbox(format("This is the DNA Splicers. Its power resonates with those dragons and will lure them out of hiding. Take it."))
+    giveitem(ITEM_DNA_SPLICERS)
+    setflag(FLAG_DNA_SPLICERS_RECEIVED)
+    startquest(QUEST_ZEKROM)
+    startquest(QUEST_RESHIRAM)
+    msgbox(format("One sleeps where the stone is split at Rusturf Tunnel; the other where the mountain burns at Mt. Chimney.\pGo! and make the legend whole!"))
+    release
+    end
+}
+
+// Called from the Zekrom and Reshiram "caught" handlers. When BOTH have been
+// caught, reveal Kyurem in Shoal Cave and start its quest (startquest raises the
+// "quest started" fanfare/banner as the notification).
+script TaoTrio_EventScript_TryUnlockKyurem {
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_ZEKROM)
+    if (var(VAR_RESULT) == FALSE) {
+        return
+    }
+    questmenu(QUEST_MENU_CHECK_COMPLETE, QUEST_RESHIRAM)
+    if (var(VAR_RESULT) == FALSE) {
+        return
+    }
+    clearflag(FLAG_HIDE_KYUREM)
+    startquest(QUEST_KYUREM)
+    msgbox(format("The DNA Splicers pulse violently!\pWith both dragons at your side, a vast, frozen presence has stirred deep within Shoal Cave..."))
+    return
+}

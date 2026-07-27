@@ -1752,6 +1752,7 @@ EventScript_PalletTown_PlayersHouse_2F_TurnOnPC::
 	.include "data/scripts/apricorn_tree.inc"
 	.include "data/scripts/wild_encounter.inc"
 	.include "data/scripts/character_quests.inc"
+	.include "data/scripts/tao_trio_quest.inc"
 	.include "data/scripts/roaming_legend_quests.inc"
 	.include "data/scripts/mega_evolution_quests.inc"
 	.include "data/scripts/rotom_quest.inc"
@@ -1765,3 +1766,4 @@ EventScript_PalletTown_PlayersHouse_2F_TurnOnPC::
 	.include "data/maps/Flower_Paradise/scripts.inc"
 
 	.include "data/maps/HeatranCave/scripts.inc"
+	.include "data/maps/ZekromCave/scripts.inc"

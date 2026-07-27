@@ -334,6 +334,10 @@ struct SaveBlock3
     // magic keeps every older save's quest progress untouched on migration.
     u32 storyQuestDataMagic;
     u8 storyQuestData[(QUEST_STORY_COUNT * 5 + 7) / 8];
+    // The post-game Tao trio (Zekrom/Reshiram/Kyurem) was appended after the
+    // story favors. Its own magic keeps every older save's progress intact.
+    u32 taoQuestDataMagic;
+    u8 taoQuestData[(QUEST_TAO_COUNT * 5 + 7) / 8];
 }; /* max size 1624 bytes */
 
 extern struct SaveBlock3 *gSaveBlock3Ptr;

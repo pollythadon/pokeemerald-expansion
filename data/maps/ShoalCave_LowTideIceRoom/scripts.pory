@@ -1,0 +1,63 @@
+// Kyurem waits here once both Zekrom and Reshiram have been caught and the
+// Kyurem quest has been started (by TaoTrio_EventScript_TryUnlockKyurem). The
+// ON_TRANSITION hook reveals it and arms the (8,10) approach trigger while the
+// quest is active and Kyurem is not yet caught; otherwise it stays hidden.
+
+mapscripts ShoalCave_LowTideIceRoom_MapScripts {
+    MAP_SCRIPT_ON_TRANSITION {
+        if (flag(FLAG_KYUREM_CAUGHT) == TRUE) {
+            setflag(FLAG_HIDE_KYUREM)
+        } else {
+            questmenu(QUEST_MENU_CHECK_ACTIVE, QUEST_KYUREM)
+            if (var(VAR_RESULT) == TRUE) {
+                clearflag(FLAG_HIDE_KYUREM)
+                setvar(VAR_TEMP_1, 1)
+            } else {
+                setflag(FLAG_HIDE_KYUREM)
+            }
+        }
+    }
+}
+
+script ShoalCave_LowTideIceRoom_EventScript_Kyurem {
+    lockall
+    setvar(VAR_TEMP_1, 0)
+    applymovement(LOCALID_PLAYER, Common_Movement_FaceUp)
+    waitmovement(0)
+    delay(20)
+    playmoncry(SPECIES_KYUREM, CRY_MODE_ENCOUNTER)
+    delay(40)
+    waitmoncry
+    setvar(VAR_LAST_TALKED, LOCALID_SHOAL_ICE_KYUREM)
+    setwildbattle(SPECIES_KYUREM, 80)
+    special(BattleSetup_StartLegendaryBattle)
+    waitstate
+    specialvar(VAR_RESULT, GetBattleOutcome)
+    if (var(VAR_RESULT) == B_OUTCOME_CAUGHT) {
+        call(ShoalCave_LowTideIceRoom_EventScript_KyuremCaught)
+    } else {
+        call(ShoalCave_LowTideIceRoom_EventScript_KyuremNotCaught)
+    }
+    releaseall
+    end
+}
+
+script ShoalCave_LowTideIceRoom_EventScript_KyuremCaught {
+    setflag(FLAG_KYUREM_CAUGHT)
+    setflag(FLAG_HIDE_KYUREM)
+    removeobject(LOCALID_SHOAL_ICE_KYUREM)
+    completequest(QUEST_KYUREM)
+    msgbox(format("The ice room falls silent. Kyurem, the hollow husk of the original dragon, is yours now. The legend is whole."))
+    return
+}
+
+script ShoalCave_LowTideIceRoom_EventScript_KyuremNotCaught {
+    // Must-catch: Kyurem freezes over and withdraws, returning on the next visit.
+    playmoncry(SPECIES_KYUREM, CRY_MODE_ENCOUNTER)
+    delay(20)
+    fadescreenswapbuffers(FADE_TO_BLACK)
+    hideobjectat(LOCALID_SHOAL_ICE_KYUREM, MAP_SHOAL_CAVE_LOW_TIDE_ICE_ROOM)
+    fadescreenswapbuffers(FADE_FROM_BLACK)
+    msgbox(format("Kyurem sinks into a shroud of frost and is gone... for now. Return when you are ready to catch it."))
+    return
+}

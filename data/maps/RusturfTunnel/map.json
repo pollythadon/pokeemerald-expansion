@@ -171,6 +171,13 @@
       "elevation": 3,
       "dest_map": "MAP_ROUTE116",
       "dest_warp_id": "2"
+    },
+    {
+      "x": 13,
+      "y": 3,
+      "elevation": 3,
+      "dest_map": "MAP_ZEKROM_CAVE",
+      "dest_warp_id": "0"
     }
   ],
   "coord_events": [
@@ -218,6 +225,15 @@
       "var": "TRIGGER_RUN_IMMEDIATELY",
       "var_value": "0",
       "script": "RusturfTunnel_EventScript_TunnelBlockagePos3"
+    },
+    {
+      "type": "trigger",
+      "x": 8,
+      "y": 2,
+      "elevation": 3,
+      "var": "VAR_ZEKROM_CAVE_STATE",
+      "var_value": "1",
+      "script": "RusturfTunnel_EventScript_RevealZekromCave"
     }
   ],
   "bg_events": [],

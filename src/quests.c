@@ -58,6 +58,7 @@
 #define QUEST_SAVE_TYPE_MAGIC 0x51545950
 #define QUEST_SAVE_MEGA_MAGIC 0x514D4547
 #define QUEST_SAVE_STORY_MAGIC 0x51535452
+#define QUEST_SAVE_TAO_MAGIC 0x5154414F
 #define QUEST_NAME_BUFFER_SIZE 64
 #define QUEST_ICON_SPRITE_SLOTS 2
 #define QUEST_CATEGORY_ICON_TAG_BASE 120
@@ -1726,6 +1727,46 @@ static const struct SideQuest sSideQuests[QUEST_COUNT] =
 		.rewardItem = ITEM_ROTOM_CATALOG,
 		.rewardQty = 1,
 	},
+	[QUEST_ZEKROM] =
+	{
+		.name = sQuestName_Zekrom,
+		.category = QUEST_CATEGORY_POKEMON,
+		.startmap = sQuestStartMap_Zekrom,
+		.startdesc = sQuestStart_Zekrom,
+		.desc = {sQuestDesc_Zekrom},
+		.donedesc = sQuestDone_Zekrom,
+		.map = {sQuestMap_Zekrom},
+		.sprite = {SPECIES_ZEKROM},
+		.spritetype = {PKMN},
+		.availType = QUEST_AVAIL_POSTGAME,
+	},
+	[QUEST_RESHIRAM] =
+	{
+		.name = sQuestName_Reshiram,
+		.category = QUEST_CATEGORY_POKEMON,
+		.startmap = sQuestStartMap_Reshiram,
+		.startdesc = sQuestStart_Reshiram,
+		.desc = {sQuestDesc_Reshiram},
+		.donedesc = sQuestDone_Reshiram,
+		.map = {sQuestMap_Reshiram},
+		.sprite = {SPECIES_RESHIRAM},
+		.spritetype = {PKMN},
+		.availType = QUEST_AVAIL_POSTGAME,
+	},
+	[QUEST_KYUREM] =
+	{
+		.name = sQuestName_Kyurem,
+		.category = QUEST_CATEGORY_POKEMON,
+		.startmap = sQuestStartMap_Kyurem,
+		.startdesc = sQuestStart_Kyurem,
+		.desc = {sQuestDesc_Kyurem},
+		.donedesc = sQuestDone_Kyurem,
+		.map = {sQuestMap_Kyurem},
+		.sprite = {SPECIES_KYUREM},
+		.spritetype = {PKMN},
+		// Real gate lives in QuestMenu_IsQuestAvailable (both duo quests complete).
+		.availType = QUEST_AVAIL_POSTGAME,
+	},
 };
 #undef TYPE_CATCH_QUEST
 ////////////////////////END QUEST CUSTOMIZATION////////////////////////////////
@@ -2834,6 +2875,12 @@ static bool8 QuestMenu_AreRegiQuestsComplete(void)
 	    && QuestMenu_GetSetQuestState(QUEST_REGISTEEL, FLAG_GET_COMPLETED);
 }
 
+static bool8 QuestMenu_AreTaoDuoComplete(void)
+{
+	return QuestMenu_GetSetQuestState(QUEST_ZEKROM, FLAG_GET_COMPLETED)
+	    && QuestMenu_GetSetQuestState(QUEST_RESHIRAM, FLAG_GET_COMPLETED);
+}
+
 bool8 QuestMenu_IsQuestAvailable(u8 questId)
 {
 	// Regigigas is the finale of the titan chain. Owning traded titans must not
@@ -2841,6 +2888,12 @@ bool8 QuestMenu_IsQuestAvailable(u8 questId)
 	if (questId == QUEST_REGIGIGAS)
 		return !FlagGet(FLAG_LEGENDARY_BTL)
 		    && QuestMenu_AreRegiQuestsComplete();
+
+	// Kyurem is the finale of the Tao trio: hidden until both Zekrom and
+	// Reshiram have been caught (their quests completed).
+	if (questId == QUEST_KYUREM)
+		return !FlagGet(FLAG_LEGENDARY_BTL)
+		    && QuestMenu_AreTaoDuoComplete();
 
 	switch (sSideQuests[questId].availType)
 	{
@@ -3033,6 +3086,15 @@ static void QuestMenu_ValidateSaveData(void)
 		gSaveBlock3Ptr->storyQuestDataMagic = QUEST_SAVE_STORY_MAGIC;
 	}
 
+	if (gSaveBlock3Ptr->taoQuestDataMagic != QUEST_SAVE_TAO_MAGIC)
+	{
+		// The post-game Tao trio was appended after the story favors.
+		// Initialize only its state so every older save remains intact.
+		memset(gSaveBlock3Ptr->taoQuestData, 0,
+		       sizeof(gSaveBlock3Ptr->taoQuestData));
+		gSaveBlock3Ptr->taoQuestDataMagic = QUEST_SAVE_TAO_MAGIC;
+	}
+
 	QuestMenu_MigrateGodsOfJohtoProgress();
 }
 
@@ -3096,10 +3158,15 @@ u8 QuestMenu_GetSetQuestState(u8 quest, u8 caseId)
 		questData = gSaveBlock3Ptr->megaQuestData;
 		quest -= QUEST_MEGA_START;
 	}
-	else
+	else if (quest < QUEST_TAO_START)
 	{
 		questData = gSaveBlock3Ptr->storyQuestData;
 		quest -= QUEST_STORY_START;
+	}
+	else
+	{
+		questData = gSaveBlock3Ptr->taoQuestData;
+		quest -= QUEST_TAO_START;
 	}
 
 	u8 unlockedIndex = quest * 5 / 8;
@@ -4626,6 +4693,8 @@ void QuestMenu_ResetMenuSaveData(void)
 	       sizeof(gSaveBlock3Ptr->megaQuestData));
 	memset(gSaveBlock3Ptr->storyQuestData, 0,
 	       sizeof(gSaveBlock3Ptr->storyQuestData));
+	memset(gSaveBlock3Ptr->taoQuestData, 0,
+	       sizeof(gSaveBlock3Ptr->taoQuestData));
 	gSaveBlock3Ptr->questDataMagic = QUEST_SAVE_DATA_MAGIC;
 	gSaveBlock3Ptr->questDataExtensionMagic = QUEST_SAVE_EXTENSION_MAGIC;
 	gSaveBlock3Ptr->characterQuestDataMagic = QUEST_SAVE_CHARACTER_MAGIC;
@@ -4633,6 +4702,7 @@ void QuestMenu_ResetMenuSaveData(void)
 	gSaveBlock3Ptr->roamingLegendDataMagic = ROAMING_LEGEND_SAVE_MAGIC;
 	gSaveBlock3Ptr->megaQuestDataMagic = QUEST_SAVE_MEGA_MAGIC;
 	gSaveBlock3Ptr->storyQuestDataMagic = QUEST_SAVE_STORY_MAGIC;
+	gSaveBlock3Ptr->taoQuestDataMagic = QUEST_SAVE_TAO_MAGIC;
 	sTypeQuestDataWasMigrated = FALSE;
 }
 

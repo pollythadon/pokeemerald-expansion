@@ -46,12 +46,12 @@ script HeatranCave_EventScript_Caught {
 }
 
 script HeatranCave_EventScript_Won {
-    setflag(FLAG_HEATRAN_DFTD)
-    completequest(QUEST_HEATRAN)
+    // Must-catch: defeating Heatran does not finish the quest. It sinks back
+    // into the magma and returns so the player can try to catch it.
     fadescreenswapbuffers(FADE_TO_BLACK)
-    removeobject(LOCALID_HEATRAN)
+    hideobjectat(LOCALID_HEATRAN, MAP_HEATRAN_CAVE)
     fadescreenswapbuffers(FADE_FROM_BLACK)
-    msgbox(format("Heatran sinks back into the magma with a final fading glow, and the mountain grows still."))
+    msgbox(format("Heatran sinks back into the magma... but its ember still smolders. Return when you are ready to catch it."))
     return
 }
 

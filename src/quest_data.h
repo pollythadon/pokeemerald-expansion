@@ -532,4 +532,25 @@ static const u8 sQuestDesc_Rotom[] = _("Something is haunting the TV in\nyour ro
 static const u8 sQuestDone_Rotom[] = _("The 'ghost' was a Rotom hiding in\nthe TV. You caught it and set\nMom's mind at ease.");
 static const u8 sQuestMap_Rotom[] = _("Your Room");
 
+static const u8 sQuestName_Zekrom[] = _("The Bolt Within");
+static const u8 sQuestStartMap_Zekrom[] = _("Sootopolis City");
+static const u8 sQuestStart_Zekrom[] = _("A researcher in Sootopolis speaks\nof a dragon of black lightning.");
+static const u8 sQuestDesc_Zekrom[] = _("Carry the DNA Splicers to Rusturf\nTunnel to draw out Zekrom, and\ncatch it.");
+static const u8 sQuestDone_Zekrom[] = _("Zekrom, the deep-black dragon of\nideals, answered your resolve.");
+static const u8 sQuestMap_Zekrom[] = _("Rusturf Tunnel");
+
+static const u8 sQuestName_Reshiram[] = _("The Flame Within");
+static const u8 sQuestStartMap_Reshiram[] = _("Sootopolis City");
+static const u8 sQuestStart_Reshiram[] = _("A researcher in Sootopolis speaks\nof a dragon of white fire.");
+static const u8 sQuestDesc_Reshiram[] = _("Carry the DNA Splicers to Mt.\nChimney to draw out Reshiram, and\ncatch it.");
+static const u8 sQuestDone_Reshiram[] = _("Reshiram, the pure-white dragon of\ntruth, answered your resolve.");
+static const u8 sQuestMap_Reshiram[] = _("Mt. Chimney");
+
+static const u8 sQuestName_Kyurem[] = _("The Empty One");
+static const u8 sQuestStartMap_Kyurem[] = _("Shoal Cave");
+static const u8 sQuestStart_Kyurem[] = _("With both dragons caught, a frozen\npresence stirs in Shoal Cave.");
+static const u8 sQuestDesc_Kyurem[] = _("Kyurem waits in the Shoal Cave\nice room. Catch it to make the\nlegend whole.");
+static const u8 sQuestDone_Kyurem[] = _("Kyurem, the hollow husk of the\noriginal dragon, is yours.");
+static const u8 sQuestMap_Kyurem[] = _("Shoal Cave");
+
 #endif // GUARD_QUEST_DATA_H

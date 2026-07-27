@@ -1,0 +1,62 @@
+mapscripts ZekromCave_MapScripts {
+    MAP_SCRIPT_ON_TRANSITION {
+        // Arm the approach trigger unless Zekrom has already been caught.
+        if (flag(FLAG_ZEKROM_CAUGHT) == FALSE) {
+            setvar(VAR_TEMP_1, 1)
+        }
+    }
+}
+
+script ZekromCave_EventScript_Zekrom {
+    lockall
+    setvar(VAR_TEMP_1, 0)
+    // Force the player to look north, up at the towering dragon.
+    applymovement(LOCALID_PLAYER, Common_Movement_FaceUp)
+    waitmovement(0)
+    delay(20)
+    playse(SE_THUNDER)
+    playmoncry(SPECIES_ZEKROM, CRY_MODE_ENCOUNTER)
+    applymovement(LOCALID_ZEKROM, ZekromCave_Movement_ZekromDescend)
+    waitmovement(0)
+    delay(30)
+    waitmoncry
+    setvar(VAR_LAST_TALKED, LOCALID_ZEKROM)
+    setwildbattle(SPECIES_ZEKROM, 70)
+    special(BattleSetup_StartLegendaryBattle)
+    waitstate
+    specialvar(VAR_RESULT, GetBattleOutcome)
+    if (var(VAR_RESULT) == B_OUTCOME_CAUGHT) {
+        call(ZekromCave_EventScript_Caught)
+    } else {
+        call(ZekromCave_EventScript_NotCaught)
+    }
+    releaseall
+    end
+}
+
+script ZekromCave_EventScript_Caught {
+    setflag(FLAG_ZEKROM_CAUGHT)
+    setflag(FLAG_ZEKROM_BATTLE)
+    removeobject(LOCALID_ZEKROM)
+    completequest(QUEST_ZEKROM)
+    msgbox(format("The cavern falls silent. Zekrom, the black dragon of ideals, is yours now."))
+    call(TaoTrio_EventScript_TryUnlockKyurem)
+    return
+}
+
+script ZekromCave_EventScript_NotCaught {
+    // Must-catch: fleeing or fainting Zekrom does not finish the quest. It
+    // withdraws deeper into the cave and returns so the player can try again.
+    playmoncry(SPECIES_ZEKROM, CRY_MODE_ENCOUNTER)
+    delay(20)
+    fadescreenswapbuffers(FADE_TO_BLACK)
+    hideobjectat(LOCALID_ZEKROM, MAP_ZEKROM_CAVE)
+    fadescreenswapbuffers(FADE_FROM_BLACK)
+    msgbox(format("Zekrom vanishes into the dark with a crackle of thunder... for now. Return when you are ready to catch it."))
+    return
+}
+
+movement ZekromCave_Movement_ZekromDescend {
+    walk_down * 3
+    face_down
+}

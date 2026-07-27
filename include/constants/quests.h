@@ -97,6 +97,9 @@
 #define QUEST_78        77
 #define QUEST_79        78
 #define QUEST_80        79
+#define QUEST_81        80
+#define QUEST_82        81
+#define QUEST_83        82
 
 // Post-game legendary quest aliases (custom framework tie-in)
 #define QUEST_MEWTWO     QUEST_1
@@ -219,6 +222,13 @@
 // by Mom after the Balance Badge. Shares the story save block with New Mauville.
 #define QUEST_ROTOM             QUEST_80
 
+// Post-game Tao trio. A Sootopolis researcher gifts the DNA Splicers and starts
+// Zekrom + Reshiram; catching both unlocks Kyurem. Appended in their own save
+// block so every existing quest ID stays save-stable.
+#define QUEST_ZEKROM            QUEST_81
+#define QUEST_RESHIRAM          QUEST_82
+#define QUEST_KYUREM            QUEST_83
+
 #define QUEST_LEGACY_COUNT            33
 #define QUEST_HOENN_EXTENSION_COUNT    8
 #define QUEST_CHARACTER_START         QUEST_42
@@ -231,7 +241,9 @@
 #define QUEST_MEGA_COUNT               2
 #define QUEST_STORY_START             QUEST_79
 #define QUEST_STORY_COUNT              2
-#define QUEST_COUNT                   80
+#define QUEST_TAO_START               QUEST_81
+#define QUEST_TAO_COUNT                3
+#define QUEST_COUNT                   83
 
 #define SUB_QUEST_1          0
 #define SUB_QUEST_2          1

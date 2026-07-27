@@ -1,0 +1,54 @@
+{
+  "id": "MAP_ZEKROM_CAVE",
+  "name": "ZekromCave",
+  "layout": "LAYOUT_ZEKROM_CAVE",
+  "music": "MUS_CAVE_OF_ORIGIN",
+  "region_map_section": "MAPSEC_HIDDEN_SEWER",
+  "requires_flash": false,
+  "weather": "WEATHER_NONE",
+  "map_type": "MAP_TYPE_UNDERGROUND",
+  "allow_cycling": false,
+  "allow_escaping": true,
+  "allow_running": false,
+  "show_map_name": true,
+  "battle_scene": "MAP_BATTLE_SCENE_NORMAL",
+  "connections": null,
+  "object_events": [
+    {
+      "local_id": "LOCALID_ZEKROM",
+      "graphics_id": "OBJ_EVENT_GFX_SPECIES(ZEKROM)",
+      "x": 17,
+      "y": 21,
+      "elevation": 3,
+      "movement_type": "MOVEMENT_TYPE_FACE_DOWN",
+      "movement_range_x": 0,
+      "movement_range_y": 0,
+      "trainer_type": "TRAINER_TYPE_NONE",
+      "trainer_sight_or_berry_tree_id": "0",
+      "script": "NULL",
+      "flag": "FLAG_ZEKROM_BATTLE"
+    }
+  ],
+  "warp_events": [
+    {
+      "x": 5,
+      "y": 4,
+      "elevation": 0,
+      "dest_map": "MAP_RUSTURF_TUNNEL",
+      "dest_warp_id": "3"
+    }
+  ],
+  "coord_events": [
+    {
+      "type": "trigger",
+      "x": 17,
+      "y": 26,
+      "elevation": 3,
+      "var": "VAR_TEMP_1",
+      "var_value": "1",
+      "script": "ZekromCave_EventScript_Zekrom"
+    }
+  ],
+  "bg_events": [],
+  "region": "REGION_HOENN"
+}
