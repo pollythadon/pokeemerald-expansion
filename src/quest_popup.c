@@ -152,6 +152,23 @@ static void Task_QuestPopup(u8 taskId)
 {
     struct Task *task = &gTasks[taskId];
 
+    // Once the banner is on screen it owns BG0's vertical scroll. If a script or
+    // field message box seizes the overworld while it is up -- e.g. a Repel wears
+    // off on the same walk and asks "Use another?" -- that interface draws on the
+    // same scrolled BG0, so both come out graphically offset. Get out of its way
+    // at once: snap BG0 back and tear the banner down. If it was still sliding in
+    // or holding, re-announce this quest once the field is idle again; if it was
+    // already sliding away it has been seen, so just move on to the next quest.
+    if ((task->tState == QSTATE_SLIDE_IN || task->tState == QSTATE_HOLD || task->tState == QSTATE_SLIDE_OUT)
+        && !QuestPopup_FieldIsIdle())
+    {
+        QuestPopup_Teardown();
+        SetGpuReg(REG_OFFSET_BG0VOFS, 0);
+        task->tYOffset = 0;
+        task->tState = (task->tState == QSTATE_SLIDE_OUT) ? QSTATE_NEXT : QSTATE_WAIT_FIELD;
+        return;
+    }
+
     switch (task->tState)
     {
     case QSTATE_NEXT:
