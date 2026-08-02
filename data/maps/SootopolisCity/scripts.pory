@@ -46,7 +46,7 @@ SootopolisCity_OnTransition:
 	call_if_eq VAR_SOOTOPOLIS_CITY_STATE, 3, SootopolisCity_EventScript_CheckSetEnterCaveOfOriginObjPos
 	call_if_eq VAR_SOOTOPOLIS_CITY_STATE, 4, SootopolisCity_EventScript_SetExitCaveOfOriginObjPos
 	call_if_eq VAR_SOOTOPOLIS_CITY_STATE, 5, SootopolisCity_EventScript_SetOutsideGymObjPos
-	call_if_eq VAR_SOOTOPOLIS_CITY_STATE, 6, SootopolisCity_EventScript_SetExpertBlockCaveEntrance
+	call_if_eq VAR_SOOTOPOLIS_CITY_STATE, 6, SootopolisCity_EventScript_SetExpertBesideCaveEntrance
 	end
 
 SootopolisCity_EventScript_HideMapNamePopup::
@@ -136,8 +136,13 @@ SootopolisCity_EventScript_SetWallaceLeft::
 	setobjectmovementtype LOCALID_SOOTOPOLIS_WALLACE, MOVEMENT_TYPE_FACE_DOWN
 	return
 
-SootopolisCity_EventScript_SetExpertBlockCaveEntrance::
-	setobjectxyperm LOCALID_SOOTOPOLIS_EXPERT, 31, 18
+@ Post-game (state 6): stand the Expert to the side of the Cave of Origin mouth
+@ instead of on the approach tile (31, 18), so the entrance stays walkable. The
+@ cave holds a post-game legendary battle (Dialga in B1F); parking him on the
+@ path used to seal it off for good. (30, 18) is the same spot he steps aside to
+@ during Steven's guide cutscene, so it's a known-clear tile beside the mouth.
+SootopolisCity_EventScript_SetExpertBesideCaveEntrance::
+	setobjectxyperm LOCALID_SOOTOPOLIS_EXPERT, 30, 18
 	return
 
 SootopolisCity_OnWarp:
