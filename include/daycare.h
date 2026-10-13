@@ -20,7 +20,8 @@ void StoreSelectedPokemonInDaycare(void);
 u16 TakePokemonFromDaycare(void);
 u8 GetLevelAfterDaycareSteps(struct BoxPokemon *mon, u32 steps);
 u8 GetNumLevelsGainedFromSteps(struct DaycareMon *daycareMon);
-void GetDaycareCost(void);
+void GetDaycareCostAndPrepareString(void);
+u32 GetEggCyclesToSubtract(void);
 u8 GetNumLevelsGainedFromDaycare(void);
 void TriggerPendingDaycareEgg(void);
 void RejectEggFromDayCare(void);
@@ -35,9 +36,12 @@ void SetDaycareCompatibilityString(void);
 bool8 NameHasGenderSymbol(const u8 *name, u8 genderRatio);
 void ShowDaycareLevelMenu(void);
 void ChooseSendDaycareMon(void);
-u8 GetEggMovesBySpecies(enum Species species, u16 *eggMoves);
-bool8 SpeciesCanLearnEggMove(enum Species species, enum Move move);
 void StorePokemonInDaycare(struct Pokemon *mon, struct DaycareMon *daycareMon);
-u8 GetEggMoves(struct Pokemon *pokemon, u16 *eggMoves);
+void IncrementDaycareSteps(void);
+bool32 CheckDaycareMonReceivedMail(void);
+enum Species GetEggSpecies(enum Species species);
+u32 GetChildNature(struct DayCare *daycare);
+void InheritIVs(struct Pokemon *egg, struct DayCare *daycare);
+void InheritAbility(struct Pokemon *egg, struct DayCare *daycare);
 
 #endif // GUARD_DAYCARE_H

@@ -43,6 +43,7 @@ static void BattleUI_DisplayNormalMoveBox(enum BattlerId, struct ChooseMoveStruc
 static void BattleUI_DisplayZMoveBox(enum BattlerId, struct ChooseMoveStruct *);
 
 static void BattleUI_AddTextPrinter(u32, u32, u32, u32, enum BattleUITextColors, const u8 *);
+static void BattleUI_AddTextPrinterWithColor(u32, u32, u32, u32, union TextColor, const u8 *);
 
 #include "data/bw_battle_ui.h"
 
@@ -371,23 +372,19 @@ static void BattleUI_DisplayNormalMoveBox(enum BattlerId battler, struct ChooseM
             // pp
             if (gBattleResources->bufferA[battler][2] != TRUE)
             {
-                u8 *txtPtr = ConvertIntToDecimalStringN(gDisplayedStringBattle, moveInfo->currentPp[i],
+                u8 *txtPtr = ConvertIntToDecimalStringN(gDisplayedStringBattle, moveInfo->currentPP[i],
                                                         STR_CONV_MODE_RIGHT_ALIGN, 2);
                 *(txtPtr)++ = CHAR_SLASH;
-                ConvertIntToDecimalStringN(txtPtr, moveInfo->maxPp[i], STR_CONV_MODE_LEFT_ALIGN, 2);
+                ConvertIntToDecimalStringN(txtPtr, moveInfo->maxPP[i], STR_CONV_MODE_LEFT_ALIGN, 2);
 
-                u32 state = GetCurrentPpToMaxPpState(moveInfo->currentPp[i], moveInfo->maxPp[i]);
+                u32 state = GetCurrentPPToMaxPPState(moveInfo->currentPP[i], moveInfo->maxPP[i]);
                 x += GetStringRightAlignXOffset(FONT_SMALL, gDisplayedStringBattle, TILE_TO_PIXELS(12));
 
                 union TextColor clr = sBWBattleUI_TextColors[BUI_TXTCLR_MOVE_BOX];
                 clr.foreground = state + 1;
 
                 // can't use BattleUI_AddTextPrinter directly
-                AddTextPrinterParameterized6(windowId, FONT_SMALL,
-                    x, 4,
-                    0, 0,
-                    clr,
-                    TEXT_SKIP_DRAW, gDisplayedStringBattle);
+                BattleUI_AddTextPrinterWithColor(windowId, FONT_SMALL, x, 4, clr, gDisplayedStringBattle);
             }
         }
 
@@ -569,5 +566,25 @@ static void BattleUI_DisplayZMoveBox(enum BattlerId battler, struct ChooseMoveSt
 
 static void BattleUI_AddTextPrinter(u32 windowId, u32 fontId, u32 x, u32 y, enum BattleUITextColors color, const u8 *str)
 {
-    AddTextPrinterParameterized6(windowId, fontId, x, y, 0, 0, sBWBattleUI_TextColors[color], TEXT_SKIP_DRAW, str);
+    BattleUI_AddTextPrinterWithColor(windowId, fontId, x, y, sBWBattleUI_TextColors[color], str);
+}
+
+// Window text printer that takes a full TextColor, accent included.
+static void BattleUI_AddTextPrinterWithColor(u32 windowId, u32 fontId, u32 x, u32 y, union TextColor color, const u8 *str)
+{
+    struct TextPrinterTemplate printer;
+
+    printer.currentChar = str;
+    printer.type = WINDOW_TEXT_PRINTER;
+    printer.windowId = windowId;
+    printer.fontId = fontId;
+    printer.x = x;
+    printer.y = y;
+    printer.currentX = printer.x;
+    printer.currentY = printer.y;
+    printer.letterSpacing = 0;
+    printer.lineSpacing = 0;
+    printer.color = color;
+
+    AddTextPrinter(&printer, TEXT_SKIP_DRAW, NULL);
 }

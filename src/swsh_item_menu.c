@@ -708,6 +708,7 @@ static const TaskFunc sContextMenuFuncs[] = {
     [ITEMMENULOCATION_WALLY] =                  NULL,
     [ITEMMENULOCATION_PCBOX] =                  Task_ItemContext_GiveToPC,
     [ITEMMENULOCATION_BERRY_TREE_MULCH] =       Task_FadeAndCloseBagMenuIfMulch,
+    [ITEMMENULOCATION_RAIDEND] =                Task_ItemContext_Normal,
 };
 
 static const struct YesNoFuncTable sYesNoTossFunctions = {ConfirmToss, CancelToss};
@@ -1519,7 +1520,7 @@ EWRAM_DATA struct BagMenu *gBagMenu = 0;
 EWRAM_DATA struct BagPosition gBagPosition = {0};
 static EWRAM_DATA struct ListBuffer1 *sListBuffer1 = 0;
 static EWRAM_DATA struct ListBuffer2 *sListBuffer2 = 0;
-EWRAM_DATA u16 gSpecialVar_ItemId = 0;
+EWRAM_DATA enum Item gSpecialVar_ItemId = 0;
 static EWRAM_DATA struct TempWallyBag *sTempWallyBag = 0;
 #if SWSH_ITEM_MENU_IN_BAG_USE
 static EWRAM_DATA struct BagItemUseState *sBagItemUseState = NULL;
@@ -1563,6 +1564,11 @@ void CB2_ChooseMulch(void)
 void ChooseBerryForMachine(MainCallback exitCallback)
 {
     GoToBagMenu(ITEMMENULOCATION_BERRY_BLENDER_CRUSH, POCKET_BERRIES, exitCallback);
+}
+
+void CB2_ChooseBall(void)
+{
+    GoToBagMenu(ITEMMENULOCATION_RAIDEND, POCKET_POKE_BALLS, CB2_SetUpReshowBattleScreenAfterMenu2);
 }
 
 void CB2_GoToSellMenu(void)
@@ -1616,7 +1622,8 @@ void GoToBagMenu(u8 location, u8 pocket, MainCallback exitCallback)
             gBagPosition.pocket = pocket;
         if (gBagPosition.location == ITEMMENULOCATION_BERRY_TREE ||
             gBagPosition.location == ITEMMENULOCATION_BERRY_BLENDER_CRUSH ||
-            gBagPosition.location == ITEMMENULOCATION_BERRY_TREE_MULCH)
+            gBagPosition.location == ITEMMENULOCATION_BERRY_TREE_MULCH ||
+            gBagPosition.location == ITEMMENULOCATION_RAIDEND)
             gBagMenu->pocketSwitchDisabled = TRUE;
         gBagMenu->newScreenCallback = NULL;
         gBagMenu->toSwapPos = NOT_SWAPPING;
@@ -3530,6 +3537,7 @@ static void OpenContextMenu(u8 taskId)
     {
     case ITEMMENULOCATION_BATTLE:
     case ITEMMENULOCATION_WALLY:
+    case ITEMMENULOCATION_RAIDEND:
         if (GetItemBattleUsage(gSpecialVar_ItemId))
         {
             gBagMenu->contextMenuItemsPtr = sContextMenuItems_BattleUse;
@@ -6946,7 +6954,7 @@ static void BagMenu_ShowPPMoveSelectWindow(u8 taskId)
         {
             u8 currentPp = GetMonData(mon, MON_DATA_PP1 + i);
             u8 maxPp = CalculatePPWithBonus(move, GetMonData(mon, MON_DATA_PP_BONUSES), i);
-            u8 ppState = GetCurrentPpToMaxPpState(currentPp, maxPp);
+            u8 ppState = GetCurrentPPToMaxPPState(currentPp, maxPp);
             s32 x;
 
             ConvertIntToDecimalStringN(gStringVar1, currentPp, STR_CONV_MODE_RIGHT_ALIGN, 2);
@@ -8768,7 +8776,7 @@ static u8 BagMenu_BattleTargetSlotId(bool8 partner, u8 partyIndex)
 {
     if (IsMultiBattle())
     {
-        u8 battler = partner ? BATTLE_PARTNER(gBattlerInMenuId) : gBattlerInMenuId;
+        u8 battler = partner ? GetPartnerBattler(gBattlerInMenuId) : gBattlerInMenuId;
         if (gBattlerPartyIndexes[battler] != partyIndex)
             return PARTY_SIZE;
         return (GetBattlerPosition(battler) == B_POSITION_PLAYER_RIGHT) ? 1 : 0;

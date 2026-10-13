@@ -855,7 +855,7 @@ static void Usm_CreateIcons(s16 x, s16 y)
         u8 id = CreateSprite(sUsmMenuItems[iconId].template, posX, y, 1);
 
         if (!!GetFlashLevel())
-            gSprites[id].objWinMask = TRUE;
+            gSprites[id].copyToObjWin = TRUE;
 
         sUsmMemory->spriteIds[i] = id;
     }
@@ -1285,7 +1285,7 @@ static u32 Usm_CreateHandSprite(s16 x, s16 y)
         SPRITE_SIZE(32x32), SPRITE_SHAPE(32x32), x, y, 0, SpriteCallbackDummy,
         TRUE);
     struct Sprite* sprite = &gSprites[spriteId];
-    sprite->objWinMask = TRUE;
+    sprite->copyToObjWin = TRUE;
     sprite->oam.priority = 0;
     return spriteId;
 }
